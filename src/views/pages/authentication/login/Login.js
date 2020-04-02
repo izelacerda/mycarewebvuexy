@@ -5,17 +5,17 @@ import {
   CardTitle,
   Row,
   Col,
-  Nav,
-  NavItem,
-  NavLink,
+  // Nav,
+  // NavItem,
+  // NavLink,
   TabContent,
   TabPane
 } from "reactstrap"
-import classnames from "classnames"
+// import classnames from "classnames"
 import loginImg from "../../../../assets/img/pages/login.png"
 import "../../../../assets/scss/pages/authentication.scss"
-import LoginAuth0 from "./LoginAuth0"
-import LoginFirebase from "./LoginFirebase"
+// import LoginAuth0 from "./LoginAuth0"
+// import LoginFirebase from "./LoginFirebase"
 import LoginJWT from "./LoginJWT"
 
 class Login extends React.Component {
@@ -51,13 +51,13 @@ class Login extends React.Component {
                 <Card className="rounded-0 mb-0 px-2 login-tabs-container">
                   <CardHeader className="pb-1">
                     <CardTitle>
-                      <h4 className="mb-0">Login</h4>
+                      <h4 className="mb-0">Acesso MYCARE </h4>
                     </CardTitle>
                   </CardHeader>
                   <p className="px-2 auth-title">
-                    Welcome back, please login to your account.
+                    Bem-vindo, por favor insira os seus dados.
                   </p>
-                  <Nav tabs className="px-2">
+                  {/* <Nav tabs className="px-2">
                     <NavItem>
                       <NavLink
                         className={classnames({
@@ -94,17 +94,17 @@ class Login extends React.Component {
                         Auth0
                       </NavLink>
                     </NavItem>
-                  </Nav>
+                  </Nav> */}
                   <TabContent activeTab={this.state.activeTab}>
                     <TabPane tabId="1">
                       <LoginJWT />
                     </TabPane>
-                    <TabPane tabId="2">
+                    {/* <TabPane tabId="2">
                       <LoginFirebase />
                     </TabPane>
                     <TabPane tabId="3">
                       <LoginAuth0 />
-                    </TabPane>
+                    </TabPane> */}
                   </TabContent>
                 </Card>
               </Col>

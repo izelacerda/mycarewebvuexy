@@ -1,4 +1,10 @@
-export const login = (state = { userRole: "admin" }, action) => {
+const INITIAL_STATE = {
+  signed: false,
+  loading: false,
+  userRole: ""
+};
+
+export const login = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     case "LOGIN_WITH_EMAIL": {
       return { ...state, values: action.payload }
@@ -16,10 +22,15 @@ export const login = (state = { userRole: "admin" }, action) => {
       return { ...state, values: action.payload }
     }
     case "LOGIN_WITH_JWT": {
+      console.log(state);
+      console.log(action.payload);
+      return { ...state, values: action.payload, signed: true, loading: false, userRole: action.payload.loggedInUser.userRole }
+    }
+    case "LOGIN_FAILURE": {
       return { ...state, values: action.payload }
     }
     case "LOGOUT_WITH_JWT": {
-      return { ...state, values: action.payload }
+      return { state }
     }
     case "LOGOUT_WITH_FIREBASE": {
       return { ...state, values: action.payload }

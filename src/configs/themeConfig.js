@@ -8,7 +8,7 @@ const themeConfig = {
   navbarColor: "default", // options[String]: default / primary / success / danger / info / warning / dark
   navbarType: "floating", // options[String]: floating(default) / static / sticky / hidden
   footerType: "static", // options[String]: static(default) / sticky / hidden
-  disableCustomizer: true, // options[Boolean]: true, false(default)
+  disableCustomizer: false, // options[Boolean]: true, false(default)
   hideScrollToTop: false, // options[Boolean]: true, false(default)
   disableThemeTour: false, // options[Boolean]: true, false(default)
   menuTheme: "primary", // options[String]: primary / success / danger / info / warning / dark

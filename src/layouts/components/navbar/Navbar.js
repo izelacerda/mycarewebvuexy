@@ -5,7 +5,7 @@ import classnames from "classnames"
 import { useAuth0 } from "../../../authServices/auth0/auth0Service"
 import {
   logoutWithJWT,
-  logoutWithFirebase
+  // logoutWithFirebase
 } from "../../../redux/actions/auth/loginActions"
 import NavbarBookmarks from "./NavbarBookmarks"
 import NavbarUser from "./NavbarUser"
@@ -92,7 +92,7 @@ const ThemeNavbar = props => {
                   props.user.login.values !== undefined &&
                   props.user.login.values.loggedInWith !== "jwt" &&
                   props.user.login.values.photoUrl
-                    ? props.user.login.values.photoUrl 
+                    ? props.user.login.values.photoUrl
                     : user !== undefined && user.picture ? user.picture
                     : userImg
                 }
@@ -121,6 +121,6 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, {
   logoutWithJWT,
-  logoutWithFirebase,
+  // logoutWithFirebase,
   useAuth0
 })(ThemeNavbar)

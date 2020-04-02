@@ -29,7 +29,7 @@ class HorizontalSidebar extends React.Component {
     this.activeParentItems = []
 
     this.redirectUnauthorized = () => {
-      history.push("misc/not-authorized")
+      history.push("/pages/login")
     }
   }
 
