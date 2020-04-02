@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { CardBody, FormGroup, Form, Input, Button, Label } from "reactstrap"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import { Container, Content } from "./styles";
 
 import Checkbox from "../../../../components/@vuexy/checkbox/CheckboxesVuexy"
 import { Mail, Lock, Check } from "react-feather"
@@ -108,6 +109,11 @@ export default function LoginJWT() {
             </Button.Ripple>
           </div>
         </Form>
+        <Container>
+          <Content>
+          <Label>Mycare.med.br - Versão: 1.0.1 - 2020</Label>
+          </Content>
+        </Container>
         <ToastContainer />
       </CardBody>
   );
