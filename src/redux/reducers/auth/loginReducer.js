@@ -22,8 +22,6 @@ export const login = (state = INITIAL_STATE, action) => {
       return { ...state, values: action.payload }
     }
     case "LOGIN_WITH_JWT": {
-      console.log(state);
-      console.log(action.payload);
       return { ...state, values: action.payload, signed: true, loading: false, userRole: action.payload.loggedInUser.userRole }
     }
     case "LOGIN_FAILURE": {
