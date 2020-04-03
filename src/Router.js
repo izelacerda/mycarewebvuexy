@@ -7,7 +7,8 @@ import Spinner from "./components/@vuexy/spinner/Loading-spinner"
 import knowledgeBaseCategory from "./views/pages/knowledge-base/Category"
 import knowledgeBaseQuestion from "./views/pages/knowledge-base/Questions"
 import { ContextLayout } from "./utility/context/Layout"
-
+import { ToastContainer  } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 // Route-based code splitting
 const analyticsDashboard = lazy(() =>
   import("./views/dashboard/analytics/AnalyticsDashboard")
@@ -402,6 +403,7 @@ class AppRouter extends React.Component {
           <AppRoute path="/extensions/pagination" component={reactPaginate} />
           <AppRoute component={error404} fullLayout />
         </Switch>
+        <ToastContainer />
       </Router>
     )
   }

@@ -1,80 +1,113 @@
-import React from "react"
+import React, { useState } from "react";
 import { Form, FormGroup, Input, Label, Button } from "reactstrap"
+import { toast } from "react-toastify"
+import { useDispatch } from "react-redux";
+
 import Checkbox from "../../../../components/@vuexy/checkbox/CheckboxesVuexy"
 import { Check } from "react-feather"
-import { connect } from "react-redux"
-import { signupWithJWT } from "../../../../redux/actions/auth/registerActions"
 import { history } from "../../../../history"
+import api from "../../../../services/api";
 
-class RegisterJWT extends React.Component {
-  state = {
-    email: "",
-    password: "",
-    name: "",
-    confirmPass: ""
+import { loginWithJWT, signFailure } from "../../../../redux/actions/auth/loginActions"
+
+export default function RegisterJWT() {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [username, setUserName] = useState("");
+    const [password_confirmation, setConfirmPass] = useState("");
+    const dispatch = useDispatch();
+
+  async function handleRegister(e) {
+    try {
+      e.preventDefault()
+      if(password!== password_confirmation)
+      {
+        toast.error("Senha e Confirmação de senha são diferentes");
+        return;
+      }
+       await api.post("/users", {
+        username,
+        email,
+        password,
+        password_confirmation,
+        addresses: []
+      });
+      const response = await api.post("/sessions", {
+        email,
+        password
+      });
+      const { token, user } = response.data;
+      const { id, name, userRole } = user;
+
+      api.defaults.headers.Authorization = `Bearer ${token}`;
+
+      dispatch(loginWithJWT({ id, name, email, password, userRole, remember: true, token }));
+
+    } catch (err) {
+      if (typeof err.response !== 'undefined')
+      {
+        if(typeof err.response.status !== 'undefined' && (err.response.status === 401 || err.response.status === 400   ))
+        {
+          toast.error("Usuário ou Senha inválidos! Verifique seus dados");
+        }
+        }
+      dispatch(signFailure());
+    }
   }
-
-  handleRegister = e => {
-    e.preventDefault()
-    this.props.signupWithJWT(
-      this.state.email,
-      this.state.password,
-      this.state.name
-    )
-  }
-
-  render() {
     return (
-      <Form action="/" onSubmit={this.handleRegister}>
+      <Form action="/" onSubmit={handleRegister}>
         <FormGroup className="form-label-group">
           <Input
             type="text"
-            placeholder="Name"
+            placeholder="Nome"
             required
-            value={this.state.name}
-            onChange={e => this.setState({ name: e.target.value })}
+            value={username}
+            onChange={e => setUserName(e.target.value)}
           />
-          <Label>Name</Label>
+          <Label>Nome</Label>
         </FormGroup>
         <FormGroup className="form-label-group">
           <Input
             type="email"
             placeholder="Email"
             required
-            value={this.state.email}
-            onChange={e => this.setState({ email: e.target.value })}
+            value={email}
+            onChange={e => setEmail(e.target.value)}
           />
           <Label>Email</Label>
         </FormGroup>
         <FormGroup className="form-label-group">
           <Input
             type="password"
-            placeholder="Password"
+            placeholder="Senha"
             required
-            value={this.state.password}
-            onChange={e => this.setState({ password: e.target.value })}
+            value={password}
+            onChange={e => setPassword(e.target.value)}
           />
-          <Label>Password</Label>
+          <Label>Senha</Label>
         </FormGroup>
         <FormGroup className="form-label-group">
           <Input
             type="password"
-            placeholder="Confirm Password"
+            placeholder="Confirmar Senha"
             required
-            value={this.state.confirmPass}
-            onChange={e => this.setState({ confirmPass: e.target.value })}
+            value={password_confirmation}
+            onChange={e => setConfirmPass(e.target.value)}
           />
-          <Label>Confirm Password</Label>
+          <Label>Confirmar Senha</Label>
         </FormGroup>
         <FormGroup>
           <Checkbox
             color="primary"
             icon={<Check className="vx-icon" size={16} />}
-            label=" I accept the terms & conditions."
+            label=" Aceitar termos e condições."
             defaultChecked={true}
           />
         </FormGroup>
         <div className="d-flex justify-content-between">
+          <Button.Ripple color="primary" type="submit">
+            Incluir
+          </Button.Ripple>
           <Button.Ripple
             color="primary"
             outline
@@ -82,19 +115,9 @@ class RegisterJWT extends React.Component {
               history.push("/pages/login")
             }}
           >
-            Login
-          </Button.Ripple>
-          <Button.Ripple color="primary" type="submit">
-            Register
+            Já possui conta
           </Button.Ripple>
         </div>
       </Form>
     )
-  }
 }
-const mapStateToProps = state => {
-  return {
-    values: state.auth.register
-  }
-}
-export default connect(mapStateToProps, { signupWithJWT })(RegisterJWT)

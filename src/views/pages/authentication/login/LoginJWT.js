@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux";
 import { CardBody, FormGroup, Form, Input, Button, Label } from "reactstrap"
-import { ToastContainer, toast } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
+import { toast } from "react-toastify"
 import { Container, Content } from "./styles";
 import * as crypto from "../../../../shared/crypto";
 
@@ -48,8 +47,12 @@ export default function LoginJWT() {
                 setEmail(cryptoEmail);
                 let cryptoPassword = crypto.decryptByDESModeCBC(auth.login.state.values.loggedInUser.password);
                 setPassword(cryptoPassword);
-                setRemember(true);
+                setRemember(auth.login.state.values.loggedInUser.remember);
               }
+              else{
+                setRemember(false);
+              }
+
             }
           }
         }
@@ -59,7 +62,7 @@ export default function LoginJWT() {
       {
         loadAuth();
       }
-  }, [auth, password]);
+  }, [auth]);
 
   async function handleLogin(e) {
     try {
@@ -80,7 +83,7 @@ export default function LoginJWT() {
       {
         if(typeof err.response.status !== 'undefined' && (err.response.status === 401 || err.response.status === 400   ))
         {
-          toast.warning("Usuário ou Senha inválidos! Verifique seus dados");
+          toast.error("Usuário ou Senha inválidos! Verifique seus dados");
         }
         }
       dispatch(signFailure());
@@ -121,7 +124,7 @@ export default function LoginJWT() {
               icon={<Check className="vx-icon" size={16} />}
               label="Lembrar"
               defaultChecked={remember}
-              onChange={e => setRemember(e.target.value)}
+              onChange={e => setRemember(e.target.checked)}
             />
             <div className="float-right">
               <Link to="/pages/forgot-password">Esqueceu a Senha?</Link>
@@ -139,7 +142,7 @@ export default function LoginJWT() {
                 history.push("/pages/register")
               }}
             >
-              Novo Usuário
+              Nova Conta
             </Button.Ripple>
           </div>
         </Form>
@@ -148,7 +151,7 @@ export default function LoginJWT() {
           <Label>Mycare.med.br - Versão: 1.0.1 - 03/04/2020</Label>
           </Content>
         </Container>
-        <ToastContainer />
+
       </CardBody>
   );
 }
