@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom"
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { CardBody, FormGroup, Form, Input, Button, Label } from "reactstrap"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { Container, Content } from "./styles";
+import * as crypto from "../../../../shared/crypto";
+
 
 import Checkbox from "../../../../components/@vuexy/checkbox/CheckboxesVuexy"
 import { Mail, Lock, Check } from "react-feather"
 import { loginWithJWT, signFailure } from "../../../../redux/actions/auth/loginActions"
 import { history } from "../../../../history"
 import api from "../../../../services/api";
+// import * as Yup from "yup";
 
 // /class LoginJWT extends React.Component {
 //   state = {
@@ -18,29 +21,60 @@ import api from "../../../../services/api";
 //     password: "",
 //     remember: false
 //   }
+// const schema = Yup.object().shape({
+//   email: Yup.string()
+//     .email("Insira um e-mail válido")
+//     .required("O e-mail é obrigatório"),
+//   password: Yup.string()
+//     .min(6, "Insira uma senha válida")
+//     .required("A senha é obrigatória")
+// });
 export default function LoginJWT() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(false);
+  const [remember, setRemember] = useState(true);
   const dispatch = useDispatch();
+  const auth = useSelector(state => state.auth);
 
-  async function handleLogin() {
+  useEffect(() =>
+  {
+     async function loadAuth() {
+      if (auth.login !== undefined) {
+        if (auth.login.state !== undefined) {
+          if (auth.login.state.values !== undefined) {
+            if (auth.login.state.values.loggedInUser !== undefined) {
+              if(auth.login.state.values.loggedInUser.remember) {
+                let cryptoEmail = crypto.decryptByDESModeCBC(auth.login.state.values.loggedInUser.email);
+                setEmail(cryptoEmail);
+                let cryptoPassword = crypto.decryptByDESModeCBC(auth.login.state.values.loggedInUser.password);
+                setPassword(cryptoPassword);
+                setRemember(true);
+              }
+            }
+          }
+        }
+      }
+     }
+     if(auth)
+      {
+        loadAuth();
+      }
+  }, [auth, password]);
+
+  async function handleLogin(e) {
     try {
+      e.preventDefault()
       const response = await api.post("/sessions", {
         email,
         password
       });
       const { token, user } = response.data;
+      const { id, name, userRole } = user;
 
       api.defaults.headers.Authorization = `Bearer ${token}`;
 
-      dispatch(loginWithJWT({ token, ...user }));
+      dispatch(loginWithJWT({ id, name, email, password, userRole, remember, token }));
 
-      // try {
-      //   history.push("/");
-      // } catch (error) {
-
-      // }
     } catch (err) {
       if (typeof err.response !== 'undefined')
       {
@@ -54,7 +88,7 @@ export default function LoginJWT() {
   }
   return (
       <CardBody className="pt-1">
-        <Form>
+        <Form action="/" onSubmit={handleLogin}>
           <FormGroup className="form-label-group position-relative has-icon-left">
             <Input
               type="email"
@@ -86,8 +120,8 @@ export default function LoginJWT() {
               color="primary"
               icon={<Check className="vx-icon" size={16} />}
               label="Lembrar"
-              defaultChecked={false}
-              onChange={e => setRemember(!remember)}
+              defaultChecked={remember}
+              onChange={e => setRemember(e.target.value)}
             />
             <div className="float-right">
               <Link to="/pages/forgot-password">Esqueceu a Senha?</Link>
@@ -95,7 +129,7 @@ export default function LoginJWT() {
           </FormGroup>
           <div className="d-flex justify-content-between">
 
-            <Button.Ripple color="primary" onClick={() => handleLogin()}>
+            <Button.Ripple color="primary" type="submit">
               Login
             </Button.Ripple>
             <Button.Ripple
@@ -111,7 +145,7 @@ export default function LoginJWT() {
         </Form>
         <Container>
           <Content>
-          <Label>Mycare.med.br - Versão: 1.0.1 - 2020</Label>
+          <Label>Mycare.med.br - Versão: 1.0.1 - 04/2020</Label>
           </Content>
         </Container>
         <ToastContainer />
