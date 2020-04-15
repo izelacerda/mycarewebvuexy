@@ -162,7 +162,7 @@ const ExportSelected = lazy(() =>
   import("./extensions/import-export/ExportSelected")
 )
 const userList = lazy(() => import("./views/apps/user/list/List"))
-const userEdit = lazy(() => import("./views/apps/user/edit/Edit"))
+const userCadastro = lazy(() => import("./views/apps/user/cadastro"))
 const userView = lazy(() => import("./views/apps/user/view/View"))
 const Login = lazy(() => import("./views/pages/authentication/login/Login"))
 const forgotPassword = lazy(() =>
@@ -372,7 +372,7 @@ class AppRouter extends React.Component {
             fullLayout
           />
           <AppRoute path="/app/user/list" component={userList} />
-          <AppRoute path="/app/user/edit" component={userEdit} />
+          <AppRoute path="/app/user/cadastro/:id" component={userCadastro} />
           <AppRoute path="/app/user/view" component={userView} />
           <AppRoute path="/charts/apex" component={apex} />
           <AppRoute path="/charts/chartjs" component={chartjs} />

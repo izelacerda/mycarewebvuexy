@@ -645,8 +645,8 @@ export const searchResult = [
       {
         id: 95,
         target: "userEdit",
-        title: "User Edit",
-        link: "/app/user/edit",
+        title: "Usuário Cadastro",
+        link: "/app/user/cadastro",
         icon: "Edit"
       },
       {

@@ -3,7 +3,8 @@ import * as crypto from "../../../shared/crypto";
 const INITIAL_STATE = {
   signed: false,
   loading: false,
-  userRole: ""
+  userRole: "",
+  token: ""
 };
 
 export const login = (state = INITIAL_STATE, action) => {
@@ -26,7 +27,7 @@ export const login = (state = INITIAL_STATE, action) => {
     case "LOGIN_WITH_JWT": {
       const password = crypto.encryptByDESModeCBC(action.payload.loggedInUser.password);
       const email = crypto.encryptByDESModeCBC(action.payload.loggedInUser.email);
-      const { id, name, remember, userRole } = action.payload.loggedInUser;
+      const { id, name, remember, userRole, licences, avatar, token } = action.payload.loggedInUser;
       const values = {
         loggedInUser: {
           id,
@@ -34,13 +35,17 @@ export const login = (state = INITIAL_STATE, action) => {
           email,
           password,
           remember,
-          userRole
+          userRole,
+          avatar,
+          licences
           },
           loggedInWith: "jwt"
       }
       return { values,
         signed: true,
         loading: false,
+        licence_id: licences[0].id,
+        token,
         userRole }
     }
     case "LOGIN_FAILURE": {

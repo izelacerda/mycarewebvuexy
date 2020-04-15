@@ -133,7 +133,7 @@ const navigationConfig = [
         type: "item",
         icon: <Icon.Circle size={12} />,
         permissions: ["admin", "editor"],
-        navLink: "/app/user/edit"
+        navLink: "/app/user/cadastro"
       }
     ]
   },

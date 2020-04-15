@@ -9,7 +9,9 @@ import {
 } from "../../../redux/actions/auth/loginActions"
 import NavbarBookmarks from "./NavbarBookmarks"
 import NavbarUser from "./NavbarUser"
-import userImg from "../../../assets/img/portrait/small/avatar-s-11.jpg"
+import api from "../../../services/api"
+
+// import userImg from "../../../assets/img/portrait/small/avatar-s-11.jpg"
 
 const UserName = props => {
   let username = ""
@@ -24,7 +26,7 @@ const UserName = props => {
       username = props.user.login.values.loggedInUser.name
     }
   } else {
-    username = "John Doe"
+    username = ""
   }
 
   return username
@@ -33,6 +35,10 @@ const ThemeNavbar = props => {
   const { user } = useAuth0()
   const colorsArr = [ "primary", "danger", "success", "info", "warning", "dark"]
   const navbarTypes = ["floating" , "static" , "sticky" , "hidden"]
+  if(props.user.login !== undefined && props.user.login.token !== undefined)
+    {
+      api.defaults.headers.Authorization = `Bearer ${props.user.login.token}`;
+    }
   return (
     <React.Fragment>
       <div className="content-overlay" />
@@ -90,11 +96,12 @@ const ThemeNavbar = props => {
                 userName={<UserName userdata={user} {...props} />}
                 userImg={
                   props.user.login.values !== undefined &&
-                  props.user.login.values.loggedInWith !== "jwt" &&
-                  props.user.login.values.photoUrl
-                    ? props.user.login.values.photoUrl
-                    : user !== undefined && user.picture ? user.picture
-                    : userImg
+                  // props.user.login.values.loggedInWith !== "jwt" &&
+                  props.user.login.values.loggedInUser.avatar !== undefined &&
+                  props.user.login.values.loggedInUser.avatar !== null &&
+                  props.user.login.values.loggedInUser.avatar.url
+                    ? props.user.login.values.loggedInUser.avatar.url
+                    : null
                 }
                 loggedInWith={
                   props.user !== undefined &&

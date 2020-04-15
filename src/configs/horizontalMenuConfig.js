@@ -133,7 +133,7 @@ const horizontalMenuConfig = [
             title: "Edit",
             type: "item",
             icon: <Icon.Circle size={10} />,
-            navLink: "/app/user/edit",
+            navLink: "/app/user/cadastro",
             permissions: ["admin", "editor"]
           }
         ]

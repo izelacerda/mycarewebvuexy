@@ -19,6 +19,8 @@ import Autocomplete from "../../../components/@vuexy/autoComplete/AutoCompleteCo
 import { useAuth0 } from "../../../authServices/auth0/auth0Service"
 import { history } from "../../../history"
 import { IntlContext } from "../../../utility/context/Internationalization"
+import { dicalogin } from "../../../shared/geral"
+import { Container, Content  } from "./styles";
 
 const handleNavigation = (e, path) => {
   e.preventDefault()
@@ -102,6 +104,7 @@ class NavbarUser extends React.PureComponent {
   state = {
     navbarSearch: false,
     langDropdown: false,
+    iniciais: '',
     shoppingCart: [
       {
         id: 1,
@@ -173,6 +176,11 @@ class NavbarUser extends React.PureComponent {
     axios.get("/api/main-search/data").then(({ data }) => {
       this.setState({ suggestions: data.searchResult })
     })
+    if (this.props.userName.props.user.login.values.loggedInUser !== undefined )
+      {
+        const iniciais = dicalogin(this.props.userName.props.user.login.values.loggedInUser.name)
+        this.setState(  { iniciais } )
+      }
   }
 
   handleNavbarSearch = () => {
@@ -665,13 +673,21 @@ class NavbarUser extends React.PureComponent {
               <span className="user-status">Available</span>
             </div>
             <span data-tour="user">
-              <img
+              {this.props.userImg ? (
+                <img
                 src={this.props.userImg}
                 className="round"
                 height="40"
                 width="40"
                 alt="avatar"
               />
+              ) : (
+                <Container>
+                  <Content>
+                    <span className="nome">{this.state.iniciais}</span>
+                  </Content>
+                </Container>
+              )}
             </span>
           </DropdownToggle>
           <UserDropdown {...this.props} />

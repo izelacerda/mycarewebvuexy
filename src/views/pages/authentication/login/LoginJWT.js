@@ -11,7 +11,7 @@ import Checkbox from "../../../../components/@vuexy/checkbox/CheckboxesVuexy"
 import { Mail, Lock, Check } from "react-feather"
 import { loginWithJWT, signFailure } from "../../../../redux/actions/auth/loginActions"
 import { history } from "../../../../history"
-import api from "../../../../services/api";
+import api from "../../../../services/api"
 // import * as Yup from "yup";
 
 // /class LoginJWT extends React.Component {
@@ -72,11 +72,11 @@ export default function LoginJWT() {
         password
       });
       const { token, user } = response.data;
-      const { id, name, userRole } = user;
+      const { id, name, userRole, licences, avatar } = user;
 
       api.defaults.headers.Authorization = `Bearer ${token}`;
 
-      dispatch(loginWithJWT({ id, name, email, password, userRole, remember, token }));
+      dispatch(loginWithJWT({ id, name, email, password, userRole, remember, token, avatar, licences }));
 
     } catch (err) {
       if (typeof err.response !== 'undefined')
@@ -85,7 +85,17 @@ export default function LoginJWT() {
         {
           toast.error("Usuário ou Senha inválidos! Verifique seus dados");
         }
+        else{
+          if(typeof err.response.status !== 'undefined' && (err.response.status === 500 || err.response.status === 501  ))
+          {
+            toast.error("Usuário não encontrado! Verifique seus dados");
+          }
         }
+      }
+      else
+      {
+        toast.error("Servidor desconectado! Verifique com o administrador do sistema");
+      }
       dispatch(signFailure());
     }
   }
@@ -153,7 +163,7 @@ export default function LoginJWT() {
         </Container>
 
       </CardBody>
-  );
+  )
 }
 // const mapStateToProps = state => {
 //   return {
