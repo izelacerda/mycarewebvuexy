@@ -196,13 +196,13 @@ export default function UserList() {
      async function loadDados() {
       if (auth.login !== undefined) {
         if (auth.login.licence_id !== undefined) {
-          const headers = {
-            licence: auth.login.licence_id,
+          const body = {
+            licence_id: auth.login.licence_id,
             id: 0
           };
-          const response = await api.get("/users", {
-            headers
-          });
+          const response = await api.post("/users.list",
+            body
+          );
           let rowData = response.data;
           setrowData(rowData)
         }

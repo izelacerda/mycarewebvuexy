@@ -50,12 +50,12 @@ export default function UserCadastro({ match }) {
 
   useEffect(() => {
     async function loadrowData() {
-      const headers = {
+      const body = {
         licence_id: auth.login.licence_id,
-        id
+        id: parseInt(id)
       };
-      const response = await api.get("/users", {
-        headers
+      const response = await api.post("/users.list", {
+        ...body
       });
       let rowData = response.data;
       if(rowData !== undefined && rowData[0] !== undefined)
