@@ -30,18 +30,19 @@ export default function RegisterJWT() {
         email,
         password,
         password_confirmation,
-        addresses: []
+        addresses: [],
+        licence_id: 0
       });
       const response = await api.post("/sessions", {
         email,
         password
       });
       const { token, user } = response.data;
-      const { id, name, userRole } = user;
+      const { id, name, userRole, licences } = user;
 
       api.defaults.headers.Authorization = `Bearer ${token}`;
 
-      dispatch(loginWithJWT({ id, name, email, password, userRole, remember: true, token }));
+      dispatch(loginWithJWT({ id, name, email, password, userRole, remember: true, token, avatar: null, licences }));
 
     } catch (err) {
       if (typeof err.response !== 'undefined')
