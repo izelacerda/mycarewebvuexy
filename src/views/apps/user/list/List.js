@@ -197,7 +197,8 @@ export default function UserList() {
       if (auth.login !== undefined) {
         if (auth.login.licence_id !== undefined) {
           const headers = {
-            licence_id: auth.login.licence_id,
+            licence: auth.login.licence_id,
+            id: 0
           };
           const response = await api.get("/users", {
             headers
