@@ -176,10 +176,14 @@ class NavbarUser extends React.PureComponent {
     axios.get("/api/main-search/data").then(({ data }) => {
       this.setState({ suggestions: data.searchResult })
     })
-    if (this.props.userName.props.user.login.values.loggedInUser !== undefined )
+
+    if (this.props.user.login.values !== undefined )
       {
-        const iniciais = dicalogin(this.props.userName.props.user.login.values.loggedInUser.name)
-        this.setState(  { iniciais } )
+        if (this.props.userName.props.user.login.values.loggedInUser !== undefined )
+        {
+          const iniciais = dicalogin(this.props.userName.props.user.login.values.loggedInUser.name)
+          this.setState(  { iniciais } )
+        }
       }
   }
 
