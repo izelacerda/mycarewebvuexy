@@ -107,33 +107,17 @@ const navigationConfig = [
   },
   {
     id: "users",
-    title: "User",
+    title: "Cadastros",
     type: "collapse",
-    icon: <Icon.User size={20} />,
+    icon: <Icon.Copy size={20} />,
     children: [
       {
         id: "list",
-        title: "List",
+        title: "Usuários",
         type: "item",
-        icon: <Icon.Circle size={12} />,
+        icon: <Icon.User size={20} />,
         permissions: ["admin", "editor"],
         navLink: "/app/user/list"
-      },
-      {
-        id: "view",
-        title: "View",
-        type: "item",
-        icon: <Icon.Circle size={12} />,
-        permissions: ["admin", "editor"],
-        navLink: "/app/user/view"
-      },
-      {
-        id: "edit",
-        title: "Edit",
-        type: "item",
-        icon: <Icon.Circle size={12} />,
-        permissions: ["admin", "editor"],
-        navLink: "/app/user/cadastro"
       }
     ]
   },

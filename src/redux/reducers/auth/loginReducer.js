@@ -28,6 +28,15 @@ export const login = (state = INITIAL_STATE, action) => {
       const password = crypto.encryptByDESModeCBC(action.payload.loggedInUser.password);
       const email = crypto.encryptByDESModeCBC(action.payload.loggedInUser.email);
       const { id, name, remember, userRole, licences, avatar, token } = action.payload.loggedInUser;
+      let avatar_company = null;
+      if(licences[0].files !== undefined )
+      {
+        if(licences[0].files !== null )
+        {
+          avatar_company = licences[0].files.url
+        }
+      }
+
       const values = {
         loggedInUser: {
           id,
@@ -45,6 +54,8 @@ export const login = (state = INITIAL_STATE, action) => {
         signed: true,
         loading: false,
         licence_id: licences[0].id,
+        company: licences[0].name,
+        avatar_company,
         token,
         userRole }
     }

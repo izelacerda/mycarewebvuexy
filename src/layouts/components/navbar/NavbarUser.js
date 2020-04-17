@@ -29,15 +29,25 @@ const handleNavigation = (e, path) => {
 
 const UserDropdown = props => {
   const { logout, isAuthenticated } = useAuth0()
+  let id = null;
+  if (props.userName.props.user !== undefined ) {
+    if (props.userName.props.user.login !== undefined ) {
+      if (props.userName.props.user.login.values !== undefined ) {
+          if (props.userName.props.user.login.values.loggedInUser !== undefined ) {
+           id= props.userName.props.user.login.values.loggedInUser.id
+          }
+      }
+    }
+  }
   return (
     <DropdownMenu right>
       <DropdownItem
         tag="a"
         href="#"
-        onClick={e => handleNavigation(e, "/pages/profile")}
+        onClick={e => handleNavigation(e, `/app/user/cadastro/${id}`)}
       >
         <Icon.User size={14} className="mr-50" />
-        <span className="align-middle">Edit Profile</span>
+        <span className="align-middle">Altera Profile</span>
       </DropdownItem>
       <DropdownItem
         tag="a"

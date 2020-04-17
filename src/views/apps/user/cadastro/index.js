@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import {
   Card,
   CardBody,
@@ -28,17 +28,27 @@ import Radio from "../../../../components/@vuexy/radio/RadioVuexy"
 import { Check, MapPin } from "react-feather"
 import Flatpickr from "react-flatpickr";
 import { dicalogin } from "../../../../shared/geral"
-import { Container, Content  } from "./styles";
+import { Container, Content, Imagem  } from "./styles";
 
 import "flatpickr/dist/themes/light.css";
 import "../../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
 
 import {
+  Cloud,
   Link,
   Twitter,
   Facebook,
   Instagram
 } from "react-feather"
+import { toast } from "react-toastify";
+import * as Yup from "yup";
+
+const schema = Yup.object().shape({
+  email: Yup.string()
+    .email("Insira um e-mail válido")
+    .required("O e-mail é obrigatório"),
+  username: Yup.string().required("O nome é obrigatório")
+});
 
 export default function UserCadastro({ match }) {
   const { id } = match.params;
@@ -46,8 +56,30 @@ export default function UserCadastro({ match }) {
   const [load, setLoad] = useState(false)
   const [rowData, setrowData] = useState("0")
   const [iniciais, setIniciais] = useState("")
+  const [url, setUrl] = useState(null)
+  const edicao = id > 0;
+
   const auth = useSelector(state => state.auth);
 
+  const [file, setFile] = useState(null);
+
+  const ref = useRef();
+
+  async function handleChangeFile(e) {
+    const data = new FormData();
+
+    data.append("file", e.target.files[0]);
+    const response = await api.post("files", data);
+
+    const { id, url } = response.data;
+
+    setFile(id);
+    handleImg(url)
+  }
+  function handleImg(par) {
+    handleChange("files.url", par)
+    setUrl(par)
+  }
   useEffect(() => {
     async function loadrowData() {
       const body = {
@@ -60,8 +92,13 @@ export default function UserCadastro({ match }) {
       let rowData = response.data;
       if(rowData !== undefined && rowData[0] !== undefined)
       {
-        setrowData(rowData[0])
+        let dados = rowData[0]
+        _.unset(dados, 'files')
+        _.unset(dados, 'pivot')
+        _.unset(dados, 'addresses')
+        setrowData(dados)
         setIniciais(dicalogin(rowData[0].username))
+        setUrl(rowData.files ? rowData.files.url : null)
       }
     }
     if (id > 0 && auth !== undefined) {
@@ -82,39 +119,108 @@ export default function UserCadastro({ match }) {
   }
   function handleChange(id, value) {
     _.set(rowData, id, value);
-    console.log(id)
-    console.log(value)
-    console.log(rowData)
   }
+  async function handleSubmit() {
+    try {
+      await schema.validate(
+        {
+          username: rowData.username,
+          email: rowData.email
+        },
+        {
+          abortEarly: false
+        }
+      );
+      if (!edicao) {
+        try {
+          // const response = await api.get("deliveryman", {
+          //   params: { email: data.email }
+          // });
+
+          // if (response.data && response.data.length > 0) {
+          //   toast.error("email ja utilizado em outro entregador!");
+          // } else {
+          //   await api.post("/deliveryman", data);
+          //   history.push({
+          //     pathname: `/deliveryman`
+          //   });
+          //   toast.success("Entregador incluído com sucesso!");
+          // }
+        } catch (error) {
+          toast.error("Erro ao incluir Usuário!");
+        }
+      } else {
+        try {
+          // var myJSON = JSON.stringify(rowData);
+          await api.put(`/users`, rowData);
+
+          toast.success("Usuário atualizado com sucesso!");
+        } catch (error) {
+          toast.error("Erro ao atualizar usuário!");
+        }
+      }
+    } catch (error) {
+      let validErrors = "";
+      if (error instanceof Yup.ValidationError) {
+        error.inner.forEach(err => {
+          validErrors = `${validErrors} ${err.message}`;
+        });
+        if (validErrors.length > 0) {
+          toast.error(
+            `Não foi possível ${
+              id === "0" ? "incluir" : "alterar"
+            } o usuário. ${validErrors}`
+          );
+        }
+      } else {
+        toast.error(
+          `Não foi possível ${id === "0" ? "incluir" : "alterar"} o usuário.`
+        );
+      }
+    }
+  }
+
   function FormTab1() {
     return (
       <Row>
         <Col sm="12">
           <Media className="mb-2">
             <Media className="mr-2 my-25" left href="#">
-                {rowData.files ? (
-                    <Media
-                      className="users-avatar-shadow rounded"
-                      object
-                      src={rowData.files ? rowData.files.url : ''}
-                      alt="imagem"
-                      height="84"
-                      width="84"
+                <Imagem>
+                  <label htmlFor="avatar">
+                    {url ? (
+                        <Media
+                          className="users-avatar-shadow rounded"
+                          object
+                          src={url}
+                          alt="imagem"
+                          height="84"
+                          width="84"
+                        />
+                    ) : (
+                      <Container>
+                        <Content>
+                          <span className="nome">{iniciais}</span>
+                        </Content>
+                      </Container>
+                    )}
+                    <input
+                      type="file"
+                      id="avatar"
+                      accept="image/*"
+                      data-file={file}
+                      onChange={handleChangeFile}
+                      ref={ref}
                     />
-                ) : (
-                  <Container>
-                    <Content>
-                      <span className="nome">{iniciais}</span>
-                    </Content>
-                  </Container>
-                )}
+                  </label>
+                </Imagem>
             </Media>
             <Media className="mt-2" body>
               <Media className="font-medium-1 text-bold-600" tag="p" heading>
                 {rowData.username ? rowData.username : null}
               </Media>
               <div className="d-flex flex-wrap">
-                <Button.Ripple className="mr-1" color="primary" outline>
+                <Button.Ripple className="mr-1" color="primary" outline onClick={() => handleImg(null)} size="sm" >
                  Remover Imagem
                 </Button.Ripple>
                 {/* <Button.Ripple color="flat-danger">Remover Imagem</Button.Ripple> */}
@@ -137,11 +243,25 @@ export default function UserCadastro({ match }) {
               </Col>
               <Col md="6" sm="12">
                 <FormGroup>
-                  <Label for="status">Status</Label>
-                  <Input type="select" name="status" id="status">
-                    <option>Ativo</option>
-                    <option>Desativado</option>
-                  </Input>
+                  <Label className="d-block mb-50">Ativo</Label>
+                  <div className="d-inline-block mr-1">
+                    <Radio
+                      label="Sim"
+                      color="primary"
+                      defaultChecked={rowData.is_active}
+                      onChange={e => handleChange("is_active", true)}
+                      name="is_active"
+                    />
+                  </div>
+                  <div className="d-inline-block mr-1">
+                    <Radio
+                      label="Não"
+                      color="primary"
+                      defaultChecked={!rowData.is_active}
+                      onChange={e => handleChange("is_active",false)}
+                      name="is_active"
+                    />
+                  </div>
                 </FormGroup>
               </Col>
               <Col md="6" sm="12">
@@ -204,21 +324,22 @@ export default function UserCadastro({ match }) {
               />
             </FormGroup>
             <FormGroup>
-              <Label for="contactnumber">Número telefone</Label>
+              <Label for="contactnumber">Número Celular</Label>
               <Input
                 type="number"
                 id="mobile"
-                placeholder="Número telefone"
+                placeholder="Número Celular"
                 value={rowData.mobile}
                 onChange={e => handleChange(e.target.id,e.target.value)}
               />
             </FormGroup>
             <FormGroup>
-              <Label for="website">Website</Label>
+              <Label for="website">Telefone Fixo</Label>
               <Input
-                type="url"
-                id="website"
-                placeholder="Endereço Web"
+                type="number"
+                id="phone"
+                placeholder="Telefone Fixo"
+                value={rowData.phone}
                 onChange={e => handleChange(e.target.id,e.target.value)}
               />
             </FormGroup>
@@ -228,7 +349,8 @@ export default function UserCadastro({ match }) {
                 <Radio
                   label="Masculino"
                   color="primary"
-                  defaultChecked={false}
+                  defaultChecked={rowData.gender === 'M' ? true : false}
+                  onChange={e => handleChange("gender", "M")}
                   name="gender"
                 />
               </div>
@@ -236,18 +358,11 @@ export default function UserCadastro({ match }) {
                 <Radio
                   label="Feminino"
                   color="primary"
-                  defaultChecked={true}
+                  defaultChecked={rowData.gender === 'F' ? true : false}
+                  onChange={e => handleChange("gender","F")}
                   name="gender"
                 />
               </div>
-              {/* <div className="d-inline-block">
-                <Radio
-                  label="Others"
-                  color="primary"
-                  defaultChecked={false}
-                  name="gender"
-                />
-              </div> */}
             </FormGroup>
             <FormGroup>
               <Label className="d-block mb-50" for="communication">
@@ -361,36 +476,52 @@ export default function UserCadastro({ match }) {
         </h5>
         <Row>
           <Col md="6" sm="12">
+            <Label for="twitter">Website</Label>
+            <FormGroup className="position-relative has-icon-left">
+              <Input
+                type="url"
+                id="website"
+                placeholder="Endereço Web"
+                value={rowData.website}
+                onChange={e => handleChange(e.target.id,e.target.value)}
+              />
+              <div className="form-control-position">
+                <Cloud size={15} />
+              </div>
+            </FormGroup>
             <Label for="twitter">Twitter</Label>
             <FormGroup className="position-relative has-icon-left">
               <Input
                 id="twitter"
                 placeholder="https://www.twitter.com/"
+                value={rowData.twitter}
                 onChange={e => handleChange(e.target.id,e.target.value)}
               />
               <div className="form-control-position">
                 <Twitter size={15} />
               </div>
             </FormGroup>
+
+          </Col>
+          <Col md="6" sm="12">
             <Label for="facebook">Facebook</Label>
             <FormGroup className="position-relative has-icon-left">
               <Input
                 id="facebook"
                 placeholder="https://www.facebook.com/"
+                value={rowData.facebook}
                 onChange={e => handleChange(e.target.id,e.target.value)}
               />
               <div className="form-control-position">
                 <Facebook size={15} />
               </div>
             </FormGroup>
-
-          </Col>
-          <Col md="6" sm="12">
             <Label for="instagram">Instagram</Label>
             <FormGroup className="position-relative has-icon-left">
               <Input
                 id="instagram"
                 placeholder="https://www.instagram.com/"
+                value={rowData.instagram}
                 onChange={e => handleChange(e.target.id,e.target.value)}
               />
               <div className="form-control-position">
@@ -399,8 +530,8 @@ export default function UserCadastro({ match }) {
             </FormGroup>
           </Col>
           <Col className="d-flex justify-content-end flex-wrap" sm="12">
-            <Button.Ripple className="mr-1" color="primary" onClick={() => handleDados("0")}>
-              Gravar dados
+            <Button.Ripple className="mr-1" color="primary" onClick={() => handleSubmit()}>
+              Gravar
             </Button.Ripple>
             <Button.Ripple color="flat-warning" onClick={() => handleDados("9")} >Limpar</Button.Ripple>
           </Col>

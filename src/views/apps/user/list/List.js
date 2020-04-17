@@ -106,52 +106,52 @@ export default function UserList() {
       filter: true,
       width: 250
     },
-    {
-      headerName: "Perfil",
-      field: "profiles.name",
-      filter: true,
-      width: 150
-    },
-    {
-      headerName: "Status",
-      field: "status.name",
-      filter: true,
-      width: 150,
-      cellRendererFramework: params => {
-        return params.value === "active" ? (
-          <div className="badge badge-pill badge-light-success">
-            {params.value}
-          </div>
-        ) : params.value === "blocked" ? (
-          <div className="badge badge-pill badge-light-danger">
-            {params.value}
-          </div>
-        ) : params.value === "deactivated" ? (
-          <div className="badge badge-pill badge-light-warning">
-            {params.value}
-          </div>
-        ) : null
-      }
-    },
-    {
-      headerName: "Verificado",
-      field: "is_verified",
-      filter: true,
-      width: 180,
-      cellRendererFramework: params => {
-        return params.value === true ? (
-          <div className="bullet bullet-sm bullet-primary"></div>
-        ) : params.value === false ? (
-          <div className="bullet bullet-sm bullet-secondary"></div>
-        ) : null
-      }
-    },
-    {
-      headerName: "Departamento",
-      field: "departments.name",
-      filter: true,
-      width: 180
-    },
+    // {
+    //   headerName: "Perfil",
+    //   field: "profiles.name",
+    //   filter: true,
+    //   width: 150
+    // },
+    // {
+    //   headerName: "Status",
+    //   field: "status.name",
+    //   filter: true,
+    //   width: 150,
+    //   cellRendererFramework: params => {
+    //     return params.value === "active" ? (
+    //       <div className="badge badge-pill badge-light-success">
+    //         {params.value}
+    //       </div>
+    //     ) : params.value === "blocked" ? (
+    //       <div className="badge badge-pill badge-light-danger">
+    //         {params.value}
+    //       </div>
+    //     ) : params.value === "deactivated" ? (
+    //       <div className="badge badge-pill badge-light-warning">
+    //         {params.value}
+    //       </div>
+    //     ) : null
+    //   }
+    // },
+    // {
+    //   headerName: "Verificado",
+    //   field: "is_verified",
+    //   filter: true,
+    //   width: 180,
+    //   cellRendererFramework: params => {
+    //     return params.value === true ? (
+    //       <div className="bullet bullet-sm bullet-primary"></div>
+    //     ) : params.value === false ? (
+    //       <div className="bullet bullet-sm bullet-secondary"></div>
+    //     ) : null
+    //   }
+    // },
+    // {
+    //   headerName: "Departamento",
+    //   field: "departments.name",
+    //   filter: true,
+    //   width: 180
+    // },
     {
       headerName: "Ações",
       field: "transactions",

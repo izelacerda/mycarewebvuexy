@@ -108,33 +108,17 @@ const horizontalMenuConfig = [
       },
       {
         id: "usersApp",
-        title: "User",
+        title: "Cadastros",
         type: "dropdown",
-        icon: <Icon.User size={16} />,
+        icon: <Icon.Copy size={20} />,
         children: [
           {
             id: "userList",
-            title: "List",
+            title: "Usuários",
             type: "item",
-            icon: <Icon.Circle size={10} />,
-            navLink: "/app/user/list",
-            permissions: ["admin", "editor"]
-          },
-          {
-            id: "userView",
-            title: "View",
-            type: "item",
-            icon: <Icon.Circle size={10} />,
-            navLink: "/app/user/view",
-            permissions: ["admin", "editor"]
-          },
-          {
-            id: "userEdit",
-            title: "Edit",
-            type: "item",
-            icon: <Icon.Circle size={10} />,
-            navLink: "/app/user/cadastro",
-            permissions: ["admin", "editor"]
+            icon: <Icon.User size={20} />,
+            permissions: ["admin", "editor"],
+            navLink: "/app/user/list"
           }
         ]
       }

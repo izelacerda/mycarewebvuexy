@@ -10,6 +10,8 @@ import {
 import NavbarBookmarks from "./NavbarBookmarks"
 import NavbarUser from "./NavbarUser"
 import api from "../../../services/api"
+import { dicalogin } from "../../../shared/geral"
+import { Container, Content  } from "./styles";
 
 // import userImg from "../../../assets/img/portrait/small/avatar-s-11.jpg"
 
@@ -38,6 +40,16 @@ const ThemeNavbar = props => {
   if(props.user.login !== undefined && props.user.login.token !== undefined)
     {
       api.defaults.headers.Authorization = `Bearer ${props.user.login.token}`;
+    }
+  let company = 'empresa'
+  let avatar_company = null
+  let iniciais_company = null
+  if (props.user.login !== undefined && props.user.login.company !== undefined) {
+      company = props.user.login.company
+      iniciais_company = dicalogin( props.user.login.company)
+      if (props.user.login.avatar_company !== undefined) {
+        avatar_company = props.user.login.avatar_company
+      }
     }
   return (
     <React.Fragment>
@@ -86,8 +98,25 @@ const ThemeNavbar = props => {
               </div>
               {props.horizontal ? (
                 <div className="logo d-flex align-items-center">
-                  <div className="brand-logo mr-50"></div>
-                  <h2 className="text-primary brand-text mb-0">Vuexy</h2>
+                  {avatar_company ? (
+                    <img
+                    src={avatar_company}
+                    className="round"
+                    height="40"
+                    width="40"
+                    alt="avatar"
+                  />
+                  ) : (
+                    <Container>
+                      <Content>
+                        <span className="nome">{iniciais_company}</span>
+                      </Content>
+                    </Container>
+                  )}
+                  {/* <div className="brand-logo mr-50"></div> */}
+                  <h2 className="text-primary brand-text mb-0">
+                    {company}
+                  </h2>
                 </div>
               ) : null}
               <NavbarUser
