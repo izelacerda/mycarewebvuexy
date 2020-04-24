@@ -17,8 +17,8 @@ const Context = React.createContext()
 
 class IntlProviderWrapper extends React.Component {
   state = {
-    locale: "en",
-    messages: menu_messages["en"]
+    locale: localStorage.getItem("language") ?  localStorage.getItem("language") : "en", //"en",
+    messages: menu_messages[localStorage.getItem("language") ?  localStorage.getItem("language") : "en"]
   }
 
   render() {
@@ -33,6 +33,7 @@ class IntlProviderWrapper extends React.Component {
               locale: language,
               messages: menu_messages[language]
             })
+            localStorage.setItem("language", language)
           }
         }}
       >

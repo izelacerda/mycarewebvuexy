@@ -7,6 +7,7 @@ import customizer from "./customizer/"
 import auth from "./auth/"
 import navbar from "./navbar/Index"
 import dataList from "./data-list/"
+// import theme from "./theme/Index"
 
 const rootReducer = combineReducers({
   calendar: calenderReducer,
@@ -17,6 +18,7 @@ const rootReducer = combineReducers({
   auth: auth,
   navbar: navbar,
   dataList: dataList
+  // theme: theme
 })
 
 export default rootReducer

@@ -73,10 +73,10 @@ const UserDropdown = props => {
         <Icon.MessageSquare size={14} className="mr-50" />
         <span className="align-middle">Chats</span>
       </DropdownItem>
-      <DropdownItem tag="a" href="#" onClick={e => handleNavigation(e, "/ecommerce/wishlist")}>
+      {/* <DropdownItem tag="a" href="#" onClick={e => props.customizerVisibility()  }>
         <Icon.Heart size={14} className="mr-50" />
-        <span className="align-middle">WishList</span>
-      </DropdownItem>
+        <span className="align-middle">Tema</span>
+      </DropdownItem> */}
       <DropdownItem divider />
       <DropdownItem
         tag="a"
@@ -214,8 +214,9 @@ class NavbarUser extends React.PureComponent {
     })
   }
 
-  handleLangDropdown = () =>
+  handleLangDropdown = () => {
     this.setState({ langDropdown: !this.state.langDropdown })
+  }
 
   render() {
     const renderCartItems = this.state.shoppingCart.map(item => {
@@ -261,15 +262,17 @@ class NavbarUser extends React.PureComponent {
       )
     })
 
+
+
     return (
       <ul className="nav navbar-nav navbar-nav-user float-right">
         <IntlContext.Consumer>
           {context => {
             let langArr = {
+              "pt" : "Portuguese",
               "en" : "English",
               "de" : "German",
-              "fr" : "French",
-              "pt" : "Portuguese"
+              "fr" : "French"
             }
             return (
               <Dropdown
@@ -288,7 +291,7 @@ class NavbarUser extends React.PureComponent {
                     countryCode={
                       context.state.locale === "en"
                         ? "us"
-                        : context.state.locale
+                        : context.state.locale === "pt" ? "br" : context.state.locale
                     }
                     svg
                   />
@@ -299,30 +302,34 @@ class NavbarUser extends React.PureComponent {
                 <DropdownMenu right>
                   <DropdownItem
                     tag="a"
-                    onClick={e => context.switchLanguage("en")}
+                    onClick={e => { context.switchLanguage("en")
+                  }}
                   >
                     <ReactCountryFlag className="country-flag" countryCode="us" svg />
                     <span className="ml-1">English</span>
                   </DropdownItem>
                   <DropdownItem
                     tag="a"
-                    onClick={e => context.switchLanguage("fr")}
+                    onClick={e => { context.switchLanguage("fr")
+                  }}
                   >
                     <ReactCountryFlag className="country-flag" countryCode="fr" svg />
                     <span className="ml-1">French</span>
                   </DropdownItem>
                   <DropdownItem
                     tag="a"
-                    onClick={e => context.switchLanguage("de")}
+                    onClick={e => { context.switchLanguage("de")
+                  }}
                   >
                     <ReactCountryFlag className="country-flag" countryCode="de" svg />
                     <span className="ml-1">German</span>
                   </DropdownItem>
                   <DropdownItem
                     tag="a"
-                    onClick={e => context.switchLanguage("pt")}
+                    onClick={e => { context.switchLanguage("pt")
+                  }}
                   >
-                    <ReactCountryFlag className="country-flag" countryCode="pt" svg />
+                    <ReactCountryFlag className="country-flag" countryCode="br" svg />
                     <span className="ml-1">Portuguese</span>
                   </DropdownItem>
                 </DropdownMenu>

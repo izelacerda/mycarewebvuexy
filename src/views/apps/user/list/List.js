@@ -101,6 +101,12 @@ export default function UserList() {
       }
     },
     {
+      headerName: "Login",
+      field: "login",
+      filter: true,
+      width: 250
+    },
+    {
       headerName: "E-mail",
       field: "email",
       filter: true,

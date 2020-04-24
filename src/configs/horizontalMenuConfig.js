@@ -108,13 +108,13 @@ const horizontalMenuConfig = [
       },
       {
         id: "usersApp",
-        title: "Cadastros",
+        title: "Tables",
         type: "dropdown",
         icon: <Icon.Copy size={20} />,
         children: [
           {
             id: "userList",
-            title: "Usuários",
+            title: "Users",
             type: "item",
             icon: <Icon.User size={20} />,
             permissions: ["admin", "editor"],

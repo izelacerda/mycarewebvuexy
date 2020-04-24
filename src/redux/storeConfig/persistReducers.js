@@ -6,7 +6,7 @@ export default reducers => {
     {
       key: "mycare",
       storage,
-      whitelist: ["auth"]
+      whitelist: ["auth","customizer"]
     },
     reducers
   );

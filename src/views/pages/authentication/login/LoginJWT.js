@@ -29,7 +29,7 @@ import api from "../../../../services/api"
 //     .required("A senha é obrigatória")
 // });
 export default function LoginJWT() {
-  const [email, setEmail] = useState("");
+  const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const dispatch = useDispatch();
@@ -43,8 +43,8 @@ export default function LoginJWT() {
           if (auth.login.state.values !== undefined) {
             if (auth.login.state.values.loggedInUser !== undefined) {
               if(auth.login.state.values.loggedInUser.remember) {
-                let cryptoEmail = crypto.decryptByDESModeCBC(auth.login.state.values.loggedInUser.email);
-                setEmail(cryptoEmail);
+                let cryptoLogin = crypto.decryptByDESModeCBC(auth.login.state.values.loggedInUser.login);
+                setLogin(cryptoLogin);
                 let cryptoPassword = crypto.decryptByDESModeCBC(auth.login.state.values.loggedInUser.password);
                 setPassword(cryptoPassword);
                 setRemember(auth.login.state.values.loggedInUser.remember);
@@ -68,15 +68,15 @@ export default function LoginJWT() {
     try {
       e.preventDefault()
       const response = await api.post("/sessions", {
-        email,
+        login,
         password
       });
       const { token, user } = response.data;
-      const { id, name, userRole, licences, avatar } = user;
+      const { id, email, name, userRole, licences, avatar } = user;
 
       api.defaults.headers.Authorization = `Bearer ${token}`;
 
-      dispatch(loginWithJWT({ id, name, email, password, userRole, remember, token, avatar, licences }));
+      dispatch(loginWithJWT({ id, name, login, email, password, userRole, remember, token, avatar, licences }));
 
     } catch (err) {
       if (typeof err.response !== 'undefined')
@@ -104,16 +104,15 @@ export default function LoginJWT() {
         <Form action="/" onSubmit={handleLogin}>
           <FormGroup className="form-label-group position-relative has-icon-left">
             <Input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
+              placeholder="Login"
+              value={login}
+              onChange={e => setLogin(e.target.value)}
               required
             />
             <div className="form-control-position">
               <Mail size={15} />
             </div>
-            <Label>Email</Label>
+            <Label>Login</Label>
           </FormGroup>
           <FormGroup className="form-label-group position-relative has-icon-left">
             <Input
@@ -158,7 +157,7 @@ export default function LoginJWT() {
         </Form>
         <Container>
           <Content>
-          <Label>Mycare.med.br - Versão: 1.0.1 - 16/04/2020</Label>
+          <Label>Mycare.med.br - Versão: 1.0.1 - 23/04/2020</Label>
           </Content>
         </Container>
 

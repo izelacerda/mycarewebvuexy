@@ -68,6 +68,13 @@ class Layout extends React.Component {
   componentDidUpdate() {
     this.handleDirUpdate()
   }
+  // componentDidUpdate(prevProps, prevState) {
+  //   this.handleDirUpdate()
+  //   if (this.state.activeLayout !== prevState.activeLayout) {
+  //     localStorage.setItem("activeLayout", this.state.activeLayout)
+  //     localStorage.setItem("direction", this.state.direction)
+  //   }
+  // }
 
   handleDirUpdate = () => {
     let dir = this.state.direction
@@ -75,8 +82,6 @@ class Layout extends React.Component {
       document.getElementsByTagName("html")[0].setAttribute("dir", "rtl")
     else document.getElementsByTagName("html")[0].setAttribute("dir", "ltr")
   }
-
-
 
   render() {
     const { children } = this.props
@@ -89,9 +94,11 @@ class Layout extends React.Component {
           horizontalLayout: layouts["horizontal"],
           switchLayout: layout => {
             this.setState({ activeLayout: layout })
+            localStorage.setItem("activeLayout", layout)
           },
           switchDir: dir => {
             this.setState({ direction: dir })
+            localStorage.setItem("direction", dir)
           }
         }}
       >

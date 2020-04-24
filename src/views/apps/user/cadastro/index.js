@@ -28,7 +28,7 @@ import Radio from "../../../../components/@vuexy/radio/RadioVuexy"
 import { Check, MapPin } from "react-feather"
 import Flatpickr from "react-flatpickr";
 import { dicalogin } from "../../../../shared/geral"
-import { Container, Content, Imagem  } from "./styles";
+import { Container } from "./styles";
 
 import "flatpickr/dist/themes/light.css";
 import "../../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
@@ -55,6 +55,16 @@ export default function UserCadastro({ match }) {
   const [activeTab, setTab] = useState("1")
   const [load, setLoad] = useState(false)
   const [rowData, setrowData] = useState("0")
+  const [addresses, setAddresses] = useState([
+    {
+      street: "",
+      number: "",
+      complement: "",
+      city_id: null,
+      type: 0,
+      zip: ""
+    }
+  ])
   const [iniciais, setIniciais] = useState("")
   const [url, setUrl] = useState(null)
   const edicao = id > 0;
@@ -75,10 +85,14 @@ export default function UserCadastro({ match }) {
 
     setFile(id);
     handleImg(url)
+    handleChange("avatar_id", id)
   }
   function handleImg(par) {
     handleChange("files.url", par)
     setUrl(par)
+    if(par === null) {
+      handleChange("avatar_id", null)
+    }
   }
   useEffect(() => {
     async function loadrowData() {
@@ -93,19 +107,35 @@ export default function UserCadastro({ match }) {
       if(rowData !== undefined && rowData[0] !== undefined)
       {
         let dados = rowData[0]
-        _.unset(dados, 'files')
-        _.unset(dados, 'pivot')
-        _.unset(dados, 'addresses')
+        // console.log(dados)
+        if(dados.addresses !== undefined)
+        {
+          if(dados.addresses[0] !== undefined)
+          {
+            const addresses = [
+              {
+                street: dados.addresses[0].street,
+                number: dados.addresses[0].number,
+                complement: dados.addresses[0].complement,
+                city_id:  dados.addresses[0].city_id,
+                type: dados.addresses[0].type,
+                zip: dados.addresses[0].zip,
+              }
+            ]
+            setAddresses(addresses)
+          }
+        }
+        _.unset(dados,'addresses')
         setrowData(dados)
-        setIniciais(dicalogin(rowData[0].username))
-        setUrl(rowData.files ? rowData.files.url : null)
+        setIniciais(dicalogin(dados.username))
+        setUrl(dados.files ? dados.files.url : null)
       }
     }
     if (id > 0 && auth !== undefined) {
 
       loadrowData();
     }
-  }, [auth, id, load, setIniciais]);
+  }, [auth, id, load]);
 
   function toggle(tab) {
     setTab(tab)
@@ -119,6 +149,9 @@ export default function UserCadastro({ match }) {
   }
   function handleChange(id, value) {
     _.set(rowData, id, value);
+  }
+  function handleChangeAddresses(id, value) {
+    _.set(addresses, id, value);
   }
   async function handleSubmit() {
     try {
@@ -152,7 +185,30 @@ export default function UserCadastro({ match }) {
       } else {
         try {
           // var myJSON = JSON.stringify(rowData);
-          await api.put(`/users`, rowData);
+          const user = {
+            id: rowData.id,
+            username: rowData.username,
+            email: rowData.email,
+            dob: rowData.dob,
+            is_verified: rowData.is_verified,
+            mobile: rowData.mobile,
+            gender: rowData.gender,
+            is_active: rowData.is_active,
+            avatar_id: rowData.avatar_id,
+            website: rowData.website,
+            contact_email: rowData.contact_email,
+            contact_message: rowData.contact_message,
+            contact_phone: rowData.contact_phone,
+            phone: rowData.phone,
+            twitter: rowData.twitter,
+            facebook: rowData.facebook,
+            instagram: rowData.instagram
+          }
+          const data = {
+            user,
+            addresses
+          }
+          await api.put(`/users`, data);
 
           toast.success("Usuário atualizado com sucesso!");
         } catch (error) {
@@ -186,7 +242,7 @@ export default function UserCadastro({ match }) {
         <Col sm="12">
           <Media className="mb-2">
             <Media className="mr-2 my-25" left href="#">
-                <Imagem>
+                <Container>
                   <label htmlFor="avatar">
                     {url ? (
                         <Media
@@ -198,11 +254,7 @@ export default function UserCadastro({ match }) {
                           width="84"
                         />
                     ) : (
-                      <Container>
-                        <Content>
-                          <span className="nome">{iniciais}</span>
-                        </Content>
-                      </Container>
+                      <span className="nome">{iniciais}</span>
                     )}
                     <input
                       type="file"
@@ -213,7 +265,7 @@ export default function UserCadastro({ match }) {
                       ref={ref}
                     />
                   </label>
-                </Imagem>
+                </Container>
             </Media>
             <Media className="mt-2" body>
               <Media className="font-medium-1 text-bold-600" tag="p" heading>
@@ -243,6 +295,28 @@ export default function UserCadastro({ match }) {
               </Col>
               <Col md="6" sm="12">
                 <FormGroup>
+                  <Label for="role">Perfil</Label>
+                  <Input type="select" name="role" id="role">
+                    <option>User</option>
+                    <option>Staff</option>
+                  </Input>
+                </FormGroup>
+              </Col>
+              <Col md="6" sm="12">
+                <FormGroup>
+                  <Label for="email">E-mail</Label>
+                  <Input
+                    type="text"
+                    defaultValue={rowData.email ? rowData.email : null}
+                    id="email"
+                    placeholder="E-mail"
+                    onChange={e => handleChange(e.target.id,e.target.value)}
+                  />
+                </FormGroup>
+
+              </Col>
+              <Col md="6" sm="12">
+                <FormGroup>
                   <Label className="d-block mb-50">Ativo</Label>
                   <div className="d-inline-block mr-1">
                     <Radio
@@ -263,27 +337,7 @@ export default function UserCadastro({ match }) {
                     />
                   </div>
                 </FormGroup>
-              </Col>
-              <Col md="6" sm="12">
-                <FormGroup>
-                  <Label for="role">Perfil</Label>
-                  <Input type="select" name="role" id="role">
-                    <option>User</option>
-                    <option>Staff</option>
-                  </Input>
-                </FormGroup>
-              </Col>
-              <Col md="6" sm="12">
-                <FormGroup>
-                  <Label for="email">E-mail</Label>
-                  <Input
-                    type="text"
-                    defaultValue={rowData.email ? rowData.email : null}
-                    id="email"
-                    placeholder="E-mail"
-                    onChange={e => handleChange(e.target.id,e.target.value)}
-                  />
-                </FormGroup>
+
               </Col>
               <Col
                 className="d-flex justify-content-end flex-wrap mt-2"
@@ -329,7 +383,7 @@ export default function UserCadastro({ match }) {
                 type="number"
                 id="mobile"
                 placeholder="Número Celular"
-                value={rowData.mobile}
+                defaultValue={rowData.mobile}
                 onChange={e => handleChange(e.target.id,e.target.value)}
               />
             </FormGroup>
@@ -339,7 +393,7 @@ export default function UserCadastro({ match }) {
                 type="number"
                 id="phone"
                 placeholder="Telefone Fixo"
-                value={rowData.phone}
+                defaultValue={rowData.phone}
                 onChange={e => handleChange(e.target.id,e.target.value)}
               />
             </FormGroup>
@@ -407,19 +461,43 @@ export default function UserCadastro({ match }) {
             </h5>
             <FormGroup>
               <Label for="address1">Endereço</Label>
-              <Input type="text" id="address1" placeholder="Endereço" />
+              <Input
+                type="text"
+                id="[0].street"
+                placeholder="Endereço"
+                defaultValue={addresses[0] !== undefined ? addresses[0].street : ''}
+                onChange={e => handleChangeAddresses(e.target.id,e.target.value)}
+                />
             </FormGroup>
             <FormGroup>
               <Label for="numero">Número</Label>
-              <Input type="text" id="numero" placeholder="Número" />
+              <Input
+                type="number"
+                id="[0].number"
+                placeholder="Número"
+                defaultValue={addresses[0] !== undefined ? addresses[0].number : ''}
+                onChange={e => handleChangeAddresses(e.target.id,e.target.value)}
+                />
             </FormGroup>
             <FormGroup>
-              <Label for="address2">Complemento</Label>
-              <Input type="text" id="address2" placeholder="Complemento" />
+              <Label for="complement">Complemento</Label>
+              <Input
+                type="text"
+                id="[0].complement"
+                placeholder="Complemento"
+                defaultValue={addresses[0] !== undefined ? addresses[0].complement : ''}
+                onChange={e => handleChangeAddresses(e.target.id,e.target.value)}
+              />
             </FormGroup>
             <FormGroup>
               <Label for="pincode">CEP</Label>
-              <Input type="text" id="CEP" placeholder="CEP" />
+              <Input
+                type="text"
+                id="[0].zip"
+                placeholder="CEP"
+                defaultValue={addresses[0] !== undefined ? addresses[0].zip : ''}
+                onChange={e => handleChangeAddresses(e.target.id,e.target.value)}
+              />
             </FormGroup>
             <Row>
               <Col  md="4" sm="12">
@@ -482,7 +560,7 @@ export default function UserCadastro({ match }) {
                 type="url"
                 id="website"
                 placeholder="Endereço Web"
-                value={rowData.website}
+                defaultValue={rowData.website}
                 onChange={e => handleChange(e.target.id,e.target.value)}
               />
               <div className="form-control-position">
@@ -494,7 +572,7 @@ export default function UserCadastro({ match }) {
               <Input
                 id="twitter"
                 placeholder="https://www.twitter.com/"
-                value={rowData.twitter}
+                defaultValue={rowData.twitter}
                 onChange={e => handleChange(e.target.id,e.target.value)}
               />
               <div className="form-control-position">
@@ -509,7 +587,7 @@ export default function UserCadastro({ match }) {
               <Input
                 id="facebook"
                 placeholder="https://www.facebook.com/"
-                value={rowData.facebook}
+                defaultValue={rowData.facebook}
                 onChange={e => handleChange(e.target.id,e.target.value)}
               />
               <div className="form-control-position">
@@ -521,7 +599,7 @@ export default function UserCadastro({ match }) {
               <Input
                 id="instagram"
                 placeholder="https://www.instagram.com/"
-                value={rowData.instagram}
+                defaultValue={rowData.instagram}
                 onChange={e => handleChange(e.target.id,e.target.value)}
               />
               <div className="form-control-position">

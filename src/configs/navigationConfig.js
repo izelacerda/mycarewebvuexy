@@ -107,13 +107,13 @@ const navigationConfig = [
   },
   {
     id: "users",
-    title: "Cadastros",
+    title: "Tables",
     type: "collapse",
     icon: <Icon.Copy size={20} />,
     children: [
       {
         id: "list",
-        title: "Usuários",
+        title: "Users",
         type: "item",
         icon: <Icon.User size={20} />,
         permissions: ["admin", "editor"],

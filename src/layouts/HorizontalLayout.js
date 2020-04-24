@@ -22,7 +22,7 @@ class HorizontalLayout extends PureComponent {
     layout: this.props.app.customizer.theme,
     collapsedContent: false,
     sidebarHidden: false,
-    currentLang: "en",
+    currentLang: localStorage.getItem("language") ?  localStorage.getItem("language") : "en",
     appOverlay: false,
     customizer: false,
     currRoute: this.props.location.pathname,

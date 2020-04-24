@@ -26,8 +26,8 @@ export const login = (state = INITIAL_STATE, action) => {
     }
     case "LOGIN_WITH_JWT": {
       const password = crypto.encryptByDESModeCBC(action.payload.loggedInUser.password);
-      const email = crypto.encryptByDESModeCBC(action.payload.loggedInUser.email);
-      const { id, name, remember, userRole, licences, avatar, token } = action.payload.loggedInUser;
+      const login = crypto.encryptByDESModeCBC(action.payload.loggedInUser.login);
+      const { id, email, name, remember, userRole, licences, avatar, token } = action.payload.loggedInUser;
       let avatar_company = null;
       if(licences[0].files !== undefined )
       {
@@ -40,6 +40,7 @@ export const login = (state = INITIAL_STATE, action) => {
       const values = {
         loggedInUser: {
           id,
+          login,
           name,
           email,
           password,
