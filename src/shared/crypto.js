@@ -24,7 +24,6 @@ export const decryptByDESModeCBC = message => {
   let iv = CryptoJS.enc.Hex.parse(ivpr);
   let pt = CryptoJS.enc.Hex.parse(message);
   let key = CryptoJS.enc.Hex.parse(keypr);
-
   var result = CryptoJS.TripleDES.decrypt(
     {
       ciphertext: pt

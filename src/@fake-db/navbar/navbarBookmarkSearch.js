@@ -31,7 +31,7 @@ export const searchResult = [
     title: "Chat",
     link: "/chat",
     icon: "MessageSquare",
-    starred: true
+    starred: false
   },
   {
     id: 5,
@@ -39,7 +39,7 @@ export const searchResult = [
     title: "Email",
     link: "/email/inbox",
     icon: "Mail",
-    starred: true
+    starred: false
   },
   {
     id: 6,
@@ -555,11 +555,11 @@ export const searchResult = [
   },
   {
     id: 73,
-    target: "Profile",
-    title: "Profile",
-    link: "/pages/profile",
+    target: "Users",
+    title: "Users",
+    link: "/app/user/list",
     icon: "Users",
-    starred: false
+    starred: true
   },
   {
     id: 74,

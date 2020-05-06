@@ -49,14 +49,14 @@ const UserDropdown = props => {
         <Icon.User size={14} className="mr-50" />
         <span className="align-middle">Altera Profile</span>
       </DropdownItem>
-      <DropdownItem
+      {/* <DropdownItem
         tag="a"
         href="#"
         onClick={e => handleNavigation(e, "/email/inbox")}
       >
         <Icon.Mail size={14} className="mr-50" />
         <span className="align-middle">My Inbox</span>
-      </DropdownItem>
+      </DropdownItem> */}
       <DropdownItem
         tag="a"
         href="#"
@@ -68,10 +68,10 @@ const UserDropdown = props => {
       <DropdownItem
         tag="a"
         href="#"
-        onClick={e => handleNavigation(e, "/chat")}
+        onClick={e => handleNavigation(e, "/calendar")}
       >
-        <Icon.MessageSquare size={14} className="mr-50" />
-        <span className="align-middle">Chats</span>
+        <Icon.Calendar size={14} className="mr-50" />
+        <span className="align-middle">Calendar</span>
       </DropdownItem>
       {/* <DropdownItem tag="a" href="#" onClick={e => props.customizerVisibility()  }>
         <Icon.Heart size={14} className="mr-50" />
@@ -219,48 +219,48 @@ class NavbarUser extends React.PureComponent {
   }
 
   render() {
-    const renderCartItems = this.state.shoppingCart.map(item => {
-      return (
-        <div className="cart-item" key={item.id}>
-          <Media
-            className="p-0"
-            onClick={() => history.push("/ecommerce/product-detail")}
-          >
-            <Media className="text-center pr-0 mr-1" left>
-              <img
-                className={`${
-                  item.imgClass
-                    ? item.imgClass + " cart-item-img"
-                    : "cart-item-img"
-                }`}
-                src={item.img}
-                width={item.width}
-                alt="Cart Item"
-              />
-            </Media>
-            <Media className="overflow-hidden pr-1 py-1 pl-0" body>
-              <span className="item-title text-truncate text-bold-500 d-block mb-50">
-                {item.name}
-              </span>
-              <span className="item-desc font-small-2 text-truncate d-block">
-                {item.desc}
-              </span>
-              <div className="d-flex justify-content-between align-items-center mt-1">
-                <span className="align-middle d-block">1 x {item.price}</span>
-                <Icon.X
-                  className="danger"
-                  size={15}
-                  onClick={e => {
-                    e.stopPropagation()
-                    this.removeItem(item.id)
-                  }}
-                />
-              </div>
-            </Media>
-          </Media>
-        </div>
-      )
-    })
+    // const renderCartItems = this.state.shoppingCart.map(item => {
+    //   return (
+    //     <div className="cart-item" key={item.id}>
+    //       <Media
+    //         className="p-0"
+    //         onClick={() => history.push("/ecommerce/product-detail")}
+    //       >
+    //         <Media className="text-center pr-0 mr-1" left>
+    //           <img
+    //             className={`${
+    //               item.imgClass
+    //                 ? item.imgClass + " cart-item-img"
+    //                 : "cart-item-img"
+    //             }`}
+    //             src={item.img}
+    //             width={item.width}
+    //             alt="Cart Item"
+    //           />
+    //         </Media>
+    //         <Media className="overflow-hidden pr-1 py-1 pl-0" body>
+    //           <span className="item-title text-truncate text-bold-500 d-block mb-50">
+    //             {item.name}
+    //           </span>
+    //           <span className="item-desc font-small-2 text-truncate d-block">
+    //             {item.desc}
+    //           </span>
+    //           <div className="d-flex justify-content-between align-items-center mt-1">
+    //             <span className="align-middle d-block">1 x {item.price}</span>
+    //             <Icon.X
+    //               className="danger"
+    //               size={15}
+    //               onClick={e => {
+    //                 e.stopPropagation()
+    //                 this.removeItem(item.id)
+    //               }}
+    //             />
+    //           </div>
+    //         </Media>
+    //       </Media>
+    //     </div>
+    //   )
+    // })
 
 
 
@@ -302,6 +302,14 @@ class NavbarUser extends React.PureComponent {
                 <DropdownMenu right>
                   <DropdownItem
                     tag="a"
+                    onClick={e => { context.switchLanguage("pt")
+                  }}
+                  >
+                    <ReactCountryFlag className="country-flag" countryCode="br" svg />
+                    <span className="ml-1">Portuguese</span>
+                  </DropdownItem>
+                  <DropdownItem
+                    tag="a"
                     onClick={e => { context.switchLanguage("en")
                   }}
                   >
@@ -324,14 +332,7 @@ class NavbarUser extends React.PureComponent {
                     <ReactCountryFlag className="country-flag" countryCode="de" svg />
                     <span className="ml-1">German</span>
                   </DropdownItem>
-                  <DropdownItem
-                    tag="a"
-                    onClick={e => { context.switchLanguage("pt")
-                  }}
-                  >
-                    <ReactCountryFlag className="country-flag" countryCode="br" svg />
-                    <span className="ml-1">Portuguese</span>
-                  </DropdownItem>
+
                 </DropdownMenu>
               </Dropdown>
             )
@@ -464,7 +465,7 @@ class NavbarUser extends React.PureComponent {
             </div>
           </div>
         </NavItem>
-        <UncontrolledDropdown
+        {/* <UncontrolledDropdown
           tag="li"
           className="dropdown-notification nav-item"
         >
@@ -526,7 +527,7 @@ class NavbarUser extends React.PureComponent {
               Your Cart Is Empty
             </li>
           </DropdownMenu>
-        </UncontrolledDropdown>
+        </UncontrolledDropdown> */}
         <UncontrolledDropdown
           tag="li"
           className="dropdown-notification nav-item"
@@ -692,7 +693,7 @@ class NavbarUser extends React.PureComponent {
               <span className="user-name text-bold-600">
                 {this.props.userName}
               </span>
-              <span className="user-status">Available</span>
+              {/* <span className="user-status">Available</span> */}
             </div>
             <span data-tour="user">
               {this.props.userImg ? (

@@ -180,19 +180,6 @@ import { history } from "../../../history"
 // }
 
 export const loginWithJWT = loggedInUser => {
-  // return {
-  //   type: "LOGIN_WITH_JWT",
-  //   payload: { loggedInUser, loggedInWith: "jwt" }
-  // };
-  // history.push("/")
-  // return dispatch => {
-  //   dispatch({
-  //     type: "LOGIN_WITH_JWT",
-  //     payload: { user, loggedInWith: "jwt" }
-  //   })
-
-
-  // }
   return dispatch => {
     dispatch({
       type: "LOGIN_WITH_JWT",

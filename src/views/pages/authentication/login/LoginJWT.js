@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom"
 import { useDispatch, useSelector } from "react-redux";
-import { CardBody, FormGroup, Form, Input, Button, Label } from "reactstrap"
-import { toast } from "react-toastify"
+import { Card, FormGroup, Form, Input, Button, Label, FormFeedback } from "reactstrap"
+import { toast, Flip } from "react-toastify"
+import * as Yup from "yup";
+import _ from 'lodash';
+
 import { Container, Content } from "./styles";
 import * as crypto from "../../../../shared/crypto";
 
@@ -12,26 +15,23 @@ import { Mail, Lock, Check } from "react-feather"
 import { loginWithJWT, signFailure } from "../../../../redux/actions/auth/loginActions"
 import { history } from "../../../../history"
 import api from "../../../../services/api"
-// import * as Yup from "yup";
 
-// /class LoginJWT extends React.Component {
-//   state = {
-//     email: "",
-//     password: "",
-//     remember: false
-//   }
-// const schema = Yup.object().shape({
-//   email: Yup.string()
-//     .email("Insira um e-mail válido")
-//     .required("O e-mail é obrigatório"),
-//   password: Yup.string()
-//     .min(6, "Insira uma senha válida")
-//     .required("A senha é obrigatória")
-// });
+const schema = Yup.object().shape({
+  login: Yup.string()
+  .required("O login é obrigatório"),
+  password: Yup.string()
+    .required("A senha é obrigatória"),
+});
+
 export default function LoginJWT() {
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(true);
+  const [load, setLoad] = useState(true);
+  const [atualiza, setAtualiza] = useState(true);
+  const [rowData] = useState(
+    {
+      login:    { value: '',  invalid: false, msg:'' },
+      password: { value: '',  invalid: false, msg:'' },
+      remember:  { value: true, invalid: false, msg:'' },
+    } )
   const dispatch = useDispatch();
   const auth = useSelector(state => state.auth);
 
@@ -41,68 +41,94 @@ export default function LoginJWT() {
       if (auth.login !== undefined) {
         if (auth.login.state !== undefined) {
           if (auth.login.state.values !== undefined) {
-            if (auth.login.state.values.loggedInUser !== undefined) {
+            if (auth.login.state.values.loggedInUser !== undefined && load && atualiza) {
               if(auth.login.state.values.loggedInUser.remember) {
                 let cryptoLogin = crypto.decryptByDESModeCBC(auth.login.state.values.loggedInUser.login);
-                setLogin(cryptoLogin);
-                let cryptoPassword = crypto.decryptByDESModeCBC(auth.login.state.values.loggedInUser.password);
-                setPassword(cryptoPassword);
-                setRemember(auth.login.state.values.loggedInUser.remember);
+                handleChange("login.value", cryptoLogin)
+                let cryptoPassword = crypto.decryptByDESModeCBC(auth.login.state.values.loggedInUser.password)
+                handleChange("password.value", cryptoPassword)
+                handleChange("remember.value", true)
               }
-              else{
-                setRemember(false);
+              else
+              {
+                handleChange("remember.value", false)
               }
-
+              setAtualiza(!atualiza)
+              setLoad(false)
             }
           }
         }
       }
      }
-     if(auth)
+     if(auth && load && rowData)
       {
         loadAuth();
       }
-  }, [auth]);
+  }, [auth] ); // eslint-disable-line
+
+  function handleChange(id, value) {
+    _.set(rowData, id, value);
+  }
 
   async function handleLogin(e) {
     try {
-      e.preventDefault()
+      // e.preventDefault()
+      await schema.validate(
+        {
+          login: rowData.login.value,
+          password: rowData.password.value,
+        },
+        {
+          abortEarly: false
+        }
+      );
       const response = await api.post("/sessions", {
-        login,
-        password
+        login: rowData.login.value,
+        password: rowData.password.value
       });
       const { token, user } = response.data;
       const { id, email, name, userRole, licences, avatar } = user;
 
       api.defaults.headers.Authorization = `Bearer ${token}`;
 
-      dispatch(loginWithJWT({ id, name, login, email, password, userRole, remember, token, avatar, licences }));
+      dispatch(loginWithJWT({ id, name,  login: rowData.login.value, email, password: rowData.password.value, userRole, remember: rowData.remember.value, token, avatar, licences }));
 
-    } catch (err) {
-      if (typeof err.response !== 'undefined')
-      {
-        if(typeof err.response.status !== 'undefined' && (err.response.status === 401 || err.response.status === 400   ))
-        {
-          toast.error("Usuário ou Senha inválidos! Verifique seus dados");
+    } catch (error) {
+      let validErrors = "";
+      if (error instanceof Yup.ValidationError) {
+        error.inner.forEach(err => {
+          validErrors = `${validErrors} ${err.message}`;
+          rowData[err.path].invalid = true
+          rowData[err.path].msg = err.message
+        });
+        setLoad(!load)
+        if (validErrors.length > 0) {
+          toast.error(
+            // `Não foi possível incluir o usuário. ${validErrors}`
+            `Erro ao incluir o usuário.`, { transition: Flip }
+          );
         }
-        else{
-          if(typeof err.response.status !== 'undefined' && (err.response.status === 500 || err.response.status === 501  ))
+      } else {
+        if (typeof error.response !== 'undefined')
+        {
+          if(typeof error.response.status !== 'undefined' && (error.response.status === 401 || error.response.status === 400   ))
           {
-            toast.error("Usuário não encontrado! Verifique seus dados");
+            toast.error(error.response.data.message, { transition: Flip });
           }
         }
+        else
+        {
+          toast.error("Servidor desconectado! Verifique com o administrador do sistema", { transition: Flip });
+        }
+        dispatch(signFailure());
       }
-      else
-      {
-        toast.error("Servidor desconectado! Verifique com o administrador do sistema");
-      }
-      dispatch(signFailure());
     }
   }
   return (
-      <CardBody className="pt-1">
-        <Form action="/" onSubmit={handleLogin}>
-          <FormGroup className="form-label-group position-relative has-icon-left">
+    <Card>
+      <Form>
+        {/* <Form onSubmit={e => e.preventDefault()}> */}
+          {/* <FormGroup className="form-label-group position-relative has-icon-left">
             <Input
               placeholder="Login"
               value={login}
@@ -113,8 +139,22 @@ export default function LoginJWT() {
               <Mail size={15} />
             </div>
             <Label>Login</Label>
-          </FormGroup>
+          </FormGroup> */}
           <FormGroup className="form-label-group position-relative has-icon-left">
+            <Input
+              type="text"
+              placeholder="Login"
+              defaultValue={rowData.login.value}
+              id="login.value"
+              onChange={e => handleChange(e.target.id,e.target.value)}
+              invalid={rowData.login.invalid}
+            />
+            <div className="form-control-position">
+              <Mail size={15} />
+            </div>
+            <FormFeedback>{rowData.login.msg}</FormFeedback>
+          </FormGroup>
+          {/* <FormGroup className="form-label-group position-relative has-icon-left">
             <Input
               type="password"
               placeholder="Senha"
@@ -126,14 +166,28 @@ export default function LoginJWT() {
               <Lock size={15} />
             </div>
             <Label>Senha</Label>
+          </FormGroup> */}
+          <FormGroup className="form-label-group position-relative has-icon-left">
+            <Input
+              type="password"
+              placeholder="Senha"
+              defaultValue={rowData.password.value}
+              id="password.value"
+              onChange={e => handleChange(e.target.id,e.target.value)}
+              invalid={rowData.password.invalid}
+            />
+            <div className="form-control-position">
+              <Lock size={15} />
+            </div>
+            <FormFeedback>{rowData.password.msg}</FormFeedback>
           </FormGroup>
           <FormGroup className="d-flex justify-content-between align-items-center">
             <Checkbox
               color="primary"
               icon={<Check className="vx-icon" size={16} />}
               label="Lembrar"
-              defaultChecked={remember}
-              onChange={e => setRemember(e.target.checked)}
+              defaultChecked={rowData.remember.value}
+              onChange={e => handleChange("remember.value",e.target.checked)}
             />
             <div className="float-right">
               <Link to="/pages/forgot-password">Esqueceu a Senha?</Link>
@@ -141,7 +195,7 @@ export default function LoginJWT() {
           </FormGroup>
           <div className="d-flex justify-content-between">
 
-            <Button.Ripple color="primary" type="submit">
+            <Button.Ripple color="primary" onClick={() => handleLogin()}>
               Login
             </Button.Ripple>
             <Button.Ripple
@@ -157,11 +211,11 @@ export default function LoginJWT() {
         </Form>
         <Container>
           <Content>
-          <Label>Mycare.med.br - Versão: 1.0.1 - 24/04/2020</Label>
+          <Label>Mycare.med.br - Versão: 1.0.1 - 2020</Label>
           </Content>
         </Container>
 
-      </CardBody>
+      </Card>
   )
 }
 // const mapStateToProps = state => {
@@ -170,5 +224,6 @@ export default function LoginJWT() {
 //   }
 // }
 // export default connect(mapStateToProps, { loginWithJWT })(LoginJWT)
+
 
 

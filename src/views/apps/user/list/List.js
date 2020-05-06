@@ -10,14 +10,22 @@ import {
   Row,
   Col,
   UncontrolledDropdown,
-  UncontrolledButtonDropdown,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
   DropdownMenu,
   DropdownItem,
   DropdownToggle,
+  Button,
   Collapse,
-  Spinner
+  Spinner,
+  CustomInput
 } from "reactstrap"
 import { useSelector } from "react-redux";
+import { toast, Flip } from "react-toastify"
+import XLSX from "xlsx"
+
 import api from "../../../../services/api"
 import { ContextLayout } from "../../../../utility/context/Layout"
 import { AgGridReact } from "ag-grid-react"
@@ -25,24 +33,22 @@ import {
   Edit,
   Trash2,
   ChevronDown,
-  Clipboard,
-  Printer,
-  Download,
   RotateCw,
-  Filter,
   X
 } from "react-feather"
 import classnames from "classnames"
+import Select from "react-select"
+
 import { history } from "../../../../history"
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 import "../../../../assets/scss/pages/users.scss"
 import { dicalogin } from "../../../../shared/geral"
 import { Container, Content  } from "./styles";
+import ToolBar from "../../../../components/especificos/toolbar"
 
 export default function UserList() {
   const auth = useSelector(state => state.auth);
   const [gridApi, setgridApi] = useState(null)
-  // const [gridColumnApi, setgridColumnApi] = useState(null)
   const [rowData, setrowData] = useState(null)
   const [pageSize, setpageSize] = useState(20)
   const [isVisible, setisVisible] = useState(true)
@@ -50,10 +56,49 @@ export default function UserList() {
   const [collapse, setcollapse] = useState(false)
   const [agFilter, setagFilter] = useState(false)
   const [status, setstatus] = useState("Opened")
-  const [role, setrole] = useState("All")
-  const [selectStatus, setselectStatus] = useState("All")
-  const [verified, setverified] = useState("All")
-  const [department, setdepartment] = useState("0")
+  const [profile, setProfile] = useState(0)
+  const [profiles, setProfiles] = useState([])
+  const [showModalDelete, setShowModalDelete] = useState(false)
+  const [showModalExport, setShowModalExport] = useState(false)
+  const [userDelete, setUserDelete] = useState(null)
+  const [fileName, setFileName] = useState("")
+  const [fileFormat, setFileFormat] = useState("xlsx")
+  const toolBarList = [
+    {
+      id: 'toolbar1',
+      color: 'primary',
+      buttomClassName: "border-primary text-success",
+      icon: 'PlusCircle',
+      size: 21,
+      label: null,
+      outline: false,
+      tooltip: 'Incluir',
+      action: () => history.push(`/app/user/cadastro/0`)
+    },
+    {
+      id: 'toolbar2',
+      color: 'primary',
+      buttomClassName: "border-primary text-success",
+      icon: 'Download',
+      size: 21,
+      label: null,
+      outline: false,
+      tooltip: 'Exportar',
+      action: () => toggleModalExport()
+    },
+    {
+      id: 'toolbar3',
+      color: 'primary',
+      buttomClassName: "border-primary text-success",
+      icon: 'Filter',
+      size: 21,
+      label: null,
+      outline: false,
+      tooltip: 'Filtrar',
+      action: () => filterGrid()
+    }
+  ]
+
   const defaultColDef  = useState({
      sortable: true
   })
@@ -64,12 +109,12 @@ export default function UserList() {
       field: "id",
       width: 150,
       filter: true,
-      checkboxSelection: true,
+      checkboxSelection: false,
       headerCheckboxSelectionFilteredOnly: true,
-      headerCheckboxSelection: true
+      headerCheckboxSelection: false
     },
     {
-      headerName: "Usuário",
+      headerName: "Nome",
       field: "username",
       filter: true,
       width: 250,
@@ -113,11 +158,43 @@ export default function UserList() {
       width: 250
     },
     // {
-    //   headerName: "Perfil",
-    //   field: "profiles.name",
+    //   headerName: "Ativo",
+    //   field: "is_active",
     //   filter: true,
     //   width: 150
     // },
+    {
+      headerName: "Ativo",
+      field: "is_active",
+      filter: true,
+      width: 120,
+      cellRendererFramework: params => {
+        return params.value === true ? (
+          <div className="badge badge-pill badge-light-success">
+            Sim
+          </div>
+          // <div className="bullet bullet-sm bullet-primary"></div>
+        ) : params.value === false ? (
+          // <div className="bullet bullet-sm bullet-secondary"></div>
+          <div className="badge badge-pill badge-light-danger">
+            Não
+          </div>
+        ) : null
+      }
+    },
+    {
+      headerName: "Perfil",
+      field: "pivot.profile_id",
+      filter: true,
+      width: 280,
+      cellRendererFramework: params => {
+        return params.value !== null ? (
+          getProfile(params.value)
+          // <div className="bullet bullet-sm bullet-primary"></div>
+        )
+         : null
+      }
+    },
     // {
     //   headerName: "Status",
     //   field: "status.name",
@@ -168,14 +245,16 @@ export default function UserList() {
             <Edit
               className="mr-50"
               size={15}
-              onClick={() => history.push("/app/user/edit")}
+              onClick={() => history.push(`/app/user/cadastro/${params.data.id}`)}
             />
             <Trash2
               size={15}
-              onClick={() => {
-                let selectedData = gridApi.getSelectedRows()
-                gridApi.updateRowData({ remove: selectedData })
-              }}
+              onClick={() =>
+                {
+                  toggleModalDelete(params.data,true)
+                }
+
+              }
             />
           </div>
         )
@@ -183,30 +262,23 @@ export default function UserList() {
     }
   ]
 
-  // useEffect(() => {
-  //   async function loadDados() {
-  //     const headers = {
-  //       licence_id: 1,
-  //     };
-  //     const response = await api.get("/users", {
-  //       headers
-  //     });
-  //     let rowData = response.data;
-  //     setrowData(rowData)
 
-  //   }
-  //   loadDados();
-  // }, []);
+
   useEffect(() =>
   {
      async function loadDados() {
       if (auth.login !== undefined) {
         if (auth.login.licence_id !== undefined) {
-          const body = {
+          let body = {
             licence_id: auth.login.licence_id,
             id: 0
           };
-          const response = await api.post("/users.list",
+          let response = await api.post("/profiles.list", {
+            ...body
+          });
+          setProfiles(response.data)
+
+          response = await api.post("/users.list",
             body
           );
           let rowData = response.data;
@@ -247,7 +319,12 @@ export default function UserList() {
 
   const filterGrid = () => {
     if (gridApi) {
-      setagFilter(!agFilter, gridApi.refreshHeader())
+      setagFilter(!agFilter)
+      setreload(true)
+      setTimeout(() => {
+        setreload(false)
+      }, 500)
+      gridApi.refreshHeader()
     }
   }
   const updateSearchQuery = val => {
@@ -259,10 +336,7 @@ export default function UserList() {
     setreload(true)
     setTimeout(() => {
       setreload(false)
-      setrole('All')
-      setselectStatus('All')
-      setverified('All')
-      setdepartment('All')
+      setProfile(0)
     }, 500)
   }
 
@@ -285,6 +359,88 @@ export default function UserList() {
   const removeCard = () => {
     setisVisible(false)
   }
+  function getProfile(id) {
+    const profile = profiles.find(e => e.id === id)
+    if(profile !== undefined) {
+      return profile.name
+    }
+    return null
+  }
+  function handleFilter(id, value) {
+    setProfile(value)
+    filterData(id, value)
+  }
+  function toggleModalDelete(userDelete, status) {
+    setUserDelete(userDelete)
+    setShowModalDelete(status)
+  }
+
+  async function handleDelete() {
+    try {
+      if(userDelete){
+        let data = {
+          user: {
+            licence_id: auth.login.licence_id,
+            id: userDelete.id,
+            login: userDelete.login
+          }
+        };
+        await api.delete("/users",
+          { data }
+        );
+        setUserDelete(null)
+        setShowModalDelete(false)
+        let rowDataAux = rowData.filter(function(row){ return row.id !== userDelete.id; })
+        setrowData(rowDataAux)
+        toast.success("Usuário excluído com sucesso!", { transition: Flip });
+      }
+
+    } catch (error) {
+      if (typeof error.response !== 'undefined')
+      {
+        if(typeof error.response.status !== 'undefined' && (error.response.status === 401 || error.response.status === 400  || error.response.status === 500 ))
+        {
+          if(error.response.data.message !== undefined) {
+            toast.error(error.response.data.message, { transition: Flip });
+          }
+          else{
+            toast.error(`Erro ao Excluir o usuário! ${error.message}`, { transition: Flip });
+          }
+        }
+      }
+      else {
+        toast.error(`Erro ao Excluir o usuário! ${error.message}`, { transition: Flip });
+      }
+      setShowModalDelete(false)
+
+    }
+
+  }
+  function toggleModalExport() {
+    setShowModalExport(!showModalExport)
+  }
+
+  function handleExport() {
+    toggleModalExport()
+    // let dataToExport = this.state.dataToExport
+    // rowData.map(item => {
+    //   if(this.state.selectedRows.includes(item.id)){
+    //     return dataToExport.push(item)
+    //   }else{
+    //     return null
+    //   }
+    // })
+    // this.setState({ dataToExport })
+    let fileNameArq =
+      fileName.length && fileFormat.length
+        ? `${fileName}.${fileFormat}`
+        : "excel-sheet.xlsx"
+    let wb = XLSX.utils.json_to_sheet(rowData)
+    let wbout = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wbout, wb, 'teste')
+    XLSX.writeFile(wbout, fileNameArq);
+  }
+
 
   return (
     <Row className="app-user-list">
@@ -333,17 +489,17 @@ export default function UserList() {
               <Row>
                 <Col lg="3" md="6" sm="12">
                   <FormGroup className="mb-0">
-                    <Label for="role">Role</Label>
-                    <Input
+                    <Label for="role">Perfil</Label>
+                    {/* <Input
                       type="select"
-                      name="role"
+                      name="pivot.profile_id"
                       id="role"
                       value={role}
                       onChange={e => {
                         setrole(e.target.value,
                           () =>
                             filterData(
-                              "role",
+                              "pivot.profile_id",
                               role.toLowerCase()
                             )
                         )
@@ -353,11 +509,22 @@ export default function UserList() {
                       <option value="User">User</option>
                       <option value="Staff">Staff</option>
                       <option value="Admin">Admin</option>
-                    </Input>
+                    </Input> */}
+                    <Select
+                      getOptionLabel={option => option.name}
+                      getOptionValue={option => option.id}
+                      className="React"
+                      classNamePrefix="select"
+                      // isSearchable={false}
+                      name="pivot.profile_id"
+                      options={profiles}
+                      value={profiles.filter(option => option.id === profile)}
+                      onChange={e => handleFilter("pivot.profile_id",e.id)}
+                    />
                   </FormGroup>
                 </Col>
                 <Col lg="3" md="6" sm="12">
-                  <FormGroup className="mb-0">
+                  {/* <FormGroup className="mb-0">
                     <Label for="status">Status</Label>
                     <Input
                       type="select"
@@ -379,10 +546,10 @@ export default function UserList() {
                       <option value="Blocked">Blocked</option>
                       <option value="Deactivated">Deactivated</option>
                     </Input>
-                  </FormGroup>
+                  </FormGroup> */}
                 </Col>
                 <Col lg="3" md="6" sm="12">
-                  <FormGroup className="mb-0">
+                  {/* <FormGroup className="mb-0">
                     <Label for="verified">Verified</Label>
                     <Input
                       type="select"
@@ -403,10 +570,10 @@ export default function UserList() {
                       <option value="True">True</option>
                       <option value="False">False</option>
                     </Input>
-                  </FormGroup>
+                  </FormGroup> */}
                 </Col>
                 <Col lg="3" md="6" sm="12">
-                  <FormGroup className="mb-0">
+                  {/* <FormGroup className="mb-0">
                     <Label for="department">Department</Label>
                     <Input
                       type="select"
@@ -428,7 +595,7 @@ export default function UserList() {
                       <option value="Development">Development</option>
                       <option value="Management">Management</option>
                     </Input>
-                  </FormGroup>
+                  </FormGroup> */}
                 </Col>
               </Row>
             </CardBody>
@@ -482,36 +649,7 @@ export default function UserList() {
                     onChange={e => updateSearchQuery(e.target.value)}
                     value={searchVal}
                   />
-                  <div className="dropdown actions-dropdown">
-                    <UncontrolledButtonDropdown>
-                      <DropdownToggle className="px-2 py-75" color="white">
-                        Actions
-                        <ChevronDown className="ml-50" size={15} />
-                      </DropdownToggle>
-                      <DropdownMenu right>
-                        <DropdownItem tag="a">
-                          <Trash2 size={15} />
-                          <span className="align-middle ml-50">Delete</span>
-                        </DropdownItem>
-                        <DropdownItem tag="a">
-                          <Clipboard size={15} />
-                          <span className="align-middle ml-50">Archive</span>
-                        </DropdownItem>
-                        <DropdownItem tag="a">
-                          <Printer size={15} />
-                          <span className="align-middle ml-50">Print</span>
-                        </DropdownItem>
-                        <DropdownItem tag="a">
-                          <Download size={15} />
-                          <span className="align-middle ml-50">CSV</span>
-                        </DropdownItem>
-                        <DropdownItem tag="a" onClick={() => filterGrid()}>
-                          <Filter size={15} />
-                          <span className="align-middle ml-50">Filtro</span>
-                        </DropdownItem>
-                      </DropdownMenu>
-                    </UncontrolledButtonDropdown>
-                  </div>
+                 <ToolBar toolBarList={toolBarList} typeBar="1"/>
                 </div>
               </div>
               {rowData !== null ? (
@@ -536,6 +674,64 @@ export default function UserList() {
                   )}
                 </ContextLayout.Consumer>
               ) : null}
+              <Modal
+                  isOpen={showModalDelete}
+                  toggle={() => toggleModalDelete(null,false)}
+                  className="modal-dialog-centered"
+                >
+                  <ModalHeader toggle={() => toggleModalDelete(null,false)} className="bg-warning">
+                    Exclusão
+                  </ModalHeader>
+                  <ModalBody>
+                    Confirma a exclusão do Usuário? <br></br><br></br>
+                    <span className="text-center">
+                      {userDelete ? userDelete.username : null}
+                    </span>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="warning" onClick={() => handleDelete()}>
+                      Confirmar
+                    </Button>{" "}
+                  </ModalFooter>
+                </Modal>
+                <Modal
+                  isOpen={showModalExport}
+                  toggle={() => toggleModalExport()}
+                  className="modal-dialog-centered"
+                >
+                  <ModalHeader toggle={() => toggleModalExport()}>Exportar para Excel</ModalHeader>
+                  <ModalBody>
+                    <FormGroup>
+                      <Input
+                        type="text"
+                        value={fileName}
+                        onChange={e => setFileName(e.target.value)}
+                        placeholder="Entre com o Nome do Arquivo"
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <CustomInput
+                        type="select"
+                        id="selectFileFormat"
+                        name="customSelect"
+                        value={fileFormat}
+                        onChange={e => setFileFormat(e.target.value)}
+                      >
+                        <option>xlsx</option>
+                        <option>csv</option>
+                        <option>txt</option>
+                      </CustomInput>
+                    </FormGroup>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Button color="primary" onClick={() => handleExport()}>
+                      Exportar
+                    </Button>
+                    <Button color="flat-danger" onClick={() => toggleModalExport()}>
+                      Cancelar
+                    </Button>
+                  </ModalFooter>
+                </Modal>
             </div>
           </CardBody>
         </Card>
