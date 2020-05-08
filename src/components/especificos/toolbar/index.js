@@ -14,9 +14,12 @@ export default function toolbar(props) {
     <div>
       <ButtonGroup className="mb-1">
         {props.toolBarList.map((item, index) => {
+           console.log('alo2')
+           console.log(item.disabled)
           const IconTag = Icon[item.icon ? item.icon : "X"]
+          const disabled = item.disabled === undefined ? false : item.disabled
           return (
-            <Button.Ripple className="btn-icon" color={item.color} onClick={item.action} key={item.id} id={item.id}>
+            <Button.Ripple className="btn-icon" disabled={disabled} color={item.color} onClick={item.action} key={item.id} id={item.id}>
               <IconTag size={item.size} />
               <UncontrolledTooltip
                 placement="bottom"

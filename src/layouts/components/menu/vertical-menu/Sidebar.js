@@ -114,6 +114,7 @@ class Sidebar extends Component {
       currentLang,
       permission,
       currentUser,
+      userPermission,
       collapsedMenuPaths
     } = this.props
 
@@ -203,6 +204,7 @@ class Sidebar extends Component {
                         lang={currentLang}
                         permission={permission}
                         currentUser={currentUser}
+                        userPermission={userPermission}
                         collapsedMenuPaths={collapsedMenuPaths}
                         toggleMenu={sidebarVisibility}
                         deviceWidth={this.props.deviceWidth}
@@ -221,7 +223,8 @@ class Sidebar extends Component {
 
 const mapStateToProps = state => {
   return {
-    currentUser: state.auth.login.userRole
+    currentUser: state.auth.login.userRole,
+    userPermission: state.auth.login.permissions
   }
 }
 

@@ -14,6 +14,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <Icon.Circle size={10} />,
         navLink: "/",
+        userPermission: 1,
         permissions: ["admin", "editor"]
       },
       {
@@ -22,6 +23,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <Icon.Circle size={10} />,
         navLink: "/ecommerce-dashboard",
+        userPermission: 1,
         permissions: ["admin"]
       }
     ]
@@ -39,6 +41,7 @@ const horizontalMenuConfig = [
         icon: <Icon.Mail size={16} />,
         navLink: "/email/:filter",
         filterBase: "/email/inbox",
+        userPermission: 1,
         permissions: ["admin", "editor"]
       },
       {
@@ -47,6 +50,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <Icon.MessageSquare size={16} />,
         navLink: "/chat",
+        userPermission: 1,
         permissions: ["admin", "editor"]
       },
       {
@@ -56,6 +60,7 @@ const horizontalMenuConfig = [
         icon: <Icon.CheckSquare size={16} />,
         navLink: "/todo/:filter",
         filterBase: "/todo/all",
+        userPermission: 1,
         permissions: ["admin", "editor"]
       },
       {
@@ -64,6 +69,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <Icon.Calendar size={16} />,
         navLink: "/calendar",
+        userPermission: 1,
         permissions: ["admin", "editor"]
       },
       {
@@ -78,6 +84,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/ecommerce/shop",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -86,6 +93,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/ecommerce/product-detail",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -94,6 +102,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/ecommerce/wishlist",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -102,6 +111,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/ecommerce/checkout",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           }
         ]
@@ -117,6 +127,7 @@ const horizontalMenuConfig = [
             title: "Users",
             type: "item",
             icon: <Icon.User size={20} />,
+            userPermission: 1,
             permissions: ["admin", "editor"],
             navLink: "/app/user/list"
           }
@@ -141,6 +152,7 @@ const horizontalMenuConfig = [
             title: "List View",
             type: "item",
             icon: <Icon.Circle size={10} />,
+            userPermission: 1,
             permissions: ["admin", "editor"],
             navLink: "/data-list/list-view"
           },
@@ -149,6 +161,7 @@ const horizontalMenuConfig = [
             title: "Thumb View",
             type: "item",
             icon: <Icon.Circle size={10} />,
+            userPermission: 1,
             permissions: ["admin", "editor"],
             navLink: "/data-list/thumb-view"
           }
@@ -166,6 +179,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/ui-element/grid",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -174,6 +188,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/ui-element/typography",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -182,6 +197,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/ui-element/textutilities",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -190,6 +206,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/ui-element/syntaxhighlighter",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           }
         ]
@@ -200,6 +217,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <Icon.Droplet size={16} />,
         navLink: "/colors/colors",
+        userPermission: 1,
         permissions: ["admin", "editor"]
       },
       {
@@ -208,6 +226,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <Icon.Eye size={16} />,
         navLink: "/icons/reactfeather",
+        userPermission: 1,
         permissions: ["admin", "editor"]
       },
       {
@@ -222,6 +241,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/cards/basic",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -230,6 +250,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/cards/statistics",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -238,6 +259,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/cards/analytics",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -246,6 +268,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/cards/action",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           }
         ]
@@ -262,6 +285,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/alerts",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -270,6 +294,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/buttons",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -278,6 +303,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/breadcrumbs",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -286,6 +312,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/carousel",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -294,6 +321,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/dropdowns",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -302,6 +330,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/list-group",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -310,6 +339,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/modals",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -318,6 +348,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/pagination",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -326,6 +357,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/nav-component",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -334,6 +366,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/navbar",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -342,6 +375,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/tabs-component",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -350,6 +384,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/pills-component",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -358,6 +393,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/tooltips",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -366,6 +402,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/popovers",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -374,6 +411,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/badges",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -382,6 +420,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/pill-badges",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -390,6 +429,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/progress",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -398,6 +438,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/media-objects",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -406,6 +447,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/spinners",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -414,6 +456,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/components/toasts",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           }
         ]
@@ -430,6 +473,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/extra-components/auto-complete",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -438,6 +482,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/extra-components/avatar",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -446,6 +491,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/extra-components/chips",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -454,6 +500,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/extra-components/divider",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           }
         ]
@@ -470,6 +517,7 @@ const horizontalMenuConfig = [
             icon: <Icon.AlertCircle size={16} />,
             type: "item",
             navLink: "/extensions/sweet-alert",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -478,6 +526,7 @@ const horizontalMenuConfig = [
             icon: <Icon.Zap size={16} />,
             type: "item",
             navLink: "/extensions/toastr",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -486,6 +535,7 @@ const horizontalMenuConfig = [
             icon: <Icon.Sliders size={16} />,
             type: "item",
             navLink: "/extensions/slider",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -494,6 +544,7 @@ const horizontalMenuConfig = [
             icon: <Icon.UploadCloud size={16} />,
             type: "item",
             navLink: "/extensions/file-uploader",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -502,6 +553,7 @@ const horizontalMenuConfig = [
             icon: <Icon.Edit size={16} />,
             type: "item",
             navLink: "/extensions/wysiwyg-editor",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -510,6 +562,7 @@ const horizontalMenuConfig = [
             icon: <Icon.Droplet size={16} />,
             type: "item",
             navLink: "/extensions/drag-and-drop",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -518,6 +571,7 @@ const horizontalMenuConfig = [
             icon: <Icon.Info size={16} />,
             type: "item",
             navLink: "/extensions/tour",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -526,6 +580,7 @@ const horizontalMenuConfig = [
             icon: <Icon.Copy size={16} />,
             type: "item",
             navLink: "/extensions/clipboard",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -534,6 +589,7 @@ const horizontalMenuConfig = [
             icon: <Icon.Menu size={16} />,
             type: "item",
             navLink: "/extensions/context-menu",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -542,6 +598,7 @@ const horizontalMenuConfig = [
             icon: <Icon.Smartphone size={16} />,
             type: "item",
             navLink: "/extensions/swiper",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -550,6 +607,7 @@ const horizontalMenuConfig = [
             icon: <Icon.Lock size={20} />,
             type: "item",
             navLink: "/extensions/access-control",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -558,6 +616,7 @@ const horizontalMenuConfig = [
             icon: <Icon.Globe size={16} />,
             type: "item",
             navLink: "/extensions/i18n",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -566,6 +625,7 @@ const horizontalMenuConfig = [
             icon: <Icon.GitPullRequest size={16} />,
             type: "item",
             navLink: "/extensions/tree",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -574,6 +634,7 @@ const horizontalMenuConfig = [
             icon: <Icon.MoreHorizontal size={16} />,
             type: "item",
             navLink: "/extensions/pagination",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -582,6 +643,7 @@ const horizontalMenuConfig = [
             icon: <Icon.DownloadCloud size={16} />,
             type: "item",
             navLink: "/extensions/import",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -590,6 +652,7 @@ const horizontalMenuConfig = [
             icon: <Icon.UploadCloud size={16} />,
             type: "item",
             navLink: "/extensions/export",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -598,6 +661,7 @@ const horizontalMenuConfig = [
             icon: <Icon.CheckSquare size={16} />,
             type: "item",
             navLink: "/extensions/export-selected",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           }
         ]
@@ -622,6 +686,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/forms/elements/select",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -630,6 +695,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/forms/elements/switch",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -638,6 +704,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/forms/elements/checkbox",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -646,6 +713,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/forms/elements/radio",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -654,6 +722,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/forms/elements/input",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -662,6 +731,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/forms/elements/input-group",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -670,6 +740,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/forms/elements/number-input",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -678,6 +749,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/forms/elements/textarea",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -686,6 +758,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/forms/elements/pickers",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -694,6 +767,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/forms/elements/input-mask",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           }
         ]
@@ -704,6 +778,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <Icon.Box size={16} />,
         navLink: "/forms/layout/form-layout",
+        userPermission: 1,
         permissions: ["admin", "editor"]
       },
       {
@@ -712,6 +787,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <Icon.MoreHorizontal size={16} />,
         navLink: "/forms/wizard",
+        userPermission: 1,
         permissions: ["admin", "editor"]
       },
       {
@@ -720,6 +796,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <Icon.CheckCircle size={16} />,
         navLink: "/forms/formik",
+        userPermission: 1,
         permissions: ["admin", "editor"]
       },
       {
@@ -734,6 +811,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/tables/reactstrap",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -742,6 +820,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/tables/react-tables",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -750,6 +829,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/tables/agGrid",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -757,6 +837,7 @@ const horizontalMenuConfig = [
             title: "DataTables",
             type: "item",
             icon: <Icon.Circle size={12} />,
+            userPermission: 1,
             permissions: ["admin", "editor"],
             navLink: "/tables/data-tables"
           }
@@ -776,6 +857,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <Icon.User size={16} />,
         navLink: "/pages/profile",
+        userPermission: 1,
         permissions: ["admin", "editor"]
       },
       {
@@ -784,6 +866,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <Icon.Settings size={16} />,
         navLink: "/pages/account-settings",
+        userPermission: 1,
         permissions: ["admin", "editor"]
       },
       {
@@ -792,6 +875,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <Icon.HelpCircle size={16} />,
         navLink: "/pages/faq",
+        userPermission: 1,
         permissions: ["admin", "editor"]
       },
       {
@@ -800,6 +884,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <Icon.Info size={16} />,
         navLink: "/pages/knowledge-base",
+        userPermission: 1,
         permissions: ["admin", "editor"],
         parentOf: [
           "/pages/knowledge-base/category/questions",
@@ -812,6 +897,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <Icon.Search size={16} />,
         navLink: "/pages/search",
+        userPermission: 1,
         permissions: ["admin", "editor"]
       },
       {
@@ -820,6 +906,7 @@ const horizontalMenuConfig = [
         type: "item",
         icon: <Icon.File size={16} />,
         navLink: "/pages/invoice",
+        userPermission: 1,
         permissions: ["admin", "editor"]
       },
       {
@@ -834,6 +921,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/pages/login",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -842,6 +930,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/pages/register",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -850,6 +939,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/pages/forgot-password",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -858,6 +948,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/pages/reset-password",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -866,6 +957,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/pages/lock-screen",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           }
         ]
@@ -882,6 +974,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/misc/coming-soon",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -896,6 +989,7 @@ const horizontalMenuConfig = [
                 type: "item",
                 icon: <Icon.Circle size={10} />,
                 navLink: "/misc/error/404",
+                userPermission: 1,
                 permissions: ["admin", "editor"]
               },
               {
@@ -904,6 +998,7 @@ const horizontalMenuConfig = [
                 type: "item",
                 icon: <Icon.Circle size={10} />,
                 navLink: "/misc/error/500",
+                userPermission: 1,
                 permissions: ["admin", "editor"]
               }
             ]
@@ -914,6 +1009,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/misc/not-authorized",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -922,6 +1018,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/misc/maintenance",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           }
         ]
@@ -948,6 +1045,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/charts/apex",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -956,6 +1054,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/charts/chartjs",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -964,6 +1063,7 @@ const horizontalMenuConfig = [
             type: "item",
             icon: <Icon.Circle size={10} />,
             navLink: "/charts/recharts",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           }
         ]
@@ -974,6 +1074,7 @@ const horizontalMenuConfig = [
         icon: <Icon.Map size={16} />,
         type: "item",
         navLink: "/maps/leaflet",
+        userPermission: 1,
         permissions: ["admin", "editor"]
       }
     ]
@@ -996,6 +1097,7 @@ const horizontalMenuConfig = [
             icon: <Icon.Circle size={10} />,
             type: "item",
             navlink: "",
+            userPermission: 1,
             permissions: ["admin", "editor"]
           },
           {
@@ -1010,6 +1112,7 @@ const horizontalMenuConfig = [
                 icon: <Icon.Circle size={10} />,
                 type: "item",
                 navLink: "",
+                userPermission: 1,
                 permissions: ["admin", "editor"]
               },
               {
@@ -1018,6 +1121,7 @@ const horizontalMenuConfig = [
                 icon: <Icon.Circle size={10} />,
                 type: "item",
                 navLink: "",
+                userPermission: 1,
                 permissions: ["admin", "editor"]
               }
             ]
@@ -1030,6 +1134,7 @@ const horizontalMenuConfig = [
         icon: <Icon.EyeOff size={16} />,
         type: "item",
         navLink: "#",
+        userPermission: 1,
         permissions: ["admin", "editor"],
         disabled: true
       },
@@ -1039,6 +1144,7 @@ const horizontalMenuConfig = [
         icon: <Icon.Folder size={16} />,
         type: "external-link",
         navLink: "google.com",
+        userPermission: 1,
         permissions: ["admin", "editor"]
       },
       {
@@ -1048,6 +1154,7 @@ const horizontalMenuConfig = [
         type: "external-link",
         newTab: true,
         navLink: "https://pixinvent.ticksy.com/",
+        userPermission: 1,
         permissions: ["admin", "editor"]
       }
     ]

@@ -15,6 +15,7 @@ const navigationConfig = [
         type: "item",
         icon: <Icon.Circle size={12} />,
         permissions: ["admin", "editor"],
+        userPermission: 1,
         navLink: "/"
       },
       {
@@ -23,6 +24,7 @@ const navigationConfig = [
         type: "item",
         icon: <Icon.Circle size={12} />,
         permissions: ["admin"],
+        userPermission: 1,
         navLink: "/ecommerce-dashboard"
       }
     ]
@@ -54,6 +56,7 @@ const navigationConfig = [
     type: "item",
     icon: <Icon.CheckSquare size={20} />,
     permissions: ["admin", "editor"],
+    userPermission: 2,
     navLink: "/todo/:filter",
     filterBase: "/todo/all"
   },
@@ -63,6 +66,7 @@ const navigationConfig = [
     type: "item",
     icon: <Icon.Calendar size={20} />,
     permissions: ["admin", "editor"],
+    userPermission: 2,
     navLink: "/calendar"
   },
   // {
@@ -117,6 +121,7 @@ const navigationConfig = [
         type: "item",
         icon: <Icon.User size={20} />,
         permissions: ["admin", "editor"],
+        userPermission: 1,
         navLink: "/app/user/list"
       }
     ]

@@ -29,7 +29,7 @@ class HorizontalSidebar extends React.Component {
     this.activeParentItems = []
 
     this.redirectUnauthorized = () => {
-      history.push("/pages/login")
+      this.props.userPermission !== undefined ?  history.push("/misc/not-authorized") : history.push("/pages/login")
     }
   }
 
@@ -216,15 +216,23 @@ class HorizontalSidebar extends React.Component {
           if (
             child.type === "external-link" ||
             (child.type === "item" &&
-              child.permissions &&
-              child.permissions.includes(this.props.currentUser)) ||
-            child.type === "dropdown" ||
-            child.permissions === undefined
+              // child.permissions &&
+              // child.permissions.includes(this.props.currentUser)) ||
+              // child.type === "dropdown" ||
+              // child.permissions === undefined
+              child.userPermission &&
+              this.props.userPermission !== undefined &&
+              this.props.userPermission.includes(child.userPermission)) ||
+              child.type === "dropdown" ||
+              child.userPermission === undefined
           ) {
             return renderChildItems
           } else if (
-            child.navLink === this.props.activePath &&
-            !child.permissions.includes(this.props.currentUser)
+            // child.navLink === this.props.activePath &&
+            // !child.permissions.includes(this.props.currentUser)
+            (child.navLink === this.props.activePath &&
+            this.props.userPermission !== undefined &&
+            !this.props.userPermission.includes(child.userPermission)) ||  (this.props.userPermission === undefined)
           ) {
             return this.redirectUnauthorized()
           } else {
@@ -351,7 +359,8 @@ class HorizontalSidebar extends React.Component {
 }
 const mapStateToProps = state => {
   return {
-    currentUser: state.auth.login.userRole
+    currentUser: state.auth.login.userRole,
+    userPermission: state.auth.login.permissions
   }
 }
 export default connect(mapStateToProps)(HorizontalSidebar)

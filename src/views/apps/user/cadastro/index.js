@@ -7,6 +7,10 @@ import {
   Nav,
   NavItem,
   NavLink,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
   TabContent,
   TabPane,
   Media,
@@ -15,7 +19,8 @@ import {
   Input,
   Label,
   FormGroup,
-  FormFeedback
+  FormFeedback,
+  Spinner
 } from "reactstrap"
 import _ from 'lodash';
 import { useSelector, useDispatch } from "react-redux";
@@ -110,8 +115,26 @@ const schema = Yup.object().shape({
   // exemplos https://github.com/jquense/yup#usage
 });
 
-export default function UserCadastro({ match }) {
-  let { id } = match.params
+export default function UserCadastro(props) {
+  let listaPermission = props.userPermission.includes(1)
+  let insertPermission = props.userPermission.includes(2)
+  let updatePermission = props.userPermission.includes(3)
+  let deletePermission = props.userPermission.includes(4)
+  let salvarPermission = true
+
+  let { id } = props.match.params
+  const edicao = id > 0;
+  if(edicao) {
+    if(!updatePermission) {
+      salvarPermission = false
+    }
+  }
+  else {
+    if(!insertPermission) {
+      salvarPermission = false
+    }
+    deletePermission = false
+  }
   const [activeTab, setTab] = useState("1")
   const [load, setLoad] = useState(true)
   const [atualiza, setAtualiza] = useState(true);
@@ -119,6 +142,8 @@ export default function UserCadastro({ match }) {
   const [countries, setCountries] = useState([])
   const [estados, setEstados] = useState([])
   const [cities, setCities] = useState([])
+
+  const [showModalDelete, setShowModalDelete] = useState(false)
 
   const dispatch = useDispatch()
 
@@ -164,7 +189,8 @@ export default function UserCadastro({ match }) {
         label: null,
         outline: false,
         tooltip: "Incluir",
-        action: () => history.push(`/app/user/cadastro/0`)
+        disabled: !insertPermission,
+        action: () => {  history.push(`/app/user/cadastro/0`); window.location.reload() }
       },
 
       {
@@ -176,7 +202,7 @@ export default function UserCadastro({ match }) {
         label:  null,
         outline: false,
         tooltip: 'Atualiza',
-        action: () => handleDados("9")
+        action: () => window.location.reload()
       },
       {
         id: 'toolbar4',
@@ -187,6 +213,7 @@ export default function UserCadastro({ match }) {
         label: null,
         outline: false,
         tooltip:  'Lista',
+        disabled: !listaPermission,
         action: () => history.push(`/app/user/list`)
       },
       {
@@ -201,6 +228,18 @@ export default function UserCadastro({ match }) {
         action: () => toggle("-1")
       },
       {
+        id: 'toolbar6',
+        color: 'primary',
+        buttomClassName: "mr-1 mb-1",
+        icon: 'Trash',
+        size: 21,
+        label: null,
+        outline: false,
+        tooltip: "Excluir",
+        disabled: !deletePermission,
+        action: () => toggleModalDelete(true)
+      },
+      {
         id: 'toolbar2',
         color: 'warning',
         buttomClassName: "mr-1 mb-1",
@@ -209,12 +248,13 @@ export default function UserCadastro({ match }) {
         label: null,
         outline: false,
         tooltip: "Salvar",
+        disabled: !salvarPermission,
         action: () => handleSubmit()
       }
     ]
   const [iniciais, setIniciais] = useState("")
   const [url, setUrl] = useState(null)
-  const edicao = id > 0;
+
 
   const auth = useSelector(state => state.auth);
 
@@ -347,12 +387,7 @@ export default function UserCadastro({ match }) {
 
     setTab(tab)
   }
-  function handleDados(par) {
-    if(par === "9")
-    {
-      setLoad(!load)
-    }
-  }
+
   function handleChange(id, value) {
     _.set(rowData, id, value);
   }
@@ -543,7 +578,8 @@ export default function UserCadastro({ match }) {
               remember: auth.login.values.loggedInUser.remember,
               token: auth.login.token,
               avatar: rowData.avatar.value,
-              licences: auth.login.values.loggedInUser.licences
+              licences: auth.login.values.loggedInUser.licences,
+              permissions:  auth.login.permissions,
             }));
           }
           toast.success("Usuário atualizado com sucesso!", { transition: Flip });
@@ -586,13 +622,59 @@ export default function UserCadastro({ match }) {
           , { transition: Flip });
         }
         toggle(tabAux)
-        // setAtualiza(!atualiza)
+        setAtualiza(!atualiza)
       } else {
         toast.error(
           `Não foi possível ${id === "0" ? "incluir" : "alterar"} o usuário. ${error.message}`
         , { transition: Flip });
       }
     }
+  }
+
+  function toggleModalDelete(status) {
+    setShowModalDelete(status)
+  }
+
+  async function handleDelete() {
+    try {
+      if(id){
+        let data = {
+          user: {
+            licence_id: auth.login.licence_id,
+            id,
+            login: rowData.login.value
+          }
+        };
+        await api.delete("/users",
+          { data }
+        );
+        setShowModalDelete(false)
+        history.push(`/app/user/list`)
+        // let rowDataAux = rowData.filter(function(row){ return row.id !== userDelete.id; })
+        // setrowData(rowDataAux)
+        toast.success("Usuário excluído com sucesso!", { transition: Flip });
+      }
+
+    } catch (error) {
+      if (typeof error.response !== 'undefined')
+      {
+        if(typeof error.response.status !== 'undefined' && (error.response.status === 401 || error.response.status === 400  || error.response.status === 500 ))
+        {
+          if(error.response.data.message !== undefined) {
+            toast.error(error.response.data.message, { transition: Flip });
+          }
+          else{
+            toast.error(`Erro ao Excluir o usuário! ${error.message}`, { transition: Flip });
+          }
+        }
+      }
+      else {
+        toast.error(`Erro ao Excluir o usuário! ${error.message}`, { transition: Flip });
+      }
+      setShowModalDelete(false)
+
+    }
+
   }
 
   function FormTab1() {
@@ -622,6 +704,7 @@ export default function UserCadastro({ match }) {
                       data-file={file}
                       onChange={handleChangeFile}
                       ref={ref}
+                      disabled={!salvarPermission}
                     />
                   </label>
                 </Container>
@@ -651,6 +734,7 @@ export default function UserCadastro({ match }) {
                     placeholder="Nome"
                     onChange={e => handleChange(e.target.id,e.target.value)}
                     invalid={rowData.username.invalid}
+                    disabled={!salvarPermission}
                   />
                   <FormFeedback>{rowData.username.msg}</FormFeedback>
               </Col>
@@ -674,6 +758,7 @@ export default function UserCadastro({ match }) {
                     options={profiles}
                     value={profiles.filter(option => option.id === rowData.profile_id.value)}
                     onChange={e => handleChangeSelect("profile_id.value","profile_id.select",e.id,e)}
+                    disabled={!salvarPermission}
                   />
                    {rowData.profile_id.invalid ? <div className="text-danger font-small-2">{rowData.profile_id.msg}</div>: null }
                 </FormGroup>
@@ -688,6 +773,7 @@ export default function UserCadastro({ match }) {
                     placeholder="Login"
                     onChange={e => handleChange(e.target.id,e.target.value)}
                     invalid={rowData.login.invalid}
+                    disabled={!salvarPermission}
                   />
                   <FormFeedback>{rowData.login.msg}</FormFeedback>
                 </FormGroup>
@@ -700,6 +786,7 @@ export default function UserCadastro({ match }) {
                     placeholder="E-mail"
                     onChange={e => handleChange(e.target.id,e.target.value)}
                     invalid={rowData.email.invalid}
+                    disabled={!salvarPermission}
                   />
                   <FormFeedback>{rowData.email.msg}</FormFeedback>
                 </FormGroup>
@@ -714,6 +801,7 @@ export default function UserCadastro({ match }) {
                       defaultChecked={rowData.is_active.value}
                       onChange={e => handleChange("is_active.value", true)}
                       name="is_active"
+                      disabled={!salvarPermission}
                     />
                   </div>
                   <div className="d-inline-block mr-1">
@@ -723,6 +811,7 @@ export default function UserCadastro({ match }) {
                       defaultChecked={!rowData.is_active.value}
                       onChange={e => handleChange("is_active.value",false)}
                       name="is_active"
+                      disabled={!salvarPermission}
                     />
                   </div>
                 </FormGroup>
@@ -1095,73 +1184,92 @@ export default function UserCadastro({ match }) {
       <Col sm="12">
         <Card>
           <CardBody className="pt-1">
-          <div>
-              <div className="d-flex justify-content-between flex-wrap mb-1">
-                <div>
-                  <Nav tabs>
-                    <NavItem>
-                      <NavLink
-                        className={classnames({
-                          active: activeTab === "1"
-                        })}
-                        onClick={() => {
-                          toggle("1")
-                        }}
-                      >
-                        <User size={16} />
-                        <span className="align-middle ml-50">Acesso</span>
-                      </NavLink>
-                    </NavItem>
-                    <NavItem>
-                      <NavLink
-                        className={classnames({
-                          active: activeTab === "2"
-                        })}
-                        onClick={() => {
-                          toggle("2")
-                        }}
-                      >
-                        <Info size={16} />
-                        <span className="align-middle ml-50">Informações</span>
-                      </NavLink>
-                    </NavItem>
-                    <NavItem>
-                      <NavLink
-                        className={classnames({
-                          active: activeTab === "3"
-                        })}
-                        onClick={() => {
-                          toggle("3")
-                        }}
-                      >
-                        <Share size={16} />
-                        <span className="align-middle ml-50">Social</span>
-                      </NavLink>
-                    </NavItem>
-                  </Nav>
+
+              <div>
+                <div className="d-flex justify-content-between flex-wrap mb-1">
+                  <div>
+                    <Nav tabs>
+                      <NavItem>
+                        <NavLink
+                          className={classnames({
+                            active: activeTab === "1"
+                          })}
+                          onClick={() => {
+                            toggle("1")
+                          }}
+                        >
+                          <User size={16} />
+                          <span className="align-middle ml-50">Acesso</span>
+                        </NavLink>
+                      </NavItem>
+                      <NavItem>
+                        <NavLink
+                          className={classnames({
+                            active: activeTab === "2"
+                          })}
+                          onClick={() => {
+                            toggle("2")
+                          }}
+                        >
+                          <Info size={16} />
+                          <span className="align-middle ml-50">Informações</span>
+                        </NavLink>
+                      </NavItem>
+                      <NavItem>
+                        <NavLink
+                          className={classnames({
+                            active: activeTab === "3"
+                          })}
+                          onClick={() => {
+                            toggle("3")
+                          }}
+                        >
+                          <Share size={16} />
+                          <span className="align-middle ml-50">Social</span>
+                        </NavLink>
+                      </NavItem>
+                    </Nav>
+                  </div>
+                  <div className="filter-actions d-flex">
+                    <ToolBar toolBarList={toolBarList} typeBar="1"/>
+                  </div>
+                  <Modal
+                    isOpen={showModalDelete}
+                    toggle={() => toggleModalDelete(false)}
+                    className="modal-dialog-centered"
+                  >
+                    <ModalHeader toggle={() => toggleModalDelete(false)} className="bg-warning">
+                      Exclusão
+                    </ModalHeader>
+                    <ModalBody>
+                      Confirma a exclusão do Usuário? <br></br><br></br>
+                      <span className="text-center">
+                        {rowData.username.value}
+                      </span>
+                    </ModalBody>
+                    <ModalFooter>
+                      <Button color="warning" onClick={() => handleDelete()}>
+                        Confirmar
+                      </Button>{" "}
+                    </ModalFooter>
+                  </Modal>
                 </div>
-                <div className="filter-actions d-flex">
-                 <ToolBar toolBarList={toolBarList} typeBar="1"/>
-                </div>
-              </div>
+                {load === false ?
+                  <TabContent activeTab={activeTab}>
+                    <TabPane tabId="1">
+                      <FormTab1 />
+                    </TabPane>
+                    <TabPane tabId="2">
+                      <FormTab2 />
+                    </TabPane>
+                    <TabPane tabId="3">
+                      <FormTab3 />
+                    </TabPane>
+                  </TabContent>
+                :
+                    <Spinner color="primary" className="reload-spinner" />
+                }
             </div>
-            <TabContent activeTab={activeTab}>
-              <TabPane tabId="1">
-                <FormTab1 />
-              </TabPane>
-              <TabPane tabId="2">
-                <FormTab2 />
-              </TabPane>
-              <TabPane tabId="3">
-                <FormTab3 />
-              </TabPane>
-            </TabContent>
-            {/* <hr className="my-2" />
-            <div className="card-btns d-flex justify-content-between">
-              <div className="float-right">
-                <ToolBar toolBarList={toolBarList} typeBar="2"/>
-              </div>
-            </div> */}
           </CardBody>
         </Card>
       </Col>

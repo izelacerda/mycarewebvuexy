@@ -26,26 +26,27 @@ const schema = Yup.object().shape({
 export default function LoginJWT() {
   const [load, setLoad] = useState(true);
   const [atualiza, setAtualiza] = useState(true);
+  const auth = useSelector(state => state.auth);
   const [rowData] = useState(
     {
       login:    { value: '',  invalid: false, msg:'' },
       password: { value: '',  invalid: false, msg:'' },
-      remember:  { value: true, invalid: false, msg:'' },
+      remember:  { value: auth.login === undefined ? true : auth.login.values.loggedInUser.remember, invalid: false, msg:'' },
     } )
   const dispatch = useDispatch();
-  const auth = useSelector(state => state.auth);
+
 
   useEffect(() =>
   {
      async function loadAuth() {
       if (auth.login !== undefined) {
-        if (auth.login.state !== undefined) {
-          if (auth.login.state.values !== undefined) {
-            if (auth.login.state.values.loggedInUser !== undefined && load && atualiza) {
-              if(auth.login.state.values.loggedInUser.remember) {
-                let cryptoLogin = crypto.decryptByDESModeCBC(auth.login.state.values.loggedInUser.login);
+        if (auth.login !== undefined) {
+          if (auth.login.values !== undefined) {
+            if (auth.login.values.loggedInUser !== undefined && load && atualiza) {
+              if(rowData.remember.value) {
+                let cryptoLogin = crypto.decryptByDESModeCBC(auth.login.values.loggedInUser.login);
                 handleChange("login.value", cryptoLogin)
-                let cryptoPassword = crypto.decryptByDESModeCBC(auth.login.state.values.loggedInUser.password)
+                let cryptoPassword = crypto.decryptByDESModeCBC(auth.login.values.loggedInUser.password)
                 handleChange("password.value", cryptoPassword)
                 handleChange("remember.value", true)
               }
@@ -73,6 +74,8 @@ export default function LoginJWT() {
   async function handleLogin(e) {
     try {
       // e.preventDefault()
+      rowData.login.value=document.getElementById("login.value").value;
+      rowData.password.value=document.getElementById("password.value").value;
       await schema.validate(
         {
           login: rowData.login.value,
@@ -87,11 +90,11 @@ export default function LoginJWT() {
         password: rowData.password.value
       });
       const { token, user } = response.data;
-      const { id, email, name, userRole, licences, avatar } = user;
+      const { id, email, name, userRole, licences, avatar, permissions } = user;
 
       api.defaults.headers.Authorization = `Bearer ${token}`;
 
-      dispatch(loginWithJWT({ id, name,  login: rowData.login.value, email, password: rowData.password.value, userRole, remember: rowData.remember.value, token, avatar, licences }));
+      dispatch(loginWithJWT({ id, name,  login: rowData.login.value, email, password: rowData.password.value, userRole, remember: rowData.remember.value, token, avatar, licences, permissions }));
 
     } catch (error) {
       let validErrors = "";

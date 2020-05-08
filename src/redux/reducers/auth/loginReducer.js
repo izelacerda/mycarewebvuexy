@@ -1,3 +1,10 @@
+import {
+  setHours,
+  setMinutes,
+  setSeconds,
+  setMilliseconds
+} from "date-fns";
+import { utcToZonedTime } from "date-fns-tz";
 import * as crypto from "../../../shared/crypto";
 
 const INITIAL_STATE = {
@@ -27,7 +34,16 @@ export const login = (state = INITIAL_STATE, action) => {
     case "LOGIN_WITH_JWT": {
       const password = crypto.encryptByDESModeCBC(action.payload.loggedInUser.password);
       const login = crypto.encryptByDESModeCBC(action.payload.loggedInUser.login);
-      const { id, email, name, remember, userRole, licences, avatar, token } = action.payload.loggedInUser;
+      const { id, email, name, remember, userRole, licences, avatar, token, permissions } = action.payload.loggedInUser;
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const checkDate = setMilliseconds(
+        setSeconds(setMinutes(setHours(new Date(), 0), 0), 0),
+        0
+      );
+      // transformando a checkdate acima para o formato global, pois
+      // a hora pode variar de usuario para usuario, e é bom manter o padrao
+      // global
+      const loginDate = utcToZonedTime(checkDate, timezone);
       let avatar_company = null;
       if(licences[0].files !== undefined )
       {
@@ -58,13 +74,16 @@ export const login = (state = INITIAL_STATE, action) => {
         company: licences[0].name,
         avatar_company,
         token,
-        userRole }
+        userRole,
+        permissions,
+        loginDate
+       }
     }
     case "LOGIN_FAILURE": {
       return { ...state, values: action.payload }
     }
     case "LOGOUT_WITH_JWT": {
-      return { state }
+      return { ...state, signed: false, userRole: null , permissions: undefined, loginDate: null}
     }
     case "LOGOUT_WITH_FIREBASE": {
       return { ...state, values: action.payload }

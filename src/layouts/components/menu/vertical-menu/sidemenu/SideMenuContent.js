@@ -15,7 +15,7 @@ class SideMenuContent extends React.Component {
     this.parentArr = []
     this.collapsedPath = null
     this.redirectUnauthorized = () => {
-      history.push("/pages/login")
+      this.props.userPermission !== undefined ?  history.push("/misc/not-authorized") : history.push("/pages/login")
     }
   }
   state = {
@@ -228,6 +228,7 @@ class SideMenuContent extends React.Component {
               currentActiveGroup={this.state.currentActiveGroup}
               permission={this.props.permission}
               currentUser={this.props.currentUser}
+              userPermission={this.props.userPermission}
               redirectUnauthorized={this.redirectUnauthorized}
               collapsedMenuPaths={this.props.collapsedMenuPaths}
               toggleMenu={this.props.toggleMenu}
@@ -251,16 +252,25 @@ class SideMenuContent extends React.Component {
       if (
         item.type === "collapse" ||
         item.type === "external-link" ||
+        // (item.type === "item" &&
+        //   item.permissions &&
+        //   item.permissions.includes(this.props.currentUser)) ||
+        // item.permissions === undefined
         (item.type === "item" &&
-          item.permissions &&
-          item.permissions.includes(this.props.currentUser)) ||
-        item.permissions === undefined
+          item.userPermission &&
+          this.props.userPermission !== undefined &&
+          this.props.userPermission.includes(item.userPermission)) ||
+        item.userPermission === undefined
       ) {
         return renderItem
       } else if (
-        item.type === "item" &&
+        // item.type === "item" &&
+        // item.navLink === this.props.activePath &&
+        // !item.permissions.includes(this.props.currentUser)
+        (item.type === "item" &&
         item.navLink === this.props.activePath &&
-        !item.permissions.includes(this.props.currentUser)
+        this.props.userPermission !== undefined &&
+        !this.props.userPermission.includes(item.userPermission)) ||  (this.props.userPermission === undefined)
       ) {
         return this.redirectUnauthorized()
       }

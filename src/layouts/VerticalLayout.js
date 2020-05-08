@@ -212,6 +212,7 @@ class VerticalLayout extends PureComponent {
       activeTheme: appProps.menuTheme,
       collapsed: this.state.collapsedContent,
       permission: this.props.permission,
+      userPermission: this.props.userPermission,
       deviceWidth: this.state.width
     };
     let navbarProps = {

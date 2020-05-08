@@ -1,14 +1,22 @@
 import React, { Suspense, lazy } from "react"
-import { Router, Switch, Route } from "react-router-dom"
+import { Router, Switch, Route, Redirect } from "react-router-dom"
 import { history } from "./history"
 import { connect } from "react-redux"
-import { Redirect } from "react-router-dom"
 import Spinner from "./components/@vuexy/spinner/Loading-spinner"
 import knowledgeBaseCategory from "./views/pages/knowledge-base/Category"
 import knowledgeBaseQuestion from "./views/pages/knowledge-base/Questions"
 import { ContextLayout } from "./utility/context/Layout"
 import { ToastContainer  } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import {
+  setHours,
+  setMinutes,
+  setSeconds,
+  setMilliseconds,
+  isBefore,
+  parseISO
+} from "date-fns";
+import { utcToZonedTime } from "date-fns-tz";
 // Route-based code splitting
 const analyticsDashboard = lazy(() =>
   import("./views/dashboard/analytics/AnalyticsDashboard")
@@ -178,11 +186,25 @@ const register = lazy(() =>
 const accessControl = lazy(() =>
   import("./extensions/access-control/AccessControl")
 )
+const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+const checkDate = setMilliseconds(
+  setSeconds(setMinutes(setHours(new Date(), 0), 0), 0),
+  0
+);
+// transformando a checkdate acima para o formato global, pois
+// a hora pode variar de usuario para usuario, e é bom manter o padrao
+// global
+const compareDate = utcToZonedTime(checkDate, timezone);
+
 // Set Layout and Component Using App Route
-const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
+const RouteConfig = ({ component: Component, fullLayout, user, userPermission, loginDate, ...rest }) => (
   <Route
     {...rest}
     render={props => {
+      if ((user === null  || loginDate === null || (isBefore(parseISO(loginDate), compareDate))) && props.location.pathname!== "/pages/login" && props.location.pathname!== "/pages/register")
+      return (
+        <Redirect to="/pages/login" />
+      );
       return (
         <ContextLayout.Consumer>
           {context => {
@@ -193,9 +215,9 @@ const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
                 ? context.horizontalLayout
                 : context.VerticalLayout
             return (
-              <LayoutTag {...props} permission={props.user}>
+              <LayoutTag {...props} >
                 <Suspense fallback={<Spinner />}>
-                  <Component {...props} />
+                  <Component {...props} userPermission={userPermission}/>
                 </Suspense>
               </LayoutTag>
             )
@@ -207,7 +229,9 @@ const RouteConfig = ({ component: Component, fullLayout, ...rest }) => (
 )
 const mapStateToProps = state => {
   return {
-    user: state.auth.login.userRole
+    user: state.auth.login.userRole,
+    userPermission: state.auth.login.permissions,
+    loginDate: state.auth.login.loginDate
   }
 }
 

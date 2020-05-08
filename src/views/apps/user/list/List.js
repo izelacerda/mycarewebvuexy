@@ -46,8 +46,13 @@ import { dicalogin } from "../../../../shared/geral"
 import { Container, Content  } from "./styles";
 import ToolBar from "../../../../components/especificos/toolbar"
 
-export default function UserList() {
+export default function UserList(props) {
   const auth = useSelector(state => state.auth);
+  let insertPermission = props.userPermission.includes(2)
+  let deletePermission = props.userPermission.includes(4)
+  let reportPermission = props.userPermission.includes(5)
+  let dadosdoCadastroPermission = props.userPermission.includes(6)
+
   const [gridApi, setgridApi] = useState(null)
   const [rowData, setrowData] = useState(null)
   const [pageSize, setpageSize] = useState(20)
@@ -73,6 +78,7 @@ export default function UserList() {
       label: null,
       outline: false,
       tooltip: 'Incluir',
+      disabled: !insertPermission,
       action: () => history.push(`/app/user/cadastro/0`)
     },
     {
@@ -84,6 +90,7 @@ export default function UserList() {
       label: null,
       outline: false,
       tooltip: 'Exportar',
+      disabled: !reportPermission,
       action: () => toggleModalExport()
     },
     {
@@ -122,7 +129,7 @@ export default function UserList() {
         return (
           <div
             className="d-flex align-items-center cursor-pointer"
-            onClick={() => history.push(`/app/user/cadastro/${params.data.id}`)}
+            onClick={() => dadosdoCadastroPermission ? history.push(`/app/user/cadastro/${params.data.id}`) : null}
           >
 
             {params.data.files ? (
@@ -245,15 +252,13 @@ export default function UserList() {
             <Edit
               className="mr-50"
               size={15}
-              onClick={() => history.push(`/app/user/cadastro/${params.data.id}`)}
+              onClick={() => dadosdoCadastroPermission ? history.push(`/app/user/cadastro/${params.data.id}`) : null}
             />
             <Trash2
               size={15}
+              disabled={!deletePermission}
               onClick={() =>
-                {
-                  toggleModalDelete(params.data,true)
-                }
-
+                  deletePermission ? toggleModalDelete(params.data,true) : null
               }
             />
           </div>
@@ -673,7 +678,9 @@ export default function UserList() {
                     />
                   )}
                 </ContextLayout.Consumer>
-              ) : null}
+              ) :
+                <Spinner color="primary" className="reload-spinner" />
+              }
               <Modal
                   isOpen={showModalDelete}
                   toggle={() => toggleModalDelete(null,false)}

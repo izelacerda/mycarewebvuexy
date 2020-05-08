@@ -61,9 +61,14 @@ class SideMenuGroup extends React.Component {
                 this.flag = false
               }
               if (
-                (child.permissions &&
-                  child.permissions.includes(this.props.currentUser)) ||
-                child.permissions === undefined
+                // (child.permissions &&
+                //   child.permissions.includes(this.props.currentUser)) ||
+                // child.permissions === undefined
+
+                (child.userPermission &&
+                  this.props.userPermission !== undefined &&
+                  this.props.userPermission.includes(child.userPermission)) ||
+                child.userPermission === undefined
               ) {
                 return (
                   <li
@@ -156,8 +161,11 @@ class SideMenuGroup extends React.Component {
                   </li>
                 )
               } else if (
-                child.navLink === this.props.activePath &&
-                !child.permissions.includes(this.props.currentUser)
+                // child.navLink === this.props.activePath &&
+                // !child.permissions.includes(this.props.currentUser)
+                (child.navLink === this.props.activePath &&
+                this.props.userPermission !== undefined &&
+                !this.props.userPermission.includes(child.userPermission)) || (this.props.userPermission === undefined)
               ) {
                 return this.props.redirectUnauthorized()
               } else {

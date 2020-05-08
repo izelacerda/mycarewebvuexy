@@ -158,33 +158,48 @@ export default function RegisterJWT() {
           abortEarly: false
         }
       );
-
-       await api.post("/users", {
-        login: rowData.login.value,
-        username: rowData.username.value,
-        email: rowData.email.value,
-        password: rowData.password.value,
-        password_confirmation: rowData.password_confirmation.value,
-        addresses: [],
-        licence_id: 0,
-        documenttype: rowData.documenttype.value,
-        document: rowData.document.value,
-        price_id: rowData.price_id.value,
-        contact_email: false,
-        contact_message: false,
-        contact_phone: false,
-        company: rowData.company.value,
-      });
+      let data = {
+        user: {
+          id: 0,
+          login: rowData.login.value,
+          username: rowData.username.value,
+          email: rowData.email.value,
+          document: rowData.document.value,
+          documenttype: rowData.documenttype.value,
+          password: rowData.password.value,
+          password_confirmation: rowData.password_confirmation.value,
+          is_active: true,
+          dob:      null,
+          mobile:    null,
+          phone:    null,
+          gender:    null,
+          website:    null,
+          contact_email:  false,
+          contact_message:  false,
+          contact_phone:  false,
+          avatar_id: null,
+          twitter:    null,
+          facebook:    null,
+          instagram:    null,
+          profile_id:  null,
+          userlog_id:   null,
+          price_id: rowData.price_id.value,
+          company: rowData.company.value,
+          licence_id: 0
+        },
+        addresses: []
+      }
+      await api.post("/users", data);
       const response = await api.post("/sessions", {
         login: rowData.login.value,
         password: rowData.password.value,
       });
       const { token, user } = response.data;
-      const { id, name, userRole, licences } = user;
+      const { id, name, userRole, licences, permissions } = user;
 
       api.defaults.headers.Authorization = `Bearer ${token}`;
 
-      dispatch(loginWithJWT({ id, name, login: rowData.login.value, email: rowData.email.value, password: rowData.password.value, userRole, remember: true, token, avatar: null, licences }));
+      dispatch(loginWithJWT({ id, name, login: rowData.login.value, email: rowData.email.value, password: rowData.password.value, userRole, remember: true, token, avatar: null, licences, permissions }));
 
     } catch (error) {
       let validErrors = "";

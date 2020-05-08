@@ -188,7 +188,8 @@ class AccessControl extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    role: state.auth.login.userRole
+    role: state.auth.login.userRole,
+    userPermission: state.auth.login.permissions
   }
 }
 export default connect(mapStateToProps, { changeRole })(AccessControl)
