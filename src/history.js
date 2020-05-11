@@ -1,3 +1,2 @@
-// import { createBrowserHistory } from "history";
-import createHashHistory from 'history/createHashHistory'
-export let history = createHashHistory({ basename: "" });
+import { createBrowserHistory } from "history";
+export let history = createBrowserHistory({ basename: "" });
