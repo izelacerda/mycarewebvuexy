@@ -31,7 +31,7 @@ export default function LoginJWT() {
     {
       login:    { value: '',  invalid: false, msg:'' },
       password: { value: '',  invalid: false, msg:'' },
-      remember:  { value: auth.login === undefined ? true : auth.login.values.loggedInUser.remember, invalid: false, msg:'' },
+      remember:  { value: auth.login === undefined || auth.login.values === undefined || auth.login.values.loggedInUser  === undefined ? true : auth.login.values.loggedInUser.remember, invalid: false, msg:'' },
     } )
   const dispatch = useDispatch();
 
