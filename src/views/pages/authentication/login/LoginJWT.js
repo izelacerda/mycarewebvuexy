@@ -214,7 +214,7 @@ export default function LoginJWT() {
         </Form>
         <Container>
           <Content>
-          <Label>Mycare.med.br - Versão: 1.0.1 - 2020</Label>
+          <Label>Mycare.med.br - Versão: 1.13.5 - 2020</Label>
           </Content>
         </Container>
 
