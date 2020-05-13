@@ -23,6 +23,18 @@
     padding: 0.5rem;
   }
 }
+.ag-grid-table {
+  height: calc(110vh - 30rem);
+  font-weight: 400;
+  font-size: 11px;
+  line-height: normal;
+  .ag-paging-panel {
+    height: 65px;
+  }
+  .sort-dropdown {
+    margin-bottom: 1rem;
+  }
+}
 
 // User view info
 .users-page-view-table .user-info {
@@ -34,15 +46,10 @@
   }
 }
 
-.ag-grid-table {
-  font-weight: 200;
-  font-size: 12px;
-  line-height: normal;
-}
 @media (max-width: 576px) {
   .ag-grid-table {
     .ag-paging-panel {
-      height: 160px;
+      height: 140px;
     }
     .sort-dropdown {
       margin-bottom: 1rem;

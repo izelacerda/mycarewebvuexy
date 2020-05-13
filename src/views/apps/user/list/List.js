@@ -42,6 +42,7 @@ import Select from "react-select"
 import { history } from "../../../../history"
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 import "../../../../assets/scss/pages/users.scss"
+
 import { dicalogin } from "../../../../shared/geral"
 import { Container, Content  } from "./styles";
 import ToolBar from "../../../../components/especificos/toolbar"
@@ -72,7 +73,7 @@ export default function UserList(props) {
     {
       id: 'toolbar1',
       color: 'primary',
-      buttomClassName: "border-primary text-success",
+      buttomClassName: "btn-icon",
       icon: 'PlusCircle',
       size: 21,
       label: null,
@@ -84,7 +85,7 @@ export default function UserList(props) {
     {
       id: 'toolbar2',
       color: 'primary',
-      buttomClassName: "border-primary text-success",
+      buttomClassName: "btn-icon",
       icon: 'Download',
       size: 21,
       label: null,
@@ -96,7 +97,7 @@ export default function UserList(props) {
     {
       id: 'toolbar3',
       color: 'primary',
-      buttomClassName: "border-primary text-success",
+      buttomClassName: "btn-icon",
       icon: 'Filter',
       size: 21,
       label: null,
@@ -266,8 +267,6 @@ export default function UserList(props) {
       }
     }
   ]
-
-
 
   useEffect(() =>
   {
@@ -706,7 +705,7 @@ export default function UserList(props) {
                   toggle={() => toggleModalExport()}
                   className="modal-dialog-centered"
                 >
-                  <ModalHeader toggle={() => toggleModalExport()}>Exportar para Excel</ModalHeader>
+                  <ModalHeader toggle={() => toggleModalExport()}>Exportar</ModalHeader>
                   <ModalBody>
                     <FormGroup>
                       <Input

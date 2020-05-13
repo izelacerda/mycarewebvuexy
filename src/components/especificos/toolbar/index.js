@@ -14,19 +14,20 @@ export default function toolbar(props) {
     <div>
       <ButtonGroup className="mb-1">
         {props.toolBarList.map((item, index) => {
-           console.log('alo2')
-           console.log(item.disabled)
-          const IconTag = Icon[item.icon ? item.icon : "X"]
+          const IconTag = item.icon ? Icon[item.icon] : null
+          const labelTag = item.label ? item.label : null
           const disabled = item.disabled === undefined ? false : item.disabled
+          const toolTip = item.tooltip ? ( <UncontrolledTooltip
+            placement="bottom"
+            target={item.id}
+          >
+            {item.tooltip}
+          </UncontrolledTooltip>) : null
           return (
-            <Button.Ripple className="btn-icon" disabled={disabled} color={item.color} onClick={item.action} key={item.id} id={item.id}>
-              <IconTag size={item.size} />
-              <UncontrolledTooltip
-                placement="bottom"
-                target={item.id}
-              >
-                {item.tooltip}
-              </UncontrolledTooltip>
+            <Button.Ripple className={item.buttomClassName} disabled={disabled} outline={item.outline} color={item.color} onClick={item.action} key={item.id} id={item.id}>
+               {item.icon ? <IconTag size={item.size} /> : null}
+               {item.label ?<span className="align-middle ml-25">{labelTag}</span>: null}
+              {toolTip}
             </Button.Ripple>
           )
         })}
@@ -35,8 +36,9 @@ export default function toolbar(props) {
     :
     <Col className="d-flex justify-content-end flex-wrap" sm="12">
        {props.toolBarList.map((item, index) => {
-         const IconTag = Icon[item.icon ? item.icon : "X"]
+         const IconTag = item.icon ? Icon[item.icon] : null
          const labelTag = item.label ? item.label : null
+         const disabled = item.disabled === undefined ? false : item.disabled
          const toolTip = item.tooltip ? ( <UncontrolledTooltip
           placement="bottom"
           target={item.id}
@@ -44,10 +46,10 @@ export default function toolbar(props) {
           {item.tooltip}
         </UncontrolledTooltip>) : null
          return (
-           <Button.Ripple className={item.buttomClassName} outline={item.outline} color={item.color} onClick={item.action} key={item.id} id={item.id}
+           <Button.Ripple className={item.buttomClassName} disabled={disabled} outline={item.outline} color={item.color} onClick={item.action} key={item.id} id={item.id}
            size="sm">
-             <IconTag size={item.size} />
-             <span className="align-middle ml-25">{labelTag}</span>
+             {item.icon ? <IconTag size={item.size} /> : null}
+             {item.label ?<span className="align-middle ml-25">{labelTag}</span>: null}
              {toolTip}
            </Button.Ripple>
          )

@@ -183,7 +183,7 @@ export default function UserCadastro(props) {
       {
         id: 'toolbar1',
         color: 'primary',
-        buttomClassName: "mr-1 mb-1",
+        buttomClassName: "btn-icon mb-1",
         icon: 'PlusCircle',
         size: 21,
         label: null,
@@ -196,7 +196,7 @@ export default function UserCadastro(props) {
       {
         id: 'toolbar3',
         color: 'primary',
-        buttomClassName: "mr-1 mb-1",
+        buttomClassName: "btn-icon mb-1",
         icon: 'RefreshCw',
         size: 21,
         label:  null,
@@ -207,7 +207,7 @@ export default function UserCadastro(props) {
       {
         id: 'toolbar4',
         color: 'primary',
-        buttomClassName: "mr-1 mb-1",
+        buttomClassName: "btn-icon mb-1",
         icon: 'List',
         size: 21,
         label: null,
@@ -219,18 +219,18 @@ export default function UserCadastro(props) {
       {
         id: 'toolbar5',
         color: 'primary',
-        buttomClassName: "mr-1 mb-1",
+        buttomClassName: "btn-icon mb-1",
         icon: 'ArrowRight',
         size: 21,
         label: null,
-        outline: true,
+        outline: false,
         tooltip: 'Próximo',
         action: () => toggle("-1")
       },
       {
         id: 'toolbar6',
         color: 'primary',
-        buttomClassName: "mr-1 mb-1",
+        buttomClassName: "btn-icon mb-1",
         icon: 'Trash',
         size: 21,
         label: null,
@@ -242,7 +242,7 @@ export default function UserCadastro(props) {
       {
         id: 'toolbar2',
         color: 'warning',
-        buttomClassName: "mr-1 mb-1",
+        buttomClassName: "btn-icon mb-1",
         icon: 'Save',
         size: 21,
         label: null,
@@ -714,7 +714,7 @@ export default function UserCadastro(props) {
                 {rowData.username ? rowData.username.value : null}
               </Media>
               <div className="d-flex flex-wrap">
-                <Button.Ripple className="mr-1" color="primary" outline onClick={() => handleImg(null)} size="sm" >
+                <Button.Ripple className="mr-1" color="primary" disabled={!salvarPermission} outline onClick={() => handleImg(null)} size="sm" >
                  Remover Imagem
                 </Button.Ripple>
                 {/* <Button.Ripple color="flat-danger">Remover Imagem</Button.Ripple> */}
@@ -739,13 +739,6 @@ export default function UserCadastro(props) {
                   <FormFeedback>{rowData.username.msg}</FormFeedback>
               </Col>
               <Col md="6" sm="12">
-                {/* <FormGroup>
-                  <Label for="role">Perfil</Label>
-                  <Input type="select" name="role" id="role">
-                    <option>User</option>
-                    <option>Staff</option>
-                  </Input>
-                </FormGroup> */}
                 <FormGroup>
                   <Label for="role">Perfil</Label>
                   <Select
@@ -758,7 +751,7 @@ export default function UserCadastro(props) {
                     options={profiles}
                     value={profiles.filter(option => option.id === rowData.profile_id.value)}
                     onChange={e => handleChangeSelect("profile_id.value","profile_id.select",e.id,e)}
-                    disabled={!salvarPermission}
+                    isDisabled={!salvarPermission}
                   />
                    {rowData.profile_id.invalid ? <div className="text-danger font-small-2">{rowData.profile_id.msg}</div>: null }
                 </FormGroup>
@@ -852,6 +845,7 @@ export default function UserCadastro(props) {
                 options={{ dateFormat: "d-m-Y" }}
                 value={rowData.dob.value}
                 onChange={date => handleChange("dob.value", date[0].toJSON())}
+                disabled={!salvarPermission}
                 // onChange={date => this.handledob(date)}
               />
             </FormGroup>
@@ -866,6 +860,7 @@ export default function UserCadastro(props) {
                 onChange={e => handleChangeMask("mobile.value",'mobile.valueMask',e.target.value)}
                 invalid={rowData.mobile.invalid}
                 tag={InputMask}
+                disabled={!salvarPermission}
               />
               <Label>{rowData.mobile.label}</Label>
               <FormFeedback>{rowData.mobile.msg}</FormFeedback>
@@ -880,6 +875,7 @@ export default function UserCadastro(props) {
                 onChange={e => handleChangeMask("phone.value",'phone.valueMask',e.target.value)}
                 invalid={rowData.phone.invalid}
                 tag={InputMask}
+                disabled={!salvarPermission}
               />
               <Label for="phone">Telefone Fixo</Label>
               <FormFeedback>{rowData.phone.msg}</FormFeedback>
@@ -893,6 +889,7 @@ export default function UserCadastro(props) {
                   defaultChecked={rowData.gender.value === 'M' ? true : false}
                   onChange={e => handleChange("gender.value", "M")}
                   name="gender.value"
+                  disabled={!salvarPermission}
                 />
               </div>
               <div className="d-inline-block mr-1">
@@ -902,6 +899,7 @@ export default function UserCadastro(props) {
                   defaultChecked={rowData.gender.value === 'F' ? true : false}
                   onChange={e => handleChange("gender.value","F")}
                   name="gender.value"
+                  disabled={!salvarPermission}
                 />
               </div>
               {rowData.gender.invalid ? <div className="text-danger font-small-2">{rowData.gender.msg}</div>: null }
@@ -918,6 +916,7 @@ export default function UserCadastro(props) {
                   defaultChecked={rowData.contact_email.value}
                   id="contact_email.value"
                   onChange={e => handleChange("contact_email.value",e.target.checked)}
+                  disabled={!salvarPermission}
                 />
               </div>
               <div className="d-inline-block mr-1">
@@ -928,6 +927,7 @@ export default function UserCadastro(props) {
                   id="contact_message.value"
                   defaultChecked={rowData.contact_message.value}
                   onChange={e => handleChange("contact_message.value",e.target.checked)}
+                  disabled={!salvarPermission}
                 />
               </div>
               <div className="d-inline-block">
@@ -938,6 +938,7 @@ export default function UserCadastro(props) {
                   id="contact_phone.value"
                   defaultChecked={rowData.contact_phone.value}
                   onChange={e => handleChange("contact_phone.value",e.target.checked)}
+                  disabled={!salvarPermission}
                 />
               </div>
             </FormGroup>
@@ -951,6 +952,7 @@ export default function UserCadastro(props) {
                   defaultChecked={rowData.documenttype.value==="F"}
                   name="documenttype.value"
                   onChange={e => onChangeDocumentType("F")}
+                  disabled={!salvarPermission}
                 />
               </div>
               <div className="d-inline-block mr-1">
@@ -960,6 +962,7 @@ export default function UserCadastro(props) {
                   defaultChecked={rowData.documenttype.value==="J"}
                   name="documenttype.value"
                   onChange={e => onChangeDocumentType("J")}
+                  disabled={!salvarPermission}
                 />
               </div>
               {rowData.documenttype.invalid ? <td className="text-danger font-small-2" >{rowData.documenttype.msg}</td>: null }
@@ -973,6 +976,7 @@ export default function UserCadastro(props) {
                 mask={rowData.document.mask}
                 onChange={e => handleChangeMask("document.value",'document.valueMask',e.target.value)}
                 invalid={rowData.document.invalid}
+                disabled={!salvarPermission}
                 tag={InputMask}
               />
               <Label>{rowData.document.label}</Label>
@@ -994,6 +998,7 @@ export default function UserCadastro(props) {
                 defaultValue={rowData.street.value}
                 onChange={e => handleChange(e.target.id,e.target.value)}
                 invalid={rowData.street.invalid}
+                disabled={!salvarPermission}
                 />
               <FormFeedback>{rowData.street.msg}</FormFeedback>
             </FormGroup>
@@ -1006,6 +1011,7 @@ export default function UserCadastro(props) {
                 defaultValue={rowData.number.value}
                 onChange={e => handleChange(e.target.id,e.target.value)}
                 invalid={rowData.number.invalid}
+                disabled={!salvarPermission}
                 />
               <FormFeedback>{rowData.number.msg}</FormFeedback>
             </FormGroup>
@@ -1018,6 +1024,7 @@ export default function UserCadastro(props) {
                 defaultValue={rowData.complement.value}
                 onChange={e => handleChange(e.target.id,e.target.value)}
                 invalid={rowData.complement.invalid}
+                disabled={!salvarPermission}
               />
               <FormFeedback>{rowData.complement.msg}</FormFeedback>
             </FormGroup>
@@ -1032,6 +1039,7 @@ export default function UserCadastro(props) {
                 onChange={e => handleChangeMask("zip.value",'zip.valueMask',e.target.value)}
                 invalid={rowData.zip.invalid}
                 tag={InputMask}
+                disabled={!salvarPermission}
               />
                <FormFeedback>{rowData.zip.msg}</FormFeedback>
             </FormGroup>
@@ -1049,6 +1057,7 @@ export default function UserCadastro(props) {
                     options={countries}
                     value={countries.filter(option => option.id === rowData.country_id.value)}
                     onChange={e => handleChangeSelect("country_id.value","country_id.select",e.id,e)}
+                    isDisabled={!salvarPermission}
                   />
                 </FormGroup>
               </Col>
@@ -1065,6 +1074,7 @@ export default function UserCadastro(props) {
                     options={estados}
                     value={estados.filter(option => option.id === rowData.state_id.value)}
                     onChange={e => handleChangeSelect("state_id.value","state_id.select",e.id,e)}
+                    isDisabled={!salvarPermission}
                   />
                 </FormGroup>
               </Col>
@@ -1081,6 +1091,7 @@ export default function UserCadastro(props) {
                     options={cities}
                     value={cities.filter(option => option.id === rowData.city_id.value)}
                     onChange={e => handleChangeSelect("city_id.value","city_id.select",e.id,e)}
+                    isDisabled={!salvarPermission}
                     invalid={true}
                   />
                   {rowData.city_id.invalid ? <div className="text-danger font-small-2">{rowData.city_id.msg}</div>: null }
@@ -1117,6 +1128,7 @@ export default function UserCadastro(props) {
                 defaultValue={rowData.website.value}
                 onChange={e => handleChange(e.target.id,e.target.value)}
                 invalid={rowData.website.invalid}
+                disabled={!salvarPermission}
               />
               <div className="form-control-position">
                 <Cloud size={15} />
@@ -1131,6 +1143,7 @@ export default function UserCadastro(props) {
                 defaultValue={rowData.twitter.value}
                 onChange={e => handleChange(e.target.id,e.target.value)}
                 invalid={rowData.twitter.invalid}
+                disabled={!salvarPermission}
               />
               <div className="form-control-position">
                 <Twitter size={15} />
@@ -1148,6 +1161,7 @@ export default function UserCadastro(props) {
                 defaultValue={rowData.facebook.value}
                 onChange={e => handleChange(e.target.id,e.target.value)}
                 invalid={rowData.facebook.invalid}
+                disabled={!salvarPermission}
               />
               <div className="form-control-position">
                 <Facebook size={15} />
@@ -1161,6 +1175,7 @@ export default function UserCadastro(props) {
                 defaultValue={rowData.instagram.value}
                 onChange={e => handleChange(e.target.id,e.target.value)}
                 invalid={rowData.instagram.invalid}
+                disabled={!salvarPermission}
               />
               <div className="form-control-position">
                 <Instagram size={15} />

@@ -15,7 +15,7 @@ const navigationConfig = [
         type: "item",
         icon: <Icon.Circle size={12} />,
         permissions: ["admin", "editor"],
-        userPermission: 1,
+        userPermission: 16,
         navLink: "/"
       },
       {
@@ -24,7 +24,7 @@ const navigationConfig = [
         type: "item",
         icon: <Icon.Circle size={12} />,
         permissions: ["admin"],
-        userPermission: 1,
+        userPermission: 16,
         navLink: "/ecommerce-dashboard"
       }
     ]
@@ -111,18 +111,36 @@ const navigationConfig = [
   // },
   {
     id: "users",
-    title: "Tables",
+    title: "System",
     type: "collapse",
     icon: <Icon.Copy size={20} />,
     children: [
       {
+        id: "profiles",
+        title: "Profiles",
+        type: "item",
+        icon: <Icon.User size={20} />,
+        permissions: ["admin"],
+        userPermission: 7,
+        navLink: "/app/profile/list"
+      },
+      {
         id: "list",
         title: "Users",
         type: "item",
-        icon: <Icon.User size={20} />,
-        permissions: ["admin", "editor"],
+        icon: <Icon.Users size={20} />,
+        permissions: ["admin"],
         userPermission: 1,
         navLink: "/app/user/list"
+      },
+      {
+        id: "permission",
+        title: "Permissions",
+        type: "item",
+        icon: <Icon.Unlock size={20} />,
+        permissions: ["admin"],
+        userPermission: 13,
+        navLink: "/app/permission/list"
       }
     ]
   },

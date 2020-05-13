@@ -24,6 +24,18 @@ const analyticsDashboard = lazy(() =>
 const ecommerceDashboard = lazy(() =>
   import("./views/dashboard/ecommerce/EcommerceDashboard")
 )
+
+const userList = lazy(() => import("./views/apps/user/list/List"))
+const permissionList = lazy(() => import("./views/apps/permission/list"))
+const userCadastro = lazy(() => import("./views/apps/user/cadastro"))
+// const userView = lazy(() => import("./views/apps/user/view/View"))
+const Login = lazy(() => import("./views/pages/authentication/login/Login"))
+
+const profileList = lazy(() => import("./views/apps/profile/list/List"))
+const profileCadastro = lazy(() => import("./views/apps/profile/cadastro"))
+// const userView = lazy(() => import("./views/apps/user/view/View"))
+
+
 const email = lazy(() => import("./views/apps/email/Email"))
 const chat = lazy(() => import("./views/apps/chat/Chat"))
 const todo = lazy(() => import("./views/apps/todo/Todo"))
@@ -169,10 +181,7 @@ const Export = lazy(() => import("./extensions/import-export/Export"))
 const ExportSelected = lazy(() =>
   import("./extensions/import-export/ExportSelected")
 )
-const userList = lazy(() => import("./views/apps/user/list/List"))
-const userCadastro = lazy(() => import("./views/apps/user/cadastro"))
-const userView = lazy(() => import("./views/apps/user/view/View"))
-const Login = lazy(() => import("./views/pages/authentication/login/Login"))
+
 const forgotPassword = lazy(() =>
   import("./views/pages/authentication/ForgotPassword")
 )
@@ -201,7 +210,7 @@ const RouteConfig = ({ component: Component, fullLayout, user, userPermission, l
   <Route
     {...rest}
     render={props => {
-      if ((user === null  || loginDate === null || (isBefore(parseISO(loginDate), compareDate))) && props.location.pathname!== "/pages/login" && props.location.pathname!== "/pages/register")
+      if ((user === null  || loginDate === null || (isBefore(parseISO(loginDate), compareDate))) && props.location.pathname!== "/pages/login" && props.location.pathname!== "/pages/register" && props.location.pathname!== "/pages/forgot-password")
       return (
         <Redirect to="/pages/login" />
       );
@@ -397,7 +406,12 @@ class AppRouter extends React.Component {
           />
           <AppRoute path="/app/user/list" component={userList} />
           <AppRoute path="/app/user/cadastro/:id" component={userCadastro} />
-          <AppRoute path="/app/user/view" component={userView} />
+
+          <AppRoute path="/app/profile/list" component={profileList} />
+          <AppRoute path="/app/profile/cadastro/:id" component={profileCadastro} />
+
+          <AppRoute path="/app/permission/list" component={permissionList} />
+          {/* <AppRoute path="/app/user/view" component={userView} /> */}
           <AppRoute path="/charts/apex" component={apex} />
           <AppRoute path="/charts/chartjs" component={chartjs} />
           <AppRoute path="/charts/recharts" component={extreme} />
