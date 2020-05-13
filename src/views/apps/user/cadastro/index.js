@@ -120,6 +120,7 @@ export default function UserCadastro(props) {
   let insertPermission = props.userPermission.includes(2)
   let updatePermission = props.userPermission.includes(3)
   let deletePermission = props.userPermission.includes(4)
+  let dadosdoCadastroPermission = props.userPermission.includes(6)
   let salvarPermission = true
 
   let { id } = props.match.params
@@ -289,6 +290,10 @@ export default function UserCadastro(props) {
   useEffect(() => {
     async function loadrowData() {
       //Profile
+      if(!dadosdoCadastroPermission) {
+        history.push(`/`)
+      }
+
       let body = {
         licence_id: auth.login.licence_id,
         id: 0
