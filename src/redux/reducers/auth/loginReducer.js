@@ -88,6 +88,9 @@ export const login = (state = INITIAL_STATE, action) => {
     case "LOGOUT_WITH_FIREBASE": {
       return { ...state, values: action.payload }
     }
+    case "CHANGE_AVATAR": {
+      return { ...state, company: action.userAvatar.company, avatar_company: action.userAvatar.avatar_company ? action.userAvatar.avatar_company.url : null }
+    }
     case "CHANGE_ROLE": {
       return { ...state, userRole: action.userRole }
     }

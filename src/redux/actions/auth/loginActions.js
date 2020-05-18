@@ -207,6 +207,9 @@ export const logoutWithFirebase = user => {
 export const changeRole = role => {
   return dispatch => dispatch({ type: "CHANGE_ROLE", userRole: role })
 }
+export const changeAvatar = avatar => {
+  return dispatch => dispatch({ type: "CHANGE_AVATAR", userAvatar: avatar })
+}
 
 export function signFailure() {
   return {

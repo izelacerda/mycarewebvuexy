@@ -80,6 +80,14 @@ const UserDropdown = props => {
       <DropdownItem divider />
       <DropdownItem
         tag="a"
+        href="#"
+        onClick={e => handleNavigation(e, `/app/user/licence`)}
+      >
+        <Icon.User size={14} className="mr-50" />
+        <span className="align-middle">Licença de Uso</span>
+      </DropdownItem>
+      <DropdownItem
+        tag="a"
         href="/pages/login"
         onClick={e => {
           e.preventDefault()

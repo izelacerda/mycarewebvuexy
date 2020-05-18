@@ -96,16 +96,16 @@ export default function RegisterJWT() {
   const [atualiza, setAtualiza] = useState(true);
   const [rowData] = useState(
     {
-      login:    { value: '',  invalid: false, msg:'' },
-      username: { value: '',  invalid: false, msg:'' },
-      company:  { value: '',  invalid: false,  msg:''},
-      email:    { value: '',  invalid: false, msg:'' },
-      password: { value: '',  invalid: false, msg:'' },
-      password_confirmation: { value: '', invalid: false, msg:'' },
-      document: { value: '',  invalid: false, msg:'', mask: '999-999-999-99', valueMask:'', label: 'CPF' },
-      price_id: { value: 1,  invalid: false, msg:'', select: { value: 1, label: "Gratuito"} },
-      documenttype: { value: 'F', invalid: false, msg:'' },
-      aceitar:  { value: false, invalid: false, msg:'' },
+      login:    { value: '',  invalid: false, tab: '1', msg:'' },
+      username: { value: '',  invalid: false, tab: '1', msg:'' },
+      company:  { value: '',  invalid: false, tab: '2', msg:''},
+      email:    { value: '',  invalid: false, tab: '1',msg:'' },
+      password: { value: '',  invalid: false, tab: '1',msg:'' },
+      password_confirmation: { value: '', invalid: false, tab: '1',msg:'' },
+      document: { value: '',  invalid: false, tab: '2',msg:'', mask: '999-999-999-99', valueMask:'', label: 'CPF' },
+      price_id: { value: 1,  invalid: false, tab: '2',msg:'', select: { value: 1, label: "Gratuito"} },
+      documenttype: { value: 'F', invalid: false, tab: '2',msg:'' },
+      aceitar:  { value: false, invalid: false, tab: '2',msg:'' },
     } )
   const [activeTab, setTab] = useState("1")
 
@@ -203,21 +203,27 @@ export default function RegisterJWT() {
 
     } catch (error) {
       let validErrors = "";
+      let tabAux = "";
       if (error instanceof Yup.ValidationError) {
         error.inner.forEach(err => {
           validErrors = `${validErrors} ${err.message}`;
 
           rowData[err.path].invalid = true
           rowData[err.path].msg = err.message
+          if(tabAux ==="" || rowData[err.path].tab < tabAux) {
+            tabAux = rowData[err.path].tab
+          }
 
         });
-        setAtualiza(!atualiza)
         if (validErrors.length > 0) {
           toast.error(
             // `Não foi possível incluir o usuário. ${validErrors}`
             `Erro ao incluir o usuário.`, { transition: Flip }
           );
         }
+        toggle(tabAux)
+        setAtualiza(!atualiza)
+
       } else {
         if (typeof error.response !== 'undefined')
         {

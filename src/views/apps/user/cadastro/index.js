@@ -66,7 +66,10 @@ const schema = Yup.object().shape({
     .email("Insira um e-mail válido")
     .required("O e-mail é obrigatório"),
   document: Yup.string()
-    .nullable()
+    // .nullable()
+    .required("CPF/CNPJ é obrigatório")
+    .min(11, "Mínimo 11 caracteres")
+    .max(14, 'Máximo 14 caracteres')
     .test("test-name", "CPF/CNPJ inválido",
       function(value) {
         return testaCPFCNPJ(value,true)
@@ -546,15 +549,15 @@ export default function UserCadastro(props) {
 
 
           const response = await api.post(`/users`, data);
-          id = response.data.data.id
+          id = response.data.id
           rowData.id.value = id
-          setIniciais(dicalogin(response.data.data.username))
+          setIniciais(dicalogin(response.data.username))
           history.push(`/app/user/cadastro/${id}`)
           toast.success("Usuário incluido com sucesso!", { transition: Flip });
         } catch (error) {
           if (typeof error.response !== 'undefined')
           {
-            if(typeof error.response.status !== 'undefined' && (error.response.status === 401 || error.response.status === 400   ))
+            if(typeof error.response.status !== 'undefined' && (error.response.status === 401 || error.response.status === 400 || error.response.status === 403  ))
             {
               if(error.response.data.message !== undefined) {
                 toast.error(error.response.data.message, { transition: Flip });
