@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { X, Tag } from "react-feather"
 import {
   UncontrolledDropdown,
@@ -10,237 +10,272 @@ import {
   Label,
   Button
 } from "reactstrap"
+import {
+  setHours,
+  setMinutes,
+  setSeconds,
+  setMilliseconds
+} from "date-fns";
 import Flatpickr from "react-flatpickr";
+import { toast, Flip } from "react-toastify"
+import { utcToZonedTime } from "date-fns-tz";
 
 import "flatpickr/dist/themes/light.css";
 import "../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
 
-const eventColors = {
-  business: "chip-success",
-  work: "chip-warning",
-  personal: "chip-danger",
-  others: "chip-primary"
-}
-class AddEvent extends React.Component {
-  state = {
-    startDate: new Date(),
-    endDate: new Date(),
-    title: "",
-    label: null,
-    allDay: true,
-    selectable: true
-  }
-  handleDateChange = date => {
-    this.setState({
-      startDate: date
-    })
+// const eventColors = {
+//   // business: "chip-success",
+//   // work: "chip-warning",
+//   // personal: "chip-danger",
+//   // others: "chip-primary",
+//   // teste: "chip-danger"
+// }
+export default function AddEvent(props) {
+// class AddEvent extends React.Component {
+  const [startDate, setStartDate] = useState(new Date())
+  const [endDate, setEndDate] = useState(new Date())
+  const [title, setTitle] = useState("")
+  const [label, setLabel] = useState(null)
+  const [allDay, setAllDay] = useState(false)
+  const [selectable, setSelectable] = useState(true)
+
+  useEffect(() => {
+    async function loadDados() {
+      setStartDate(props.eventInfo.start)
+      setEndDate(props.eventInfo.end)
+      setTitle(props.eventInfo.title)
+      setLabel(props.eventInfo.label)
+      setAllDay(props.eventInfo.allDay)
+      setSelectable(props.eventInfo.selectable)
+     }
+     if(props.eventInfo) {
+      loadDados();
+     }
+  }, [props.eventInfo]);
+
+  const handleDateChange = date => {
+    let data = new Date(date.toString())
+    let minutes = data.getMinutes()
+    let hours = data.getHours()
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if(minutes!==0 && minutes!==30) {
+      if(minutes>=21 && minutes<=29) {
+        minutes=30
+      }
+      else {
+        minutes=0
+        hours+=1
+      }
+    }
+    let start = setMilliseconds(
+      setSeconds(setMinutes(setHours(data, hours), minutes), 0),
+      0
+    );
+    const newStartDate = utcToZonedTime(start, timezone);
+    let end = setMilliseconds(
+      setSeconds(setMinutes(newStartDate, minutes+30), 0),
+      0
+    );
+    const newEndDate = utcToZonedTime(end, timezone);
+    setStartDate(newStartDate)
+    setEndDate(newEndDate)
   }
 
-  handleEndDateChange = date => {
-    this.setState({
-      endDate: date
-    })
+  const handleEndDateChange = date => {
+    setEndDate(date)
   }
 
-  handleLabelChange = label => {
-    this.setState({
-      label
-    })
+  const handleLabelChange = label => {
+    setLabel(label)
   }
 
-  handleAddEvent = id => {
-    this.props.handleSidebar(false)
-    this.props.addEvent({
+  const handleAddEvent = id => {
+    if(label === null || label === undefined) {
+      toast.error(`Obrigado informar o tipo de Agendamento! `, { transition: Flip });
+      return
+    }
+    props.handleSidebar(false)
+    props.HandleAddEvent({
       id: id,
-      title: this.state.title,
-      start: this.state.startDate,
-      end: this.state.endDate,
-      label: this.state.label === null ? "others" : this.state.label,
-      allDay: this.state.allDay,
-      selectable: this.state.selectable
+      title: title,
+      start: startDate,
+      end: endDate,
+      label: label === null && props.calendars.length>1 ? props.calendars[0].label : label,
+      allDay: allDay,
+      selectable: selectable
     })
-    this.setState({
-      startDate: new Date(),
-      endDate: new Date(),
-      title: "",
-      label: null,
-      allDay: true,
+    setStartDate(new Date())
+    setEndDate(new Date())
+    setTitle("")
+    setLabel(null)
+    setAllDay(true)
+    setSelectable(true)
+  }
+  const handleUpdateEvent = id => {
+    props.handleSidebar(false)
+    props.updateEvent({
+      id: props.eventInfo.id,
+      title: title,
+      label: label,
+      start: startDate,
+      end: endDate,
+      allDay: false,
       selectable: true
     })
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    this.setState({
-      title: nextProps.eventInfo === null ? "" : nextProps.eventInfo.title,
-      url: nextProps.eventInfo === null ? "" : nextProps.eventInfo.url,
-      startDate:
-        nextProps.eventInfo === null
-          ? new Date()
-          : new Date(nextProps.eventInfo.start),
-      endDate:
-        nextProps.eventInfo === null
-          ? new Date()
-          : new Date(nextProps.eventInfo.end),
-      label: nextProps.eventInfo === null ? null : nextProps.eventInfo.label,
-      allDay: nextProps.eventInfo === null ? true : nextProps.eventInfo.allDay,
-      selectable:
-        nextProps.eventInfo === null ? true : nextProps.eventInfo.selectable
-    })
-  }
-
-  render() {
-    let events = this.props.events.map(i => i.id)
-    let lastId = events.pop()
-    let newEventId = lastId + 1
-    return (
-      <div
+  return (
+    <div
         className={`add-event-sidebar ${
-          this.props.sidebar ? "show" : "hidden"
+          props.sidebar ? "show" : "hidden"
         }`}
-      >
-        <div className="header d-flex justify-content-between">
-          <h3 className="text-bold-600 mb-0">
-            {this.props.eventInfo !== null &&
-            this.props.eventInfo.title.length > 0
-              ? "Update Event"
-              : "Add Event"}
-          </h3>
-          <div
-            className="close-icon cursor-pointer"
-            onClick={() => this.props.handleSidebar(false)}
-          >
-            <X size={20} />
-          </div>
+    >
+      <div className="header d-flex justify-content-between">
+        <h3 className="text-bold-600 mb-0">
+          {props.eventInfo !== null &&
+          props.eventInfo.title.length > 0
+            ? "Alterar Evento"
+            : "Incluir Evento"}
+        </h3>
+        <div
+          className="close-icon cursor-pointer"
+          onClick={() => props.handleSidebar(false)}
+        >
+          <X size={20} />
         </div>
-        <div className="add-event-body">
-          <div className="category-action d-flex justify-content-between my-50">
-            <div className="event-category">
-              {this.state.label !== null ? (
-                <div className={`chip ${eventColors[this.state.label]}`}>
-                  <div className="chip-body">
-                    <div className="chip-text text-capitalize">
-                      {this.state.label}
-                    </div>
+      </div>
+      <div className="add-event-body">
+        <div className="category-action d-flex justify-content-between my-50">
+          <div className="event-category">
+            {label !== null ? (
+              <div className={`chip ${props.handleEventColorsW(label)}`}>
+                <div className="chip-body">
+                  <div className="chip-text text-capitalize">
+                    {label}
                   </div>
                 </div>
-              ) : null}
-            </div>
-            <div className="category-dropdown">
-              <UncontrolledDropdown>
-                <DropdownToggle tag="div" className="cursor-pointer">
-                  <Tag size={18} />
-                </DropdownToggle>
-                <DropdownMenu tag="ul" right>
-                  <DropdownItem
-                    tag="li"
-                    onClick={() => this.handleLabelChange("business")}
-                  >
-                    <span className="bullet bullet-success bullet-sm mr-50"></span>
-                    <span>Business</span>
-                  </DropdownItem>
-                  <DropdownItem
-                    tag="li"
-                    onClick={() => this.handleLabelChange("work")}
-                  >
-                    <span className="bullet bullet-warning bullet-sm mr-50"></span>
-                    <span>Work</span>
-                  </DropdownItem>
-                  <DropdownItem
-                    tag="li"
-                    onClick={() => this.handleLabelChange("personal")}
-                  >
-                    <span className="bullet bullet-danger bullet-sm mr-50"></span>
-                    <span>Personal</span>
-                  </DropdownItem>
-                  <DropdownItem
-                    tag="li"
-                    onClick={() => this.handleLabelChange("others")}
-                  >
-                    <span className="bullet bullet-primary bullet-sm mr-50"></span>
-                    <span>Others</span>
-                  </DropdownItem>
-                </DropdownMenu>
-              </UncontrolledDropdown>
-            </div>
+              </div>
+            ) : null}
           </div>
-          <div className="add-event-fields mt-2">
-            <FormGroup className="form-label-group">
-              <Input
-                type="text"
-                id="EventTitle"
-                placeholder="Event Title"
-                value={this.state.title}
-                onChange={e => this.setState({ title: e.target.value })}
-              />
-              <Label for="EventTitle">Event Title</Label>
-            </FormGroup>
-            <FormGroup>
-              <Label for="startDate">Start Date</Label>
-              <Flatpickr
-                id="startDate"
-                className="form-control"
-                value={this.state.startDate}
-                onChange={date => this.handleDateChange(date)}
-                options={{ altInput: true, altFormat: "F j, Y", dateFormat: "Y-m-d", }}
-              />
-            </FormGroup>
-            <FormGroup>
-              <Label for="endDate">End Date</Label>
-              <Flatpickr
-                id="endDate"
-                className="form-control"
-                value={this.state.endDate}
-                onChange={date => this.handleEndDateChange(date)}
-                options={{ altInput: true, altFormat: "F j, Y", dateFormat: "Y-m-d", }}
-              />
-            </FormGroup>
+          <div className="category-dropdown">
+            <UncontrolledDropdown>
+              <DropdownToggle tag="div" className="cursor-pointer">
+                <Tag size={18} />
+              </DropdownToggle>
+              <DropdownMenu tag="ul" right>
+                {props.calendars.map(calendar => {
+                  return (
+                  calendar.id>0 ?
+                  <DropdownItem
+                    tag="li"
+                    key={calendar.id}
+                    onClick={() => handleLabelChange(calendar.name)}
+                  >
+                    <span className={`bullet bullet-sm mr-50 ${props.handleEventColorsB(calendar.name)}`}></span>
+                    <span>{calendar.name}</span>
+                  </DropdownItem>
+                  : null)
+                })}
+              </DropdownMenu>
+            </UncontrolledDropdown>
           </div>
-          <hr className="my-2" />
-          <div className="add-event-actions text-right">
-            <Button.Ripple
-              disabled={this.state.title.length > 0 ? false : true}
-              color="primary"
+        </div>
+        <div className="add-event-fields mt-2">
+          <FormGroup className="form-label-group">
+            <Input
+              type="text"
+              id="EventTitle"
+              placeholder="Event Title"
+              value={title}
+              onChange={e => setTitle(e.target.value)}
+            />
+            <Label for="EventTitle">Título</Label>
+          </FormGroup>
+          <FormGroup>
+            <Label for="startDate">Início</Label>
+            <Flatpickr
+              id="startDate"
+              className="form-control"
+              data-enable-time
+              value={startDate}
+              onChange={date => handleDateChange(date)}
+              // options={{ altInput: true, altFormat: "F j, Y", dateFormat: "Y-m-d", }}
+            />
+              {/* <Flatpickr
+            className="form-control"
+            data-enable-time
+            value={dateTimePicker}
+            onChange={date => {
+              propssetState({ dateTimePicker : date });
+            }} */}
+          </FormGroup>
+          <FormGroup>
+            <Label for="endDate">Fim</Label>
+            <Flatpickr
+              id="endDate"
+              className="form-control"
+              data-enable-time
+              value={endDate}
+              onChange={date => handleEndDateChange(date)}
+              // options={{ altInput: true, altFormat: "F j, Y", dateFormat: "Y-m-d", }}
+            />
+          </FormGroup>
+        </div>
+        <hr className="my-2" />
+        <div className="add-event-actions text-right">
+
+          <Button.Ripple
+            disabled={title.length > 0 ? false : true}
+            color="primary"
+            onClick={() => {
+              if (props.eventInfo !== null &&
+                props.eventInfo.title.length > 0)
+                handleUpdateEvent()
+              else
+                handleAddEvent(0)
+            }}
+          >
+            {props.eventInfo !== null &&
+            props.eventInfo.title.length > 0
+              ? "Alterar"
+              : "Incluir"}
+          </Button.Ripple>
+          <Button.Ripple
+            className="ml-1 mr-1"
+            color="flat-primary"
+            onClick={() => {
+              props.handleSidebar(false)
+              if (props.handleSelectedEvent)
+                props.handleSelectedEvent(null)
+              else return null
+            }}
+          >
+            Cancelar
+          </Button.Ripple>
+          {  props.eventInfo === null ||
+                props.eventInfo.title.length <= 0
+             ? null
+             :
+             <Button.Ripple
+              className="mr-1"
+              disabled={false}
+              color="flat-danger"
               onClick={() => {
-                this.props.handleSidebar(false)
-                if (
-                  this.props.eventInfo === null ||
-                  this.props.eventInfo.title.length <= 0
-                )
-                  this.handleAddEvent(newEventId)
-                else
-                  this.props.updateEvent({
-                    id: this.props.eventInfo.id,
-                    title: this.state.title,
-                    label: this.state.label,
-                    start: this.state.startDate,
-                    end: this.state.endDate,
-                    allDay: true,
-                    selectable: true
+                  props.handleSidebar(false)
+                  props.deleteEvent({
+                    id: props.eventInfo.id
                   })
               }}
             >
-              {this.props.eventInfo !== null &&
-              this.props.eventInfo.title.length > 0
-                ? "Update Event"
-                : "Add Event"}
+              Excluir
             </Button.Ripple>
-            <Button.Ripple
-              className="ml-1"
-              color="flat-danger"
-              onClick={() => {
-                this.props.handleSidebar(false)
-                if (this.props.handleSelectedEvent)
-                  this.props.handleSelectedEvent(null)
-                else return null
-              }}
-            >
-              Cancel
-            </Button.Ripple>
-          </div>
+
+          }
         </div>
       </div>
-    )
-  }
+    </div>
+  )
+  // }
 }
 
-export default AddEvent
+// export default AddEvent

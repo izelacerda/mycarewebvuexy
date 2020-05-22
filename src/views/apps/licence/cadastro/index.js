@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react"
 import {
   Card,
-  CardHeader,
+  // CardHeader,
   CardBody,
   Row,
   Col,
@@ -27,6 +27,7 @@ import api from "../../../../services/api"
 import { changeAvatar } from "../../../../redux/actions/auth/loginActions"
 import { history } from "../../../../history"
 import ToolBar from "../../../../components/especificos/toolbar"
+import Breadcrumbs from "../../../../components/@vuexy/breadCrumbs/BreadCrumb"
 
 const schema = Yup.object().shape({
   name: Yup.string()
@@ -277,12 +278,20 @@ export default function LicenceCadastro(props) {
     )
   }
   return (
+  <>
+    <Breadcrumbs
+      breadCrumbTitle="Licença de Uso"
+      breadCrumbParent="Configuração"
+      breadCrumbActive="Licença de Uso"
+    />
     <Row>
+
        <Col lg="4" md="12">
+
         <Card>
-          <CardHeader>
+          {/* <CardHeader>
             <span className="font-medium-1 text-bold-600">Licença de Uso</span>
-          </CardHeader>
+          </CardHeader> */}
           <CardBody>
               <div>
                 <div className="d-flex justify-content-end flex-wrap" sm="12">
@@ -306,6 +315,7 @@ export default function LicenceCadastro(props) {
         </Card>
       </Col>
     </Row>
+  </>
   )
 
 }

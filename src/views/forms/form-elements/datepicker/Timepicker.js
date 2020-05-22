@@ -40,7 +40,7 @@ class Timepickers extends React.Component{
                 value={timeLimit}
                 options={{
                   enableTime: true,
-                  noCalendar: true,
+                  noCalendar: false,
                   dateFormat: "H:i",
                   minTime: "16:00",
                   maxTime: "22:30"

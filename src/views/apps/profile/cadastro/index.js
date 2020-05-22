@@ -36,6 +36,7 @@ import "../../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
 import api from "../../../../services/api"
 import { history } from "../../../../history"
 import ToolBar from "../../../../components/especificos/toolbar"
+import Breadcrumbs from "../../../../components/@vuexy/breadCrumbs/BreadCrumb"
 
 const schema = Yup.object().shape({
   name: Yup.string()
@@ -147,6 +148,7 @@ export default function UserCadastro(props) {
   useEffect(() => {
     async function loadrowData() {
       //Profile
+
       if(!dadosdoCadastroPermission) {
         history.push(`/`)
       }
@@ -359,7 +361,7 @@ export default function UserCadastro(props) {
             <Row>
               <Col md="6" sm="12">
                 <FormGroup>
-                  <Label for="name">Nome</Label>
+                  <Label className="d-block mb-50">Nome</Label>
                   <Input
                     type="text"
                     defaultValue= {rowData.name.value ? rowData.name.value : null}
@@ -402,6 +404,12 @@ export default function UserCadastro(props) {
     )
   }
   return (
+  <>
+    <Breadcrumbs
+      breadCrumbTitle="Perfil"
+      breadCrumbParent="Sistema"
+      breadCrumbActive="Perfis"
+    />
     <Row>
       <Col sm="12">
         <Card>
@@ -421,7 +429,7 @@ export default function UserCadastro(props) {
                           }}
                         >
                           <User size={16} />
-                          <span className="align-middle ml-50">Dados</span>
+                          <span className="align-middle ml-50">Dados Gerais</span>
                         </NavLink>
                       </NavItem>
                     </Nav>
@@ -464,6 +472,7 @@ export default function UserCadastro(props) {
         </Card>
       </Col>
     </Row>
+  </>
   )
 
 }

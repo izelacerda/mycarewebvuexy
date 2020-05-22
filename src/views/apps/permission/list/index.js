@@ -18,6 +18,7 @@ import "../../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
 import { history } from "../../../../history"
 import ProfilePermission from "./profilePermission"
 import UserPermission from "./userPermission"
+import Breadcrumbs from "../../../../components/@vuexy/breadCrumbs/BreadCrumb"
 
 export default function PermissionList(props) {
   let AcessoPermission = props.userPermission.includes(13)
@@ -55,6 +56,12 @@ export default function PermissionList(props) {
   }
 
   return (
+  <>
+    <Breadcrumbs
+      breadCrumbTitle="Permissões"
+      breadCrumbParent="Sistema"
+      breadCrumbActive="Permissões"
+    />
     <Row>
       <Col sm="12">
         <Card>
@@ -111,6 +118,7 @@ export default function PermissionList(props) {
         </Card>
       </Col>
     </Row>
+  </>
   )
 
 }

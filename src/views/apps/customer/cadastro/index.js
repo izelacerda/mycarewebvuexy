@@ -25,17 +25,11 @@ import {
 import _ from 'lodash';
 import { useSelector, useDispatch } from "react-redux";
 import classnames from "classnames"
-import { User, Info, Share } from "react-feather"
+import { User, Info } from "react-feather"
 import { toast, Flip } from "react-toastify"
 import * as Yup from "yup";
 import InputMask from "react-input-mask"
-import {
-  Cloud,
-  Link,
-  Twitter,
-  Facebook,
-  Instagram
-} from "react-feather"
+
 import Select from "react-select"
 
 import "../../../../assets/scss/pages/users.scss"
@@ -59,9 +53,6 @@ import Breadcrumbs from "../../../../components/@vuexy/breadCrumbs/BreadCrumb"
 const schema = Yup.object().shape({
   username: Yup.string()
   .required("O nome é obrigatório")
-  .min(10, "Mínimo 10 caracteres"),
-  login: Yup.string()
-  .required("O login é obrigatório")
   .min(10, "Mínimo 10 caracteres"),
   email: Yup.string()
     .email("Insira um e-mail válido")
@@ -89,18 +80,6 @@ const schema = Yup.object().shape({
     .boolean(),
   contact_phone: Yup
     .boolean(),
-  website: Yup.string()
-    .nullable()
-    .url("Utilize o formato correto para o Website"),
-  twitter: Yup.string()
-    .nullable()
-    .url("Utilize o formato correto para o Twitter"),
-  facebook: Yup.string()
-    .nullable()
-    .url("Utilize o formato correto para o Facebook"),
-  instagram: Yup.string()
-    .nullable()
-    .url("Utilize o formato correto para o Instagram"),
   street: Yup.string()
     .required("Endereço é obrigatório"),
   number: Yup.string()
@@ -110,21 +89,18 @@ const schema = Yup.object().shape({
   city_id: Yup.number()
     .min(1,"A Cidade é obrigatória")
     .required("A Cidade é obrigatória"),
-  profile_id: Yup.number()
-    .min(1,"O Perfil é obrigatório")
-    .required("O Perfil é obrigatório"),
   zip: Yup.string()
     .required("O CEP  é obrigatório"),
   // outros notOneof(['admin','teste'], 'este nome nao pode')
   // exemplos https://github.com/jquense/yup#usage
 });
 
-export default function UserCadastro(props) {
-  let listaPermission = props.userPermission.includes(1)
-  let insertPermission = props.userPermission.includes(2)
-  let updatePermission = props.userPermission.includes(3)
-  let deletePermission = props.userPermission.includes(4)
-  let dadosdoCadastroPermission = props.userPermission.includes(6)
+export default function ProviderCadastro(props) {
+  let listaPermission = props.userPermission.includes(31)
+  let insertPermission = props.userPermission.includes(32)
+  let updatePermission = props.userPermission.includes(33)
+  let deletePermission = props.userPermission.includes(34)
+  let dadosdoCadastroPermission = props.userPermission.includes(36)
   let salvarPermission = true
 
   let { id } = props.match.params
@@ -143,7 +119,6 @@ export default function UserCadastro(props) {
   const [activeTab, setTab] = useState("1")
   const [load, setLoad] = useState(true)
   const [atualiza, setAtualiza] = useState(true);
-  const [profiles, setProfiles] = useState([])
   const [countries, setCountries] = useState([])
   const [estados, setEstados] = useState([])
   const [cities, setCities] = useState([])
@@ -155,13 +130,12 @@ export default function UserCadastro(props) {
   const [rowData] = useState(
     {
       id: { value: 0,  invalid: false, tab: '1', msg:'' },
-      login:    { value: '',  invalid: false, tab: '1', msg:'' },
+      login: { value: '',  invalid: false, tab: '1', msg:'' },
       username: { value: '',  invalid: false, tab: '1', msg:'' },
       email:    { value: '',  invalid: false, tab: '1', msg:'' },
       avatar: { value: null,  invalid: false, tab: '1', msg:'' },
       avatar_id: { value: null,  invalid: false, tab: '1', msg:'' },
       is_active: { value: true, invalid: false, tab: '1', msg:'' },
-      profile_id: { value: 0,  invalid: false, tab: '1', msg:'', select: { value: 0, label: ""} },
       document: { value: '',  invalid: false, tab: '2', msg:'', mask: '999-999-999-99', valueMask:'', label: 'CPF' },
       documenttype: { value: 'F', invalid: false, tab: '2', msg:'' },
       dob:      { value: null, invalid: false, tab: '2', msg:'' },
@@ -179,10 +153,6 @@ export default function UserCadastro(props) {
       complement: { value: '',  invalid: false, tab: '2', msg:'' },
       addresstype: { value: '1',  invalid: false, tab: '2', msg:'' },
       zip: { value: '',  invalid: false, tab: '2', msg:'', mask: '99999-999', valueMask:'', label: 'zip' },
-      website:    { value: '',  invalid: false, tab: '3', msg:'' },
-      twitter:    { value: '',  invalid: false, tab: '3', msg:'' },
-      facebook:    { value: '',  invalid: false, tab: '3', msg:'' },
-      instagram:    { value: '',  invalid: false, tab: '3', msg:'' },
     } )
     const toolBarList = [
       {
@@ -195,7 +165,7 @@ export default function UserCadastro(props) {
         outline: false,
         tooltip: "Incluir",
         disabled: !insertPermission,
-        action: () => {  history.push(`/app/user/cadastro/0`); window.location.reload() }
+        action: () => {  history.push(`/app/customer/cadastro/0`); window.location.reload() }
       },
 
       {
@@ -219,7 +189,7 @@ export default function UserCadastro(props) {
         outline: false,
         tooltip:  'Lista',
         disabled: !listaPermission,
-        action: () => history.push(`/app/user/list`)
+        action: () => history.push(`/app/customer/list`)
       },
       {
         id: 'toolbar5',
@@ -302,10 +272,7 @@ export default function UserCadastro(props) {
         licence_id: auth.login.licence_id,
         id: 0
       };
-      let response = await api.post("/profiles.list", {
-        ...body
-      });
-      setProfiles(response.data)
+      let response = null
 
       //Countries
       body = {
@@ -316,13 +283,14 @@ export default function UserCadastro(props) {
       });
       setCountries(response.data)
 
-      // Usuários
+      // Paciente
       if(id > 0) {
         body = {
           licence_id: auth.login.licence_id,
-          id: parseInt(id)
+          id: parseInt(id),
+          active: "all"
         };
-        response = await api.post("/users.list", {
+        response = await api.post("/customers.list", {
           ...body
         });
         if(response.data !== undefined && response.data[0] !== undefined )
@@ -354,17 +322,12 @@ export default function UserCadastro(props) {
           rowData.mobile.value = dados.mobile
           rowData.phone.value = dados.phone
           rowData.gender.value = dados.gender
-          rowData.website.value = dados.website
           rowData.contact_email.value = dados.contact_email
           rowData.contact_message.value = dados.contact_message
           rowData.contact_phone.value = dados.contact_phone
           rowData.avatar_id.value = dados.avatar_id
-          rowData.twitter.value = dados.twitter
-          rowData.facebook.value = dados.facebook
-          rowData.instagram.value = dados.instagram
           rowData.is_active.value = dados.is_active
           rowData.avatar.value = dados.files
-          rowData.profile_id.value = dados.pivot && dados.pivot.profile_id ? dados.pivot.profile_id : 0
           setIniciais(dicalogin(dados.username))
           setUrl(dados.files ? dados.files.url : null)
 
@@ -385,7 +348,7 @@ export default function UserCadastro(props) {
   function toggle(tab) {
     if(tab==='-1'){
       const tabNro = parseInt(activeTab)+1
-      if(tabNro > 3) {
+      if(tabNro > 2) {
         tab="1"
       }
       else
@@ -474,7 +437,6 @@ export default function UserCadastro(props) {
       }
       await schema.validate(
         {
-          login: rowData.login.value,
           username: rowData.username.value,
           email: rowData.email.value,
           document: rowData.document.value,
@@ -483,20 +445,15 @@ export default function UserCadastro(props) {
           mobile:    rowData.mobile.value,
           phone:    rowData.phone.value,
           gender:    rowData.gender.value,
-          website:    rowData.website.value,
           contact_email:  rowData.contact_email.value,
           contact_message:  rowData.contact_message.value,
           contact_phone:  rowData.contact_phone.value,
           avatar_id: rowData.avatar_id.value,
-          twitter:    rowData.twitter.value,
-          facebook:    rowData.facebook.value,
-          instagram:    rowData.instagram.value,
           is_active: rowData.is_active.value,
           street: rowData.street.value,
           number: rowData.number.value ,
           zip: rowData.zip.value,
           city_id: rowData.city_id.value,
-          profile_id: rowData.profile_id.value
         },
         {
           abortEarly: false
@@ -513,7 +470,7 @@ export default function UserCadastro(props) {
       data = {
         user: {
           id: rowData.id.value,
-          login: rowData.login.value,
+          login: edicao === false ? rowData.email.value : rowData.login.value,
           username: rowData.username.value,
           email: rowData.email.value,
           document: rowData.document.value,
@@ -523,15 +480,10 @@ export default function UserCadastro(props) {
           mobile:    rowData.mobile.value,
           phone:    rowData.phone.value,
           gender:    rowData.gender.value,
-          website:    rowData.website.value,
           contact_email:  rowData.contact_email.value,
           contact_message:  rowData.contact_message.value,
           contact_phone:  rowData.contact_phone.value,
           avatar_id: rowData.avatar_id.value,
-          twitter:    rowData.twitter.value,
-          facebook:    rowData.facebook.value,
-          instagram:    rowData.instagram.value,
-          profile_id:  rowData.profile_id.value,
           userlog_id:   auth.login.values.loggedInUser.id,
           licence_id: auth.login.licence_id
         },
@@ -547,14 +499,12 @@ export default function UserCadastro(props) {
       }
       if (!edicao) {
         try {
-
-
-          const response = await api.post(`/users`, data);
+          const response = await api.post(`/customers`, data);
           id = response.data.id
           rowData.id.value = id
           setIniciais(dicalogin(response.data.username))
-          history.push(`/app/user/cadastro/${id}`)
-          toast.success("Usuário incluido com sucesso!", { transition: Flip });
+          history.push(`/app/customer/cadastro/${id}`)
+          toast.success("Paciente incluído com sucesso!", { transition: Flip });
         } catch (error) {
           if (typeof error.response !== 'undefined')
           {
@@ -564,17 +514,17 @@ export default function UserCadastro(props) {
                 toast.error(error.response.data.message, { transition: Flip });
               }
               else{
-                toast.error(`Erro ao Incluir o usuário! ${error.message}`, { transition: Flip });
+                toast.error(`Erro ao Incluir o paciente! ${error.message}`, { transition: Flip });
               }
             }
           }
           else {
-            toast.error(`Erro ao Incluir o usuário! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao Incluir o paciente! ${error.message}`, { transition: Flip });
           }
         }
       } else {
         try {
-          await api.put(`/users`, data);
+          await api.put(`/customers`, data);
           if(auth.login.values.loggedInUser.id === parseInt(id)) {
             let cryptoPassword = crypto.decryptByDESModeCBC(auth.login.values.loggedInUser.password)
             dispatch(loginWithJWT({
@@ -591,7 +541,7 @@ export default function UserCadastro(props) {
               permissions:  auth.login.permissions,
             }));
           }
-          toast.success("Usuário atualizado com sucesso!", { transition: Flip });
+          toast.success("Paciente atualizado com sucesso!", { transition: Flip });
         } catch (error) {
           if (typeof error.response !== 'undefined')
           {
@@ -601,12 +551,12 @@ export default function UserCadastro(props) {
                 toast.error(error.response.data.message, { transition: Flip });
               }
               else{
-                toast.error(`Erro ao Incluir o usuário! ${error.message}`, { transition: Flip });
+                toast.error(`Erro ao Incluir o paciente! ${error.message}`, { transition: Flip });
               }
             }
           }
           else {
-            toast.error(`Erro ao atualizar o usuário! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao atualizar o paciente! ${error.message}`, { transition: Flip });
           }
         }
       }
@@ -627,14 +577,14 @@ export default function UserCadastro(props) {
           toast.error(
             `Dados incorretos ao ${
               id === "0" ? "incluir" : "alterar"
-            } o usuário.`
+            } o paciente.`
           , { transition: Flip });
         }
         toggle(tabAux)
         setAtualiza(!atualiza)
       } else {
         toast.error(
-          `Não foi possível ${id === "0" ? "incluir" : "alterar"} o usuário. ${error.message}`
+          `Não foi possível ${id === "0" ? "incluir" : "alterar"} o paciente. ${error.message}`
         , { transition: Flip });
       }
     }
@@ -654,14 +604,14 @@ export default function UserCadastro(props) {
             login: rowData.login.value
           }
         };
-        await api.delete("/users",
+        await api.delete("/customers",
           { data }
         );
         setShowModalDelete(false)
-        history.push(`/app/user/list`)
+        history.push(`/app/customer/list`)
         // let rowDataAux = rowData.filter(function(row){ return row.id !== userDelete.id; })
         // setrowData(rowDataAux)
-        toast.success("Usuário excluído com sucesso!", { transition: Flip });
+        toast.success("Paciente excluído com sucesso!", { transition: Flip });
       }
 
     } catch (error) {
@@ -673,12 +623,12 @@ export default function UserCadastro(props) {
             toast.error(error.response.data.message, { transition: Flip });
           }
           else{
-            toast.error(`Erro ao Excluir o usuário! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao Excluir o paciente! ${error.message}`, { transition: Flip });
           }
         }
       }
       else {
-        toast.error(`Erro ao Excluir o usuário! ${error.message}`, { transition: Flip });
+        toast.error(`Erro ao Excluir o paciente! ${error.message}`, { transition: Flip });
       }
       setShowModalDelete(false)
 
@@ -749,37 +699,6 @@ export default function UserCadastro(props) {
               </Col>
               <Col md="6" sm="12">
                 <FormGroup>
-                  <Label for="role">Perfil</Label>
-                  <Select
-                    getOptionLabel={option => option.name}
-                    getOptionValue={option => option.id}
-                    className="React"
-                    classNamePrefix="select"
-                    isSearchable={false}
-                    name="profile"
-                    options={profiles}
-                    value={profiles.filter(option => option.id === rowData.profile_id.value)}
-                    onChange={e => handleChangeSelect("profile_id.value","profile_id.select",e.id,e)}
-                    isDisabled={!salvarPermission}
-                  />
-                   {rowData.profile_id.invalid ? <div className="text-danger font-small-2">{rowData.profile_id.msg}</div>: null }
-                </FormGroup>
-              </Col>
-              <Col md="6" sm="12">
-                <FormGroup>
-                  <Label for="login">Login</Label>
-                  <Input
-                    type="text"
-                    defaultValue={rowData.login ? rowData.login.value : null}
-                    id="login.value"
-                    placeholder="Login"
-                    onChange={e => handleChange(e.target.id,e.target.value)}
-                    invalid={rowData.login.invalid}
-                    disabled={!salvarPermission}
-                  />
-                  <FormFeedback>{rowData.login.msg}</FormFeedback>
-                </FormGroup>
-                <FormGroup>
                   <Label for="email">E-mail</Label>
                   <Input
                     type="text"
@@ -819,15 +738,6 @@ export default function UserCadastro(props) {
                 </FormGroup>
 
               </Col>
-              {/* <Col
-                className="d-flex justify-content-end flex-wrap mt-2"
-                sm="12"
-              >
-                <Button.Ripple className="mr-1" color="primary" onClick={() => toggle("2")}>
-                  Proximo
-                </Button.Ripple>
-                <Button.Ripple color="flat-warning" onClick={() => handleDados("9")} >Limpar</Button.Ripple>
-              </Col> */}
             </Row>
           </Form>
         </Col>
@@ -1109,95 +1019,6 @@ export default function UserCadastro(props) {
               </Col>
             </Row>
           </Col>
-          {/* <Col className="d-flex justify-content-end flex-wrap" sm="12">
-            <Button.Ripple className="mr-1" color="primary" onClick={() => toggle("3")}>
-              Proximo
-            </Button.Ripple>
-            <Button.Ripple color="flat-warning" onClick={() => handleDados("9")} >Limpar</Button.Ripple>
-          </Col> */}
-        </Row>
-      </Form>
-    )
-  }
-  function FormTab3() {
-    return (
-      <Form className="mt-2" onSubmit={e => e.preventDefault()}>
-        <h5 className="mb-1">
-          <Link size={15} />
-          <span className="align-middle ml-50">Social Links</span>
-        </h5>
-        <Row>
-          <Col md="6" sm="12">
-            <Label for="twitter">Website</Label>
-            <FormGroup className="position-relative has-icon-left">
-              <Input
-                type="url"
-                id="website.value"
-                placeholder="Endereço Web"
-                defaultValue={rowData.website.value}
-                onChange={e => handleChange(e.target.id,e.target.value)}
-                invalid={rowData.website.invalid}
-                disabled={!salvarPermission}
-              />
-              <div className="form-control-position">
-                <Cloud size={15} />
-              </div>
-              <FormFeedback>{rowData.website.msg}</FormFeedback>
-            </FormGroup>
-            <Label for="twitter">Twitter</Label>
-            <FormGroup className="position-relative has-icon-left">
-              <Input
-                id="twitter.value"
-                placeholder="https://www.twitter.com/"
-                defaultValue={rowData.twitter.value}
-                onChange={e => handleChange(e.target.id,e.target.value)}
-                invalid={rowData.twitter.invalid}
-                disabled={!salvarPermission}
-              />
-              <div className="form-control-position">
-                <Twitter size={15} />
-              </div>
-              <FormFeedback>{rowData.twitter.msg}</FormFeedback>
-            </FormGroup>
-
-          </Col>
-          <Col md="6" sm="12">
-            <Label for="facebook">Facebook</Label>
-            <FormGroup className="position-relative has-icon-left">
-              <Input
-                id="facebook.value"
-                placeholder="https://www.facebook.com/"
-                defaultValue={rowData.facebook.value}
-                onChange={e => handleChange(e.target.id,e.target.value)}
-                invalid={rowData.facebook.invalid}
-                disabled={!salvarPermission}
-              />
-              <div className="form-control-position">
-                <Facebook size={15} />
-              </div>
-            </FormGroup>
-            <Label for="instagram">Instagram</Label>
-            <FormGroup className="position-relative has-icon-left">
-              <Input
-                id="instagram.value"
-                placeholder="https://www.instagram.com/"
-                defaultValue={rowData.instagram.value}
-                onChange={e => handleChange(e.target.id,e.target.value)}
-                invalid={rowData.instagram.invalid}
-                disabled={!salvarPermission}
-              />
-              <div className="form-control-position">
-                <Instagram size={15} />
-              </div>
-              <FormFeedback>{rowData.instagram.msg}</FormFeedback>
-            </FormGroup>
-          </Col>
-          {/* <Col className="d-flex justify-content-end flex-wrap" sm="12">
-            <Button.Ripple className="mr-1" color="primary" onClick={() => handleSubmit()}>
-              Gravar
-            </Button.Ripple>
-            <Button.Ripple color="flat-warning" onClick={() => handleDados("9")} >Limpar</Button.Ripple>
-          </Col> */}
         </Row>
       </Form>
     )
@@ -1206,9 +1027,9 @@ export default function UserCadastro(props) {
   return (
   <>
     <Breadcrumbs
-      breadCrumbTitle="Usuário"
-      breadCrumbParent="Sistema"
-      breadCrumbActive="Usuários"
+      breadCrumbTitle="Paciente"
+      breadCrumbParent="Cadastro"
+      breadCrumbActive="Pacientes"
     />
     <Row>
       <Col sm="12">
@@ -1229,7 +1050,7 @@ export default function UserCadastro(props) {
                           }}
                         >
                           <User size={16} />
-                          <span className="align-middle ml-50">Acesso</span>
+                          <span className="align-middle ml-50">Dados Gerais</span>
                         </NavLink>
                       </NavItem>
                       <NavItem>
@@ -1243,19 +1064,6 @@ export default function UserCadastro(props) {
                         >
                           <Info size={16} />
                           <span className="align-middle ml-50">Informações</span>
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          className={classnames({
-                            active: activeTab === "3"
-                          })}
-                          onClick={() => {
-                            toggle("3")
-                          }}
-                        >
-                          <Share size={16} />
-                          <span className="align-middle ml-50">Social</span>
                         </NavLink>
                       </NavItem>
                     </Nav>
@@ -1272,7 +1080,7 @@ export default function UserCadastro(props) {
                       Exclusão
                     </ModalHeader>
                     <ModalBody>
-                      Confirma a exclusão do Usuário? <br></br><br></br>
+                      Confirma a exclusão do Paciente? <br></br><br></br>
                       <span className="text-center">
                         {rowData.username.value}
                       </span>
@@ -1291,9 +1099,6 @@ export default function UserCadastro(props) {
                     </TabPane>
                     <TabPane tabId="2">
                       <FormTab2 />
-                    </TabPane>
-                    <TabPane tabId="3">
-                      <FormTab3 />
                     </TabPane>
                   </TabContent>
                 :

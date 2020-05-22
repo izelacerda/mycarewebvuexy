@@ -26,14 +26,22 @@ const ecommerceDashboard = lazy(() =>
 )
 
 const userList = lazy(() => import("./views/apps/user/list/List"))
-const permissionList = lazy(() => import("./views/apps/permission/list"))
 const userCadastro = lazy(() => import("./views/apps/user/cadastro"))
+
+const permissionList = lazy(() => import("./views/apps/permission/list"))
+
 const Login = lazy(() => import("./views/pages/authentication/login/Login"))
 
 const profileList = lazy(() => import("./views/apps/profile/list/List"))
 const profileCadastro = lazy(() => import("./views/apps/profile/cadastro"))
 
 const userLicence = lazy(() => import("./views/apps/licence/cadastro"))
+
+const providerList = lazy(() => import("./views/apps/provider/list/List"))
+const providerCadastro = lazy(() => import("./views/apps/provider/cadastro"))
+
+const customerList = lazy(() => import("./views/apps/customer/list/List"))
+const customerCadastro = lazy(() => import("./views/apps/customer/cadastro"))
 
 const email = lazy(() => import("./views/apps/email/Email"))
 const chat = lazy(() => import("./views/apps/chat/Chat"))
@@ -281,7 +289,7 @@ class AppRouter extends React.Component {
             component={checkout}
             permission="admin"
           />
-          <AppRoute path="/data-list/list-view" component={listView} />
+          <AppRoute path="/data-list/list-view" c omponent={listView} />
           <AppRoute path="/data-list/thumb-view" component={thumbView} />
           <AppRoute path="/ui-element/grid" component={grid} />
           <AppRoute path="/ui-element/typography" component={typography} />
@@ -408,6 +416,12 @@ class AppRouter extends React.Component {
 
           <AppRoute path="/app/profile/list" component={profileList} />
           <AppRoute path="/app/profile/cadastro/:id" component={profileCadastro} />
+
+          <AppRoute path="/app/provider/list" component={providerList} />
+          <AppRoute path="/app/provider/cadastro/:id" component={providerCadastro} />
+
+          <AppRoute path="/app/customer/list" component={customerList} />
+          <AppRoute path="/app/customer/cadastro/:id" component={customerCadastro} />
 
           <AppRoute path="/app/permission/list" component={permissionList} />
 

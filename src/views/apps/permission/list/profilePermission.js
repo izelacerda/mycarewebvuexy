@@ -159,6 +159,7 @@ export default function ProfilePermission(props) {
       if (auth.login !== undefined) {
         if (auth.login.licence_id !== undefined) {
           let body = {
+            application_id: 1,
             licence_id: auth.login.licence_id,
             id: 0
           };

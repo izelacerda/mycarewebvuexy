@@ -2,10 +2,7 @@ import React, { useState, useEffect } from "react"
 import {
   Card,
   CardBody,
-  CardHeader,
-  CardTitle,
   FormGroup,
-  Label,
   Input,
   Row,
   Col,
@@ -18,7 +15,6 @@ import {
   DropdownItem,
   DropdownToggle,
   Button,
-  Collapse,
   Spinner,
   CustomInput
 } from "reactstrap"
@@ -33,11 +29,7 @@ import {
   Edit,
   Trash2,
   ChevronDown,
-  RotateCw,
-  X
 } from "react-feather"
-import classnames from "classnames"
-import Select from "react-select"
 
 import { history } from "../../../../history"
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
@@ -46,6 +38,7 @@ import "../../../../assets/scss/pages/users.scss"
 import { dicalogin } from "../../../../shared/geral"
 import { Container, Content  } from "./styles";
 import ToolBar from "../../../../components/especificos/toolbar"
+import Breadcrumbs from "../../../../components/@vuexy/breadCrumbs/BreadCrumb"
 
 export default function UserList(props) {
   const auth = useSelector(state => state.auth);
@@ -57,12 +50,7 @@ export default function UserList(props) {
   const [gridApi, setgridApi] = useState(null)
   const [rowData, setrowData] = useState(null)
   const [pageSize, setpageSize] = useState(20)
-  const [isVisible, setisVisible] = useState(true)
-  const [reload, setreload] = useState(false)
-  const [collapse, setcollapse] = useState(false)
   const [agFilter, setagFilter] = useState(false)
-  const [status, setstatus] = useState("Opened")
-  const [profile, setProfile] = useState(0)
   const [profiles, setProfiles] = useState([])
   const [showModalDelete, setShowModalDelete] = useState(false)
   const [showModalExport, setShowModalExport] = useState(false)
@@ -301,19 +289,6 @@ export default function UserList(props) {
     // setgridColumnApi(params.columnApi)
   }
 
-  const filterData = (column, val) => {
-    var filter = gridApi.getFilterInstance(column)
-    var modelObj = null
-    if (val !== "all") {
-      modelObj = {
-        type: "equals",
-        filter: val
-      }
-    }
-    filter.setModel(modelObj)
-    gridApi.onFilterChanged()
-  }
-
   const filterSize = val => {
     if (gridApi) {
       gridApi.paginationSetPageSize(Number(val))
@@ -324,9 +299,7 @@ export default function UserList(props) {
   const filterGrid = () => {
     if (gridApi) {
       setagFilter(!agFilter)
-      setreload(true)
       setTimeout(() => {
-        setreload(false)
       }, 500)
       gridApi.refreshHeader()
     }
@@ -336,33 +309,6 @@ export default function UserList(props) {
     setsearchVal(val)
   }
 
-  const refreshCard = () => {
-    setreload(true)
-    setTimeout(() => {
-      setreload(false)
-      setProfile(0)
-    }, 500)
-  }
-
-  const toggleCollapse = () => {
-    setcollapse(!collapse)
-  }
-  const onEntering = () => {
-    setstatus("Opening...")
-  }
-
-  const onEntered = () => {
-    setstatus("Opened")
-  }
-  const onExiting = () => {
-    setstatus("Closing...")
-  }
-  const onExited = () => {
-    setstatus("Closed")
-  }
-  const removeCard = () => {
-    setisVisible(false)
-  }
   function getProfile(id) {
     const profile = profiles.find(e => e.id === id)
     if(profile !== undefined) {
@@ -370,10 +316,7 @@ export default function UserList(props) {
     }
     return null
   }
-  function handleFilter(id, value) {
-    setProfile(value)
-    filterData(id, value)
-  }
+
   function toggleModalDelete(userDelete, status) {
     setUserDelete(userDelete)
     setShowModalDelete(status)
@@ -447,165 +390,13 @@ export default function UserList(props) {
 
 
   return (
+  <>
+    <Breadcrumbs
+      breadCrumbTitle="Usuários"
+      breadCrumbParent="Sistema"
+      breadCrumbActive="Usuários"
+    />
     <Row className="app-user-list">
-      <Col sm="12">
-        <Card
-          className={classnames("card-action card-reload", {
-            "d-none": isVisible === false,
-            "card-collapsed": status === "Closed",
-            closing: status === "Closing...",
-            opening: status === "Opening...",
-            refreshing: reload
-          })}
-        >
-          <CardHeader>
-            <CardTitle>Filtros</CardTitle>
-            <div className="actions">
-              <ChevronDown
-                className="collapse-icon mr-50"
-                size={15}
-                onClick={toggleCollapse}
-              />
-              <RotateCw
-                className="mr-50"
-                size={15}
-                onClick={() => {
-                  refreshCard()
-                  gridApi.setFilterModel(null)
-                }}
-              />
-              <X size={15} onClick={removeCard} />
-            </div>
-          </CardHeader>
-          <Collapse
-            isOpen={collapse}
-            onExited={onExited}
-            onEntered={onEntered}
-            onExiting={onExiting}
-            onEntering={onEntering}
-          >
-            <CardBody>
-              {reload ? (
-                <Spinner color="primary" className="reload-spinner" />
-              ) : (
-                ""
-              )}
-              <Row>
-                <Col lg="3" md="6" sm="12">
-                  <FormGroup className="mb-0">
-                    <Label for="role">Perfil</Label>
-                    {/* <Input
-                      type="select"
-                      name="pivot.profile_id"
-                      id="role"
-                      value={role}
-                      onChange={e => {
-                        setrole(e.target.value,
-                          () =>
-                            filterData(
-                              "pivot.profile_id",
-                              role.toLowerCase()
-                            )
-                        )
-                      }}
-                    >
-                      <option value="All">All</option>
-                      <option value="User">User</option>
-                      <option value="Staff">Staff</option>
-                      <option value="Admin">Admin</option>
-                    </Input> */}
-                    <Select
-                      getOptionLabel={option => option.name}
-                      getOptionValue={option => option.id}
-                      className="React"
-                      classNamePrefix="select"
-                      // isSearchable={false}
-                      name="pivot.profile_id"
-                      options={profiles}
-                      value={profiles.filter(option => option.id === profile)}
-                      onChange={e => handleFilter("pivot.profile_id",e.id)}
-                    />
-                  </FormGroup>
-                </Col>
-                <Col lg="3" md="6" sm="12">
-                  {/* <FormGroup className="mb-0">
-                    <Label for="status">Status</Label>
-                    <Input
-                      type="select"
-                      name="status"
-                      id="status"
-                      value={selectStatus}
-                      onChange={e => {
-                        setstatus(e.target.value,
-                          () =>
-                            filterData(
-                              "status",
-                              selectStatus.toLowerCase()
-                            )
-                          )
-                      }}
-                    >
-                      <option value="All">All</option>
-                      <option value="Active">Active</option>
-                      <option value="Blocked">Blocked</option>
-                      <option value="Deactivated">Deactivated</option>
-                    </Input>
-                  </FormGroup> */}
-                </Col>
-                <Col lg="3" md="6" sm="12">
-                  {/* <FormGroup className="mb-0">
-                    <Label for="verified">Verified</Label>
-                    <Input
-                      type="select"
-                      name="verified"
-                      id="verified"
-                      value={verified}
-                      onChange={e => {
-                        setverified(e.target.value,
-                          () =>
-                            filterData(
-                              "is_verified",
-                              verified.toLowerCase()
-                            )
-                          )
-                      }}
-                    >
-                      <option value="All">All</option>
-                      <option value="True">True</option>
-                      <option value="False">False</option>
-                    </Input>
-                  </FormGroup> */}
-                </Col>
-                <Col lg="3" md="6" sm="12">
-                  {/* <FormGroup className="mb-0">
-                    <Label for="department">Department</Label>
-                    <Input
-                      type="select"
-                      name="department"
-                      id="department"
-                      value={department}
-                      onChange={e => {
-                        setstatus(e.target.value,
-                          () =>
-                            filterData(
-                              "department",
-                              department.toLowerCase()
-                            )
-                          )
-                      }}
-                    >
-                      <option value="All">All</option>
-                      <option value="Sales">Sales</option>
-                      <option value="Development">Development</option>
-                      <option value="Management">Management</option>
-                    </Input>
-                  </FormGroup> */}
-                </Col>
-              </Row>
-            </CardBody>
-          </Collapse>
-        </Card>
-      </Col>
       <Col sm="12">
         <Card>
           <CardBody>
@@ -743,5 +534,6 @@ export default function UserList(props) {
         </Card>
       </Col>
     </Row>
+  </>
   )
 }

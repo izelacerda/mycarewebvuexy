@@ -6,8 +6,8 @@ let data = {
       title: "My Event",
       start: new Date(),
       end: new Date(),
-      label: "business",
-      allDay: true,
+      label: "RM",
+      allDay: false,
       selectable: true
     }
   ]

@@ -2,12 +2,59 @@ import React from "react"
 import * as Icon from "react-feather"
 const navigationConfig = [
   {
-    id: "dashboard",
-    title: "Dashboard",
+    id: "favorite",
+    title: "Favorites",
+    type: "collapse",
+    icon: <Icon.Star size={20} />,
+    badge: "warning",
+    children: [
+      {
+        id: "calendar",
+        title: "Calendar",
+        type: "item",
+        icon: <Icon.Calendar size={20} />,
+        permissions: ["admin", "editor"],
+        userPermission: 19,
+        navLink: "/calendar"
+
+        // id: "analyticsDash",
+        // title: "Analytics",
+        // type: "item",
+        // icon: <Icon.Circle size={12} />,
+        // permissions: ["admin", "editor"],
+        // userPermission: 16,
+        // navLink: "/"
+      }
+      // {
+      //   id: "analyticsDash",
+      //   title: "Analytics",
+      //   type: "item",
+      //   icon: <Icon.Circle size={12} />,
+      //   permissions: ["admin", "editor"],
+      //   userPermission: 16,
+      //   navLink: "/"
+      // },
+      // {
+      //   id: "eCommerceDash",
+      //   title: "eCommerce",
+      //   type: "item",
+      //   icon: <Icon.Circle size={12} />,
+      //   permissions: ["admin"],
+      //   userPermission: 16,
+      //   navLink: "/ecommerce-dashboard"
+      // }
+    ]
+  },
+  {
+    type: "groupHeader",
+    groupTitle: "APPS"
+  },
+  {
+    id: "DashBoard",
+    title: "DashBoard",
     type: "collapse",
     icon: <Icon.Home size={20} />,
     badge: "warning",
-    badgeText: "2",
     children: [
       {
         id: "analyticsDash",
@@ -29,10 +76,6 @@ const navigationConfig = [
       }
     ]
   },
-  {
-    type: "groupHeader",
-    groupTitle: "APPS"
-  },
   // {
   //   id: "email",
   //   title: "Email",
@@ -50,25 +93,25 @@ const navigationConfig = [
   //   permissions: ["admin", "editor"],
   //   navLink: "/chat"
   // },
-  {
-    id: "todo",
-    title: "Todo",
-    type: "item",
-    icon: <Icon.CheckSquare size={20} />,
-    permissions: ["admin", "editor"],
-    userPermission: 2,
-    navLink: "/todo/:filter",
-    filterBase: "/todo/all"
-  },
-  {
-    id: "calendar",
-    title: "Calendar",
-    type: "item",
-    icon: <Icon.Calendar size={20} />,
-    permissions: ["admin", "editor"],
-    userPermission: 2,
-    navLink: "/calendar"
-  },
+  // {
+  //   id: "todo",
+  //   title: "Todo",
+  //   type: "item",
+  //   icon: <Icon.CheckSquare size={20} />,
+  //   permissions: ["admin", "editor"],
+  //   userPermission: 2,
+  //   navLink: "/todo/:filter",
+  //   filterBase: "/todo/all"
+  // },
+  // {
+  //   id: "calendar",
+  //   title: "Calendar",
+  //   type: "item",
+  //   icon: <Icon.Calendar size={20} />,
+  //   permissions: ["admin", "editor"],
+  //   userPermission: 2,
+  //   navLink: "/calendar"
+  // },
   // {
   //   id: "eCommerce",
   //   title: "Ecommerce",
@@ -110,7 +153,33 @@ const navigationConfig = [
   //   ]
   // },
   {
-    id: "users",
+    id: "tables",
+    title: "Tables",
+    type: "collapse",
+    icon: <Icon.Copy size={20} />,
+    children: [
+      {
+        id: "prestadores",
+        title: "Providers",
+        type: "item",
+        icon: <Icon.Shield size={20} />,
+        permissions: ["admin"],
+        userPermission: 25,
+        navLink: "/app/provider/list"
+      },
+      {
+        id: "customer",
+        title: "Pacients",
+        type: "item",
+        icon: <Icon.Heart size={20} />,
+        permissions: ["admin"],
+        userPermission: 31,
+        navLink: "/app/customer/list"
+      }
+    ]
+  },
+  {
+    id: "system",
     title: "System",
     type: "collapse",
     icon: <Icon.Copy size={20} />,

@@ -1,5 +1,5 @@
 {
-  "Dashboard": "painel de controle",
+  "DashBoard": "Painel de controle",
   "Analytics": "Analytics",
   "eCommerce": "comércio eletrônico",
   "Apps": "Apps",
@@ -12,7 +12,11 @@
   "Wish List": "Lista de Desejos",
   "Product Detail": "Detalhes do produto",
   "Checkout": "Confira",
+  "Favorites": "Favoritos",
+  "Favorite": "Favorito",
   "Profiles": "Perfis",
+  "Providers": "Prestadores",
+  "Pacients": "Pacientes",
   "System": "Sistema",
   "User": "Usuário",
   "Users": "Usuários",

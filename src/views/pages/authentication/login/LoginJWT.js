@@ -86,6 +86,7 @@ export default function LoginJWT() {
         }
       );
       const response = await api.post("/sessions", {
+        application_id: 1,
         login: rowData.login.value,
         password: rowData.password.value
       });
@@ -214,7 +215,7 @@ export default function LoginJWT() {
         </Form>
         <Container>
           <Content>
-          <Label>Mycare.med.br - Versão: 1.13.5 - 2020</Label>
+          <Label>Mycare.med.br - Versão: 1.22.5 - 2020</Label>
           </Content>
         </Container>
 

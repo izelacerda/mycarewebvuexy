@@ -21,36 +21,38 @@ import {
 import { useSelector } from "react-redux";
 import { toast, Flip } from "react-toastify"
 import XLSX from "xlsx"
-
+import Breadcrumbs from "../../../../components/@vuexy/breadCrumbs/BreadCrumb"
 import api from "../../../../services/api"
 import { ContextLayout } from "../../../../utility/context/Layout"
 import { AgGridReact } from "ag-grid-react"
 import {
   Edit,
   Trash2,
-  ChevronDown
+  ChevronDown,
 } from "react-feather"
 
 import { history } from "../../../../history"
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 import "../../../../assets/scss/pages/users.scss"
 
+import { dicalogin } from "../../../../shared/geral"
+import { Container, Content  } from "./styles";
 import ToolBar from "../../../../components/especificos/toolbar"
-import Breadcrumbs from "../../../../components/@vuexy/breadCrumbs/BreadCrumb"
 
-export default function UserList(props) {
+export default function ProviderList(props) {
   const auth = useSelector(state => state.auth);
-  let insertPermission = props.userPermission.includes(8)
-  let deletePermission = props.userPermission.includes(10)
-  let reportPermission = props.userPermission.includes(11)
-  let dadosdoCadastroPermission = props.userPermission.includes(12)
+  let insertPermission = props.userPermission.includes(26)
+  let deletePermission = props.userPermission.includes(28)
+  let reportPermission = props.userPermission.includes(29)
+  let dadosdoCadastroPermission = props.userPermission.includes(30)
 
   const [gridApi, setgridApi] = useState(null)
   const [rowData, setrowData] = useState(null)
   const [pageSize, setpageSize] = useState(20)
+  const [agFilter, setagFilter] = useState(false)
   const [showModalDelete, setShowModalDelete] = useState(false)
   const [showModalExport, setShowModalExport] = useState(false)
-  const [itemDelete, setItemDelete] = useState(null)
+  const [userDelete, setUserDelete] = useState(null)
   const [fileName, setFileName] = useState("")
   const [fileFormat, setFileFormat] = useState("xlsx")
   const toolBarList = [
@@ -64,7 +66,7 @@ export default function UserList(props) {
       outline: false,
       tooltip: 'Incluir',
       disabled: !insertPermission,
-      action: () => history.push(`/app/profile/cadastro/0`)
+      action: () => history.push(`/app/provider/cadastro/0`)
     },
     {
       id: 'toolbar2',
@@ -77,6 +79,17 @@ export default function UserList(props) {
       tooltip: 'Exportar',
       disabled: !reportPermission,
       action: () => toggleModalExport()
+    },
+    {
+      id: 'toolbar3',
+      color: 'primary',
+      buttomClassName: "btn-icon",
+      icon: 'Filter',
+      size: 21,
+      label: null,
+      outline: false,
+      tooltip: 'Filtrar',
+      action: () => filterGrid()
     }
   ]
 
@@ -95,20 +108,42 @@ export default function UserList(props) {
       headerCheckboxSelection: false
     },
     {
-      headerName: "Perfil",
-      field: "name",
+      headerName: "Nome",
+      field: "username",
       filter: true,
       width: 250,
       cellRendererFramework: params => {
         return (
           <div
             className="d-flex align-items-center cursor-pointer"
-            onClick={() => dadosdoCadastroPermission ? history.push(`/app/profile/cadastro/${params.data.id}`) : null}
+            onClick={() => dadosdoCadastroPermission ? history.push(`/app/provider/cadastro/${params.data.id}`) : null}
           >
-            <span>{params.data.name}</span>
+
+            {params.data.files ? (
+                <img
+                className="rounded-circle mr-50"
+                src={params.data.files.url}
+                alt="user avatar"
+                height="30"
+                width="30"
+              />
+            ) : (
+              <Container>
+                <Content>
+                  <span className="nome">{dicalogin(params.data.username)}</span>
+                </Content>
+              </Container>
+            )}
+            <span>{params.data.username}</span>
           </div>
         )
       }
+    },
+    {
+      headerName: "E-mail",
+      field: "email",
+      filter: true,
+      width: 250
     },
     {
       headerName: "Ativo",
@@ -129,6 +164,46 @@ export default function UserList(props) {
         ) : null
       }
     },
+    // {
+    //   headerName: "Status",
+    //   field: "status.name",
+    //   filter: true,
+    //   width: 150,
+    //   cellRendererFramework: params => {
+    //     return params.value === "active" ? (
+    //       <div className="badge badge-pill badge-light-success">
+    //         {params.value}
+    //       </div>
+    //     ) : params.value === "blocked" ? (
+    //       <div className="badge badge-pill badge-light-danger">
+    //         {params.value}
+    //       </div>
+    //     ) : params.value === "deactivated" ? (
+    //       <div className="badge badge-pill badge-light-warning">
+    //         {params.value}
+    //       </div>
+    //     ) : null
+    //   }
+    // },
+    // {
+    //   headerName: "Verificado",
+    //   field: "is_verified",
+    //   filter: true,
+    //   width: 180,
+    //   cellRendererFramework: params => {
+    //     return params.value === true ? (
+    //       <div className="bullet bullet-sm bullet-primary"></div>
+    //     ) : params.value === false ? (
+    //       <div className="bullet bullet-sm bullet-secondary"></div>
+    //     ) : null
+    //   }
+    // },
+    // {
+    //   headerName: "Departamento",
+    //   field: "departments.name",
+    //   filter: true,
+    //   width: 180
+    // },
     {
       headerName: "Ações",
       field: "transactions",
@@ -139,7 +214,7 @@ export default function UserList(props) {
             <Edit
               className="mr-50"
               size={15}
-              onClick={() => dadosdoCadastroPermission ? history.push(`/app/profile/cadastro/${params.data.id}`) : null}
+              onClick={() => dadosdoCadastroPermission ? history.push(`/app/provider/cadastro/${params.data.id}`) : null}
             />
             <Trash2
               size={15}
@@ -162,12 +237,14 @@ export default function UserList(props) {
           let body = {
             licence_id: auth.login.licence_id,
             id: 0,
-            active: 'all'
+            active: "all"
           };
-          let response = await api.post("/profiles.list", {
-            ...body
-          });
-          setrowData(response.data)
+          let response = null
+          response = await api.post("/providers.list",
+            body
+          );
+          let rowData = response.data;
+          setrowData(rowData)
         }
       }
      }
@@ -182,7 +259,6 @@ export default function UserList(props) {
     // setgridColumnApi(params.columnApi)
   }
 
-
   const filterSize = val => {
     if (gridApi) {
       gridApi.paginationSetPageSize(Number(val))
@@ -190,32 +266,71 @@ export default function UserList(props) {
     }
   }
 
+  const filterGrid = () => {
+    if (gridApi) {
+      setagFilter(!agFilter)
+      setTimeout(() => {
+      }, 500)
+      gridApi.refreshHeader()
+    }
+  }
   const updateSearchQuery = val => {
     gridApi.setQuickFilter(val)
     setsearchVal(val)
   }
 
+  // const refreshCard = () => {
+  //   setreload(true)
+  //   setTimeout(() => {
+  //     setreload(false)
+  //   }, 500)
+  // }
 
-  function toggleModalDelete(itemDelete, status) {
-    setItemDelete(itemDelete)
+  // const toggleCollapse = () => {
+  //   setcollapse(!collapse)
+  // }
+  // const onEntering = () => {
+  //   setstatus("Opening...")
+  // }
+
+  // const onEntered = () => {
+  //   setstatus("Opened")
+  // }
+  // const onExiting = () => {
+  //   setstatus("Closing...")
+  // }
+  // const onExited = () => {
+  //   setstatus("Closed")
+  // }
+  // const removeCard = () => {
+  //   setisVisible(false)
+  // }
+  // function handleFilter(id, value) {
+  //   filterData(id, value)
+  // }
+  function toggleModalDelete(userDelete, status) {
+    setUserDelete(userDelete)
     setShowModalDelete(status)
   }
 
   async function handleDelete() {
     try {
-      if(itemDelete){
+      if(userDelete){
         let data = {
-          licence_id: auth.login.licence_id,
-          id: itemDelete.id,
+          user: {
+            licence_id: auth.login.licence_id,
+            id: userDelete.id,
+            login: userDelete.login
+          }
         };
-        await api.delete("/profiles",
+        await api.delete("/providers",
           { data }
         );
-        setItemDelete(null)
+        setUserDelete(null)
         setShowModalDelete(false)
-        let rowDataAux = rowData.filter(function(row){ return row.id !== itemDelete.id; })
+        let rowDataAux = rowData.filter(function(row){ return row.id !== userDelete.id; })
         setrowData(rowDataAux)
-        toast.success("Perfil excluído com sucesso!", { transition: Flip });
+        toast.success("Prestador excluído com sucesso!", { transition: Flip });
       }
 
     } catch (error) {
@@ -227,12 +342,12 @@ export default function UserList(props) {
             toast.error(error.response.data.message, { transition: Flip });
           }
           else{
-            toast.error(`Erro ao Excluir o Perfil! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao Excluir o prestador! ${error.message}`, { transition: Flip });
           }
         }
       }
       else {
-        toast.error(`Erro ao Excluir o Perfil! ${error.message}`, { transition: Flip });
+        toast.error(`Erro ao Excluir o prestador! ${error.message}`, { transition: Flip });
       }
       setShowModalDelete(false)
 
@@ -245,6 +360,15 @@ export default function UserList(props) {
 
   function handleExport() {
     toggleModalExport()
+    // let dataToExport = this.state.dataToExport
+    // rowData.map(item => {
+    //   if(this.state.selectedRows.includes(item.id)){
+    //     return dataToExport.push(item)
+    //   }else{
+    //     return null
+    //   }
+    // })
+    // this.setState({ dataToExport })
     let fileNameArq =
       fileName.length && fileFormat.length
         ? `${fileName}.${fileFormat}`
@@ -255,15 +379,15 @@ export default function UserList(props) {
     XLSX.writeFile(wbout, fileNameArq);
   }
 
+
   return (
-  <>
-    <Breadcrumbs
-      breadCrumbTitle="Perfis"
-      breadCrumbParent="Sistema"
-      breadCrumbActive="Perfis"
-    />
     <Row className="app-user-list">
       <Col sm="12">
+        <Breadcrumbs
+          breadCrumbTitle="Prestadores"
+          breadCrumbParent="Cadastros"
+          breadCrumbActive="Prestadores"
+        />
         <Card>
           <CardBody>
             <div className="ag-theme-material ag-grid-table">
@@ -325,7 +449,7 @@ export default function UserList(props) {
                       onGridReady={onGridReady}
                       colResizeDefault={"shift"}
                       animateRows={true}
-                      floatingFilter={false}
+                      floatingFilter={agFilter}
                       pagination={true}
                       pivotPanelShow="always"
                       paginationPageSize={pageSize}
@@ -346,9 +470,9 @@ export default function UserList(props) {
                     Exclusão
                   </ModalHeader>
                   <ModalBody>
-                    Confirma a exclusão do Perfil? <br></br><br></br>
+                    Confirma a exclusão do Prestador? <br></br><br></br>
                     <span className="text-center">
-                      {itemDelete ? itemDelete.username : null}
+                      {userDelete ? userDelete.username : null}
                     </span>
                   </ModalBody>
                   <ModalFooter>
@@ -400,6 +524,5 @@ export default function UserList(props) {
         </Card>
       </Col>
     </Row>
-  </>
   )
 }

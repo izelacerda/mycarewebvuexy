@@ -191,6 +191,7 @@ export default function RegisterJWT() {
       }
       await api.post("/users", data);
       const response = await api.post("/sessions", {
+        application_id: 1,
         login: rowData.login.value,
         password: rowData.password.value,
       });
