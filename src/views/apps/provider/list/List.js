@@ -153,13 +153,13 @@ export default function ProviderList(props) {
       cellRendererFramework: params => {
         return params.value === true ? (
           <div className="badge badge-pill badge-light-success">
-            Sim
+            Ativo
           </div>
           // <div className="bullet bullet-sm bullet-primary"></div>
         ) : params.value === false ? (
           // <div className="bullet bullet-sm bullet-secondary"></div>
           <div className="badge badge-pill badge-light-danger">
-            Não
+            Inativo
           </div>
         ) : null
       }

@@ -43,10 +43,15 @@ const providerCadastro = lazy(() => import("./views/apps/provider/cadastro"))
 const customerList = lazy(() => import("./views/apps/customer/list/List"))
 const customerCadastro = lazy(() => import("./views/apps/customer/cadastro"))
 
+// const calendarList = lazy(() => import("./views/apps/calendar/list/List"))
+// const calendarCadastro = lazy(() => import("./views/apps/calendar/cadastro"))
+
 const email = lazy(() => import("./views/apps/email/Email"))
 const chat = lazy(() => import("./views/apps/chat/Chat"))
 const todo = lazy(() => import("./views/apps/todo/Todo"))
-const calendar = lazy(() => import("./views/apps/calendar/Calendar"))
+const appointment = lazy(() => import("./views/apps/appointment/Calendar"))
+
+
 const shop = lazy(() => import("./views/apps/ecommerce/shop/Shop"))
 const wishlist = lazy(() => import("./views/apps/ecommerce/wishlist/Wishlist"))
 const checkout = lazy(() => import("./views/apps/ecommerce/cart/Cart"))
@@ -277,7 +282,7 @@ class AppRouter extends React.Component {
             component={() => <Redirect to="/todo/all" />}
           />
           <AppRoute path="/todo/:filter" component={todo} />
-          <AppRoute path="/calendar" component={calendar} />
+
           <AppRoute path="/ecommerce/shop" component={shop} />
           <AppRoute path="/ecommerce/wishlist" component={wishlist} />
           <AppRoute
@@ -426,6 +431,11 @@ class AppRouter extends React.Component {
           <AppRoute path="/app/permission/list" component={permissionList} />
 
           <AppRoute path="/app/user/licence/" component={userLicence} />
+
+          {/* <AppRoute path="/app/calendar/list" component={calendarList} /> */}
+          {/* <AppRoute path="/app/calendar/cadastro/:id" component={calendarCadastro} /> */}
+
+          <AppRoute path="/appointment" component={appointment} />
 
           <AppRoute path="/charts/apex" component={apex} />
           <AppRoute path="/charts/chartjs" component={chartjs} />

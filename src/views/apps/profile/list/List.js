@@ -38,7 +38,7 @@ import "../../../../assets/scss/pages/users.scss"
 import ToolBar from "../../../../components/especificos/toolbar"
 import Breadcrumbs from "../../../../components/@vuexy/breadCrumbs/BreadCrumb"
 
-export default function UserList(props) {
+export default function ProfileList(props) {
   const auth = useSelector(state => state.auth);
   let insertPermission = props.userPermission.includes(8)
   let deletePermission = props.userPermission.includes(10)
@@ -118,13 +118,13 @@ export default function UserList(props) {
       cellRendererFramework: params => {
         return params.value === true ? (
           <div className="badge badge-pill badge-light-success">
-            Sim
+            Ativo
           </div>
           // <div className="bullet bullet-sm bullet-primary"></div>
         ) : params.value === false ? (
           // <div className="bullet bullet-sm bullet-secondary"></div>
           <div className="badge badge-pill badge-light-danger">
-            Não
+            Inativo
           </div>
         ) : null
       }
@@ -348,7 +348,7 @@ export default function UserList(props) {
                   <ModalBody>
                     Confirma a exclusão do Perfil? <br></br><br></br>
                     <span className="text-center">
-                      {itemDelete ? itemDelete.username : null}
+                      {itemDelete ? itemDelete.name : null}
                     </span>
                   </ModalBody>
                   <ModalFooter>

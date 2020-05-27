@@ -39,7 +39,7 @@ import { dicalogin } from "../../../../shared/geral"
 import { Container, Content  } from "./styles";
 import ToolBar from "../../../../components/especificos/toolbar"
 
-export default function ProviderList(props) {
+export default function CustomerList(props) {
   const auth = useSelector(state => state.auth);
   let insertPermission = props.userPermission.includes(32)
   let deletePermission = props.userPermission.includes(34)
@@ -153,13 +153,13 @@ export default function ProviderList(props) {
       cellRendererFramework: params => {
         return params.value === true ? (
           <div className="badge badge-pill badge-light-success">
-            Sim
+            Ativo
           </div>
           // <div className="bullet bullet-sm bullet-primary"></div>
         ) : params.value === false ? (
           // <div className="bullet bullet-sm bullet-secondary"></div>
           <div className="badge badge-pill badge-light-danger">
-            Não
+            Inativo
           </div>
         ) : null
       }

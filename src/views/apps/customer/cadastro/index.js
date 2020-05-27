@@ -95,7 +95,7 @@ const schema = Yup.object().shape({
   // exemplos https://github.com/jquense/yup#usage
 });
 
-export default function ProviderCadastro(props) {
+export default function CustomerCadastro(props) {
   let listaPermission = props.userPermission.includes(31)
   let insertPermission = props.userPermission.includes(32)
   let updatePermission = props.userPermission.includes(33)

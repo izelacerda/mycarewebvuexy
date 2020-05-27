@@ -24,19 +24,16 @@ import {
 import _ from 'lodash';
 import { useSelector } from "react-redux";
 import classnames from "classnames"
-import { User } from "react-feather"
 import { toast, Flip } from "react-toastify"
 import * as Yup from "yup";
 
-import "../../../../assets/scss/pages/users.scss"
-import Radio from "../../../../components/@vuexy/radio/RadioVuexy"
+import "../../../../../assets/scss/pages/users.scss"
+import Radio from "../../../../../components/@vuexy/radio/RadioVuexy"
 
 import "flatpickr/dist/themes/light.css";
-import "../../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
-import api from "../../../../services/api"
-import { history } from "../../../../history"
-import ToolBar from "../../../../components/especificos/toolbar"
-import Breadcrumbs from "../../../../components/@vuexy/breadCrumbs/BreadCrumb"
+import "../../../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
+import api from "../../../../../services/api"
+import ToolBar from "../../../../../components/especificos/toolbar"
 
 const schema = Yup.object().shape({
   name: Yup.string()
@@ -47,17 +44,16 @@ const schema = Yup.object().shape({
   // exemplos https://github.com/jquense/yup#usage
 });
 
-export default function ProfileCadastro(props) {
-  let listaPermission = props.userPermission.includes(7)
-  let insertPermission = props.userPermission.includes(8)
-  let updatePermission = props.userPermission.includes(9)
-  let deletePermission = props.userPermission.includes(10)
-  let dadosdoCadastroPermission = props.userPermission.includes(12)
+export default function CalendarCadastro(props) {
+  let listaPermission = props.userPermission.includes(37)
+  let insertPermission = props.userPermission.includes(38)
+  let updatePermission = props.userPermission.includes(39)
+  let deletePermission = props.userPermission.includes(40)
+  let dadosdoCadastroPermission = props.userPermission.includes(42)
   let salvarPermission = true
 
-  let { id } = props.match.params
-  const edicao = id > 0;
-  if(edicao) {
+  let  [id, setId]  = useState(props.id)
+  if(id > 0) {
     if(!updatePermission) {
       salvarPermission = false
     }
@@ -91,7 +87,7 @@ export default function ProfileCadastro(props) {
         outline: false,
         tooltip: "Incluir",
         disabled: !insertPermission,
-        action: () => {  history.push(`/app/profile/cadastro/0`); window.location.reload() }
+        action: () => { rowData.id.value=0; rowData.name.value="";  setId(0); setLoad(true) }
       },
 
       {
@@ -103,7 +99,7 @@ export default function ProfileCadastro(props) {
         label:  null,
         outline: false,
         tooltip: 'Atualiza',
-        action: () => window.location.reload()
+        action: () => setLoad(true)
       },
       {
         id: 'toolbar4',
@@ -115,7 +111,7 @@ export default function ProfileCadastro(props) {
         outline: false,
         tooltip:  'Lista',
         disabled: !listaPermission,
-        action: () => history.push(`/app/profile/list`)
+        action: () => props.handleChangeScreen(1,0)
       },
       {
         id: 'toolbar6',
@@ -150,7 +146,7 @@ export default function ProfileCadastro(props) {
       //Profile
 
       if(!dadosdoCadastroPermission) {
-        history.push(`/`)
+        props.handleChangeScreen(1,0)
       }
       let body = {
         licence_id: auth.login.licence_id,
@@ -162,14 +158,14 @@ export default function ProfileCadastro(props) {
           licence_id: auth.login.licence_id,
           id: parseInt(id)
         };
-        response = await api.post("/profiles.list", {
+        response = await api.post("/calendars.list", {
           ...body
         });
         if(response.data !== undefined && response.data[0] !== undefined )
         {
           let dados = response.data[0]
 
-          rowData.id.value = parseInt(id)
+          rowData.id.value = id
           rowData.name.value = dados.name
           rowData.is_active.value = dados.is_active
         }
@@ -217,21 +213,20 @@ export default function ProfileCadastro(props) {
         }
       );
       let data=null
-      if (!edicao) {
+      if (id === 0) {
         try {
           data = {
             licence_id: auth.login.licence_id,
             name: rowData.name.value,
             is_active: rowData.is_active.value,
-            is_system: false,
-            systemname: "system",
             userlog_id: auth.login.values.loggedInUser.id
           }
-          const response = await api.post(`/profiles`, data);
+          const response = await api.post(`/calendars`, data);
           id = response.data.id
           rowData.id.value = id
-          history.push(`/app/profile/cadastro/${id}`)
-          toast.success("Perfil incluido com sucesso!", { transition: Flip });
+          props.handleChangeScreen(1,0)
+          // history.push(`/app/calendar/cadastro/${id}`)
+          toast.success("Tipo de Agenda incluído com sucesso!", { transition: Flip });
         } catch (error) {
           if (typeof error.response !== 'undefined')
           {
@@ -241,12 +236,12 @@ export default function ProfileCadastro(props) {
                 toast.error(error.response.data.message, { transition: Flip });
               }
               else{
-                toast.error(`Erro ao Incluir o Perfil! ${error.message}`, { transition: Flip });
+                toast.error(`Erro ao Incluir o Tipo de Agenda! ${error.message}`, { transition: Flip });
               }
             }
           }
           else {
-            toast.error(`Erro ao Incluir o Perfil! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao Incluir o Tipo de Agenda! ${error.message}`, { transition: Flip });
           }
         }
       } else {
@@ -258,8 +253,9 @@ export default function ProfileCadastro(props) {
             is_active: rowData.is_active.value,
             userlog_id: auth.login.values.loggedInUser.id
           }
-          await api.put(`/profiles`, data);
-          toast.success("Perfil atualizado com sucesso!", { transition: Flip });
+          await api.put(`/calendars`, data);
+          props.handleChangeScreen(1,0)
+          toast.success("Tipo de Agenda atualizado com sucesso!", { transition: Flip });
         } catch (error) {
           if (typeof error.response !== 'undefined')
           {
@@ -269,12 +265,12 @@ export default function ProfileCadastro(props) {
                 toast.error(error.response.data.message, { transition: Flip });
               }
               else{
-                toast.error(`Erro ao Incluir o Perfil! ${error.message}`, { transition: Flip });
+                toast.error(`Erro ao Incluir o Tipo de Agenda! ${error.message}`, { transition: Flip });
               }
             }
           }
           else {
-            toast.error(`Erro ao atualizar o Perfil! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao atualizar o Tipo de Agenda! ${error.message}`, { transition: Flip });
           }
         }
       }
@@ -295,14 +291,14 @@ export default function ProfileCadastro(props) {
           toast.error(
             `Dados incorretos ao ${
               id === "0" ? "incluir" : "alterar"
-            } o Perfil.`
+            } o Tipo de Agenda.`
           , { transition: Flip });
         }
         toggle(tabAux)
         setAtualiza(!atualiza)
       } else {
         toast.error(
-          `Não foi possível ${id === "0" ? "incluir" : "alterar"} o Perfil. ${error.message}`
+          `Não foi possível ${id === "0" ? "incluir" : "alterar"} o Tipo de Agenda. ${error.message}`
         , { transition: Flip });
       }
     }
@@ -316,19 +312,18 @@ export default function ProfileCadastro(props) {
     try {
       if(id){
         let data = {
-          user: {
-            licence_id: auth.login.licence_id,
-            id
-          }
+          licence_id: auth.login.licence_id,
+          id
         };
-        await api.delete("/profiles",
+        await api.delete("/calendars",
           { data }
         );
         setShowModalDelete(false)
-        history.push(`/app/profile/list`)
+        props.handleChangeScreen(1,0)
+        // history.push(`/app/calendar/list`)
         // let rowDataAux = rowData.filter(function(row){ return row.id !== userDelete.id; })
         // setrowData(rowDataAux)
-        toast.success("Perfil excluído com sucesso!", { transition: Flip });
+        toast.success("Tipo de Agenda excluído com sucesso!", { transition: Flip });
       }
 
     } catch (error) {
@@ -340,12 +335,12 @@ export default function ProfileCadastro(props) {
             toast.error(error.response.data.message, { transition: Flip });
           }
           else{
-            toast.error(`Erro ao Excluir o Perfil! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao Excluir o Tipo de Agenda! ${error.message}`, { transition: Flip });
           }
         }
       }
       else {
-        toast.error(`Erro ao Excluir o Perfil! ${error.message}`, { transition: Flip });
+        toast.error(`Erro ao Excluir o Tipo de Agenda! ${error.message}`, { transition: Flip });
       }
       setShowModalDelete(false)
 
@@ -405,11 +400,6 @@ export default function ProfileCadastro(props) {
   }
   return (
   <>
-    <Breadcrumbs
-      breadCrumbTitle="Perfil"
-      breadCrumbParent="Sistema"
-      breadCrumbActive="Perfis"
-    />
     <Row>
       <Col sm="12">
         <Card>
@@ -428,8 +418,7 @@ export default function ProfileCadastro(props) {
                             toggle("1")
                           }}
                         >
-                          <User size={16} />
-                          <span className="align-middle ml-50">Dados Gerais</span>
+                        <span className="align-middle ml-50">{id>0 ? "Alteração" : "Inclusão" }</span>
                         </NavLink>
                       </NavItem>
                     </Nav>
@@ -446,7 +435,7 @@ export default function ProfileCadastro(props) {
                       Exclusão
                     </ModalHeader>
                     <ModalBody>
-                      Confirma a exclusão do Perfil? <br></br><br></br>
+                      Confirma a exclusão do Tipo de Agenda? <br></br><br></br>
                       <span className="text-center">
                         {rowData.name.value}
                       </span>

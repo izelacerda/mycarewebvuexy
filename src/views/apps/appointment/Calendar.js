@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react"
 import AddEventSidebar from "./AddEventSidebar"
+import AddAgendaSidebar from "./AddAgendaSidebar"
 import AddEventButton from "./AddEventButton"
 import { Card, CardBody, Button, ButtonGroup, Col } from "reactstrap"
 import { Calendar, momentLocalizer } from "react-big-calendar"
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop"
 import moment from "moment"
 
-import { ChevronLeft, ChevronRight } from "react-feather"
+import { ChevronLeft, ChevronRight, Plus } from "react-feather"
 import { useSelector } from "react-redux";
 import Select from "react-select"
 import { toast, Flip } from "react-toastify"
@@ -26,6 +27,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css"
 import "../../../assets/scss/plugins/calendars/react-big-calendar.scss"
 import api from "../../../services/api"
 
+
 const DragAndDropCalendar = withDragAndDrop(Calendar)
 const localizer = momentLocalizer(moment)
 // let eventColors = [
@@ -41,7 +43,7 @@ const localizer = momentLocalizer(moment)
 // ]
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-export default function CalendarApp(props) {
+export default function AppointmentApp(props) {
   const auth = useSelector(state => state.auth);
   // let insertPermission = props.userPermission.includes(20)
   // let deletePermission = props.userPermission.includes(22)
@@ -62,6 +64,7 @@ export default function CalendarApp(props) {
   const [calendars, setCalendars] = useState([])
   const [calendar_id, setCalendar_id] = useState(0)
   const [loaded, setLoaded] = useState(false)
+  const [sideBarType, setSideBarType] = useState(1)
 
   useEffect(() => {
     async function loadDados() {
@@ -273,6 +276,7 @@ export default function CalendarApp(props) {
 
   const handleSelectEvent = event => {
     // let filteredState = events.filter(i => i.id === event.id)
+    setSideBarType(1)
     setSidebar(true)
     setEventInfo(event)
     // this.props.handleSidebar(true)
@@ -280,6 +284,10 @@ export default function CalendarApp(props) {
     // this.setState({
     //   eventInfo: filteredState[0]
     // })
+  }
+  const handleTypeAgenda = () => {
+    setSideBarType(2)
+    setSidebar(true)
   }
   const updateEvent = async event => {
     let calendar_id = findCalendar(event.label)
@@ -397,6 +405,8 @@ export default function CalendarApp(props) {
           start: newStartDate,
           end: newEndDate
         }
+
+    setSideBarType(1)
     setEventInfo(eventInfo)
     setSidebar(true)
   }
@@ -426,6 +436,14 @@ export default function CalendarApp(props) {
                 <span>{calendar.name}</span>
               </div> : null)
             })}
+             <Button.Ripple
+              className="btn-icon rounded-circle"
+              size="sm"
+              color="primary"
+              onClick={() => handleTypeAgenda(2)}
+            >
+              <Plus size={10} />
+            </Button.Ripple>
           </div>
         </div>
         <div className="text-center view-options mt-1 mt-sm-0 ml-lg-5 ml-0">
@@ -518,6 +536,7 @@ export default function CalendarApp(props) {
         <div
           className={`app-content-overlay ${sidebar ? "show" : "hidden"}`}
           onClick={() => {
+            setSideBarType(1)
             setSidebar(false)
             setSelectedEvent(null)
             // this.props.handleSidebar(false)
@@ -551,20 +570,30 @@ export default function CalendarApp(props) {
             : null }
           </CardBody>
         </Card>
-        <AddEventSidebar
+        {sideBarType === 1 ?
+          <AddEventSidebar
+            sidebar={sidebar}
+            handleSidebar={setSidebar}
+            HandleAddEvent={HandleAddEvent}
+            events={events}
+            eventInfo={eventInfo}
+            selectedEvent={selectedEvent}
+            updateEvent={updateEvent}
+            deleteEvent={deleteEvent}
+            handleEventColorsW={handleEventColorsW}
+            handleEventColorsB={handleEventColorsB}
+            calendars={calendars}
+            resizable
+            agenda={true}
+            userPermission={props.userPermission}
+          />
+        :
+        <AddAgendaSidebar
           sidebar={sidebar}
           handleSidebar={setSidebar}
-          HandleAddEvent={HandleAddEvent}
-          events={events}
-          eventInfo={eventInfo}
-          selectedEvent={selectedEvent}
-          updateEvent={updateEvent}
-          deleteEvent={deleteEvent}
-          handleEventColorsW={handleEventColorsW}
-          handleEventColorsB={handleEventColorsB}
-          calendars={calendars}
-          resizable
-        />
+          agenda={true}
+          userPermission={props.userPermission} />
+        }
       </div>
     )
 }

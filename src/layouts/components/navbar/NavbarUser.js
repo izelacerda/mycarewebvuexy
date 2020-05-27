@@ -68,7 +68,7 @@ const UserDropdown = props => {
       <DropdownItem
         tag="a"
         href="#"
-        onClick={e => handleNavigation(e, "/calendar")}
+        onClick={e => handleNavigation(e, "/appointment")}
       >
         <Icon.Calendar size={14} className="mr-50" />
         <span className="align-middle">Calendar</span>

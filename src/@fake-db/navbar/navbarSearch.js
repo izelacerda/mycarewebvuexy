@@ -44,7 +44,7 @@ export const searchResult = [
         id: 6,
         target: "Calender",
         title: "Calender",
-        link: "/calendar",
+        link: "/appointment",
         icon: "Calendar"
       },
       {

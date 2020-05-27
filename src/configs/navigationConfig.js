@@ -9,40 +9,14 @@ const navigationConfig = [
     badge: "warning",
     children: [
       {
-        id: "calendar",
-        title: "Calendar",
+        id: "appointment",
+        title: "Appointment",
         type: "item",
         icon: <Icon.Calendar size={20} />,
         permissions: ["admin", "editor"],
         userPermission: 19,
-        navLink: "/calendar"
-
-        // id: "analyticsDash",
-        // title: "Analytics",
-        // type: "item",
-        // icon: <Icon.Circle size={12} />,
-        // permissions: ["admin", "editor"],
-        // userPermission: 16,
-        // navLink: "/"
+        navLink: "/appointment"
       }
-      // {
-      //   id: "analyticsDash",
-      //   title: "Analytics",
-      //   type: "item",
-      //   icon: <Icon.Circle size={12} />,
-      //   permissions: ["admin", "editor"],
-      //   userPermission: 16,
-      //   navLink: "/"
-      // },
-      // {
-      //   id: "eCommerceDash",
-      //   title: "eCommerce",
-      //   type: "item",
-      //   icon: <Icon.Circle size={12} />,
-      //   permissions: ["admin"],
-      //   userPermission: 16,
-      //   navLink: "/ecommerce-dashboard"
-      // }
     ]
   },
   {

@@ -68,7 +68,7 @@ const horizontalMenuConfig = [
         title: "Calendar",
         type: "item",
         icon: <Icon.Calendar size={16} />,
-        navLink: "/calendar",
+        navLink: "/appointment",
         userPermission: 1,
         permissions: ["admin", "editor"]
       },

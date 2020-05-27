@@ -6,14 +6,10 @@ import {
   Input,
   Row,
   Col,
-  UncontrolledDropdown,
   Modal,
   ModalHeader,
   ModalBody,
   ModalFooter,
-  DropdownMenu,
-  DropdownItem,
-  DropdownToggle,
   Button,
   Spinner,
   CustomInput
@@ -22,39 +18,32 @@ import { useSelector } from "react-redux";
 import { toast, Flip } from "react-toastify"
 import XLSX from "xlsx"
 
-import api from "../../../../services/api"
-import { ContextLayout } from "../../../../utility/context/Layout"
+import api from "../../../../../services/api"
+import { ContextLayout } from "../../../../../utility/context/Layout"
 import { AgGridReact } from "ag-grid-react"
 import {
   Edit,
-  Trash2,
-  ChevronDown,
+  Trash2
 } from "react-feather"
 
-import { history } from "../../../../history"
-import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
-import "../../../../assets/scss/pages/users.scss"
+import "../../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
+import "../../../../../assets/scss/pages/users.scss"
 
-import { dicalogin } from "../../../../shared/geral"
-import { Container, Content  } from "./styles";
-import ToolBar from "../../../../components/especificos/toolbar"
-import Breadcrumbs from "../../../../components/@vuexy/breadCrumbs/BreadCrumb"
+import ToolBar from "../../../../../components/especificos/toolbar"
 
-export default function UserList(props) {
+
+export default function CalendarList(props) {
   const auth = useSelector(state => state.auth);
-  let insertPermission = props.userPermission.includes(2)
-  let deletePermission = props.userPermission.includes(4)
-  let reportPermission = props.userPermission.includes(5)
-  let dadosdoCadastroPermission = props.userPermission.includes(6)
+  let insertPermission = props.userPermission ?  props.userPermission.includes(38) : false
+  let deletePermission = props.userPermission ?  props.userPermission.includes(40) : false
+  let reportPermission = props.userPermission ?  props.userPermission.includes(41) : false
+  let dadosdoCadastroPermission =  props.userPermission ?  props.userPermission.includes(42) : false
 
-  const [gridApi, setgridApi] = useState(null)
   const [rowData, setrowData] = useState(null)
-  const [pageSize, setpageSize] = useState(20)
-  const [agFilter, setagFilter] = useState(false)
-  const [profiles, setProfiles] = useState([])
+  const pageSize = useState(150)
   const [showModalDelete, setShowModalDelete] = useState(false)
   const [showModalExport, setShowModalExport] = useState(false)
-  const [userDelete, setUserDelete] = useState(null)
+  const [itemDelete, setItemDelete] = useState(null)
   const [fileName, setFileName] = useState("")
   const [fileFormat, setFileFormat] = useState("xlsx")
   const toolBarList = [
@@ -68,7 +57,7 @@ export default function UserList(props) {
       outline: false,
       tooltip: 'Incluir',
       disabled: !insertPermission,
-      action: () => history.push(`/app/user/cadastro/0`)
+      action: () =>  props.handleChangeScreen(2,0)
     },
     {
       id: 'toolbar2',
@@ -81,84 +70,30 @@ export default function UserList(props) {
       tooltip: 'Exportar',
       disabled: !reportPermission,
       action: () => toggleModalExport()
-    },
-    {
-      id: 'toolbar3',
-      color: 'primary',
-      buttomClassName: "btn-icon",
-      icon: 'Filter',
-      size: 21,
-      label: null,
-      outline: false,
-      tooltip: 'Filtrar',
-      action: () => filterGrid()
     }
   ]
 
   const defaultColDef  = useState({
      sortable: true
   })
-  const [searchVal, setsearchVal] = useState("")
   const columnDefs = [
+
     {
-      headerName: "ID",
-      field: "id",
-      width: 150,
+      headerName: "Tipos",
+      field: "name",
       filter: true,
-      checkboxSelection: false,
-      headerCheckboxSelectionFilteredOnly: true,
-      headerCheckboxSelection: false
-    },
-    {
-      headerName: "Nome",
-      field: "username",
-      filter: true,
-      width: 250,
+      width: 120,
       cellRendererFramework: params => {
         return (
           <div
             className="d-flex align-items-center cursor-pointer"
-            onClick={() => dadosdoCadastroPermission ? history.push(`/app/user/cadastro/${params.data.id}`) : null}
+            onClick={() => dadosdoCadastroPermission ?  props.handleChangeScreen(2, params.data.id) : null}
           >
-
-            {params.data.files ? (
-                <img
-                className="rounded-circle mr-50"
-                src={params.data.files.url}
-                alt="user avatar"
-                height="30"
-                width="30"
-              />
-            ) : (
-              <Container>
-                <Content>
-                  <span className="nome">{dicalogin(params.data.username)}</span>
-                </Content>
-              </Container>
-            )}
-            <span>{params.data.username}</span>
+            <span>{params.data.name}</span>
           </div>
         )
       }
     },
-    {
-      headerName: "Login",
-      field: "login",
-      filter: true,
-      width: 250
-    },
-    {
-      headerName: "E-mail",
-      field: "email",
-      filter: true,
-      width: 250
-    },
-    // {
-    //   headerName: "Ativo",
-    //   field: "is_active",
-    //   filter: true,
-    //   width: 150
-    // },
     {
       headerName: "Ativo",
       field: "is_active",
@@ -167,82 +102,30 @@ export default function UserList(props) {
       cellRendererFramework: params => {
         return params.value === true ? (
           <div className="badge badge-pill badge-light-success">
-            Ativo
+            Sim
           </div>
           // <div className="bullet bullet-sm bullet-primary"></div>
         ) : params.value === false ? (
           // <div className="bullet bullet-sm bullet-secondary"></div>
           <div className="badge badge-pill badge-light-danger">
-            Inativo
+            Não
           </div>
         ) : null
       }
     },
     {
-      headerName: "Perfil",
-      field: "pivot.profile_id",
-      filter: true,
-      width: 280,
-      cellRendererFramework: params => {
-        return params.value !== null ? (
-          getProfile(params.value)
-          // <div className="bullet bullet-sm bullet-primary"></div>
-        )
-         : null
-      }
-    },
-    // {
-    //   headerName: "Status",
-    //   field: "status.name",
-    //   filter: true,
-    //   width: 150,
-    //   cellRendererFramework: params => {
-    //     return params.value === "active" ? (
-    //       <div className="badge badge-pill badge-light-success">
-    //         {params.value}
-    //       </div>
-    //     ) : params.value === "blocked" ? (
-    //       <div className="badge badge-pill badge-light-danger">
-    //         {params.value}
-    //       </div>
-    //     ) : params.value === "deactivated" ? (
-    //       <div className="badge badge-pill badge-light-warning">
-    //         {params.value}
-    //       </div>
-    //     ) : null
-    //   }
-    // },
-    // {
-    //   headerName: "Verificado",
-    //   field: "is_verified",
-    //   filter: true,
-    //   width: 180,
-    //   cellRendererFramework: params => {
-    //     return params.value === true ? (
-    //       <div className="bullet bullet-sm bullet-primary"></div>
-    //     ) : params.value === false ? (
-    //       <div className="bullet bullet-sm bullet-secondary"></div>
-    //     ) : null
-    //   }
-    // },
-    // {
-    //   headerName: "Departamento",
-    //   field: "departments.name",
-    //   filter: true,
-    //   width: 180
-    // },
-    {
       headerName: "Ações",
       field: "transactions",
-      width: 150,
+      width: 100,
       cellRendererFramework: params => {
         return (
           <div className="actions cursor-pointer">
             <Edit
               className="mr-50"
               size={15}
-              onClick={() => dadosdoCadastroPermission ? history.push(`/app/user/cadastro/${params.data.id}`) : null}
+              onClick={() => dadosdoCadastroPermission ? props.handleChangeScreen(2,params.data.id) : null}
             />
+            {/* history.push(`/app/calendar/cadastro/${params.data.id}`) */}
             <Trash2
               size={15}
               disabled={!deletePermission}
@@ -263,18 +146,13 @@ export default function UserList(props) {
         if (auth.login.licence_id !== undefined) {
           let body = {
             licence_id: auth.login.licence_id,
-            id: 0
+            id: 0,
+            active: 'all'
           };
-          let response = await api.post("/profiles.list", {
+          let response = await api.post("/calendars.list", {
             ...body
           });
-          setProfiles(response.data)
-
-          response = await api.post("/users.list",
-            body
-          );
-          let rowData = response.data;
-          setrowData(rowData)
+          setrowData(response.data)
         }
       }
      }
@@ -285,61 +163,30 @@ export default function UserList(props) {
   }, [auth]);
 
   const onGridReady = params => {
-    setgridApi(params.api)
+    // setgridApi(params.api)
     // setgridColumnApi(params.columnApi)
   }
 
-  const filterSize = val => {
-    if (gridApi) {
-      gridApi.paginationSetPageSize(Number(val))
-      setpageSize(val)
-    }
-  }
-
-  const filterGrid = () => {
-    if (gridApi) {
-      setagFilter(!agFilter)
-      setTimeout(() => {
-      }, 500)
-      gridApi.refreshHeader()
-    }
-  }
-  const updateSearchQuery = val => {
-    gridApi.setQuickFilter(val)
-    setsearchVal(val)
-  }
-
-  function getProfile(id) {
-    const profile = profiles.find(e => e.id === id)
-    if(profile !== undefined) {
-      return profile.name
-    }
-    return null
-  }
-
-  function toggleModalDelete(userDelete, status) {
-    setUserDelete(userDelete)
+  function toggleModalDelete(itemDelete, status) {
+    setItemDelete(itemDelete)
     setShowModalDelete(status)
   }
 
   async function handleDelete() {
     try {
-      if(userDelete){
+      if(itemDelete){
         let data = {
-          user: {
-            licence_id: auth.login.licence_id,
-            id: userDelete.id,
-            login: userDelete.login
-          }
+          licence_id: auth.login.licence_id,
+          id: itemDelete.id,
         };
-        await api.delete("/users",
+        await api.delete("/calendars",
           { data }
         );
-        setUserDelete(null)
+        setItemDelete(null)
         setShowModalDelete(false)
-        let rowDataAux = rowData.filter(function(row){ return row.id !== userDelete.id; })
+        let rowDataAux = rowData.filter(function(row){ return row.id !== itemDelete.id; })
         setrowData(rowDataAux)
-        toast.success("Usuário excluído com sucesso!", { transition: Flip });
+        toast.success("Tipo de Agenda excluído com sucesso!", { transition: Flip });
       }
 
     } catch (error) {
@@ -351,12 +198,12 @@ export default function UserList(props) {
             toast.error(error.response.data.message, { transition: Flip });
           }
           else{
-            toast.error(`Erro ao Excluir o usuário! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao Excluir o Tipo de Agenda! ${error.message}`, { transition: Flip });
           }
         }
       }
       else {
-        toast.error(`Erro ao Excluir o usuário! ${error.message}`, { transition: Flip });
+        toast.error(`Erro ao Excluir o Tipo de Agenda! ${error.message}`, { transition: Flip });
       }
       setShowModalDelete(false)
 
@@ -369,15 +216,6 @@ export default function UserList(props) {
 
   function handleExport() {
     toggleModalExport()
-    // let dataToExport = this.state.dataToExport
-    // rowData.map(item => {
-    //   if(this.state.selectedRows.includes(item.id)){
-    //     return dataToExport.push(item)
-    //   }else{
-    //     return null
-    //   }
-    // })
-    // this.setState({ dataToExport })
     let fileNameArq =
       fileName.length && fileFormat.length
         ? `${fileName}.${fileFormat}`
@@ -388,14 +226,8 @@ export default function UserList(props) {
     XLSX.writeFile(wbout, fileNameArq);
   }
 
-
   return (
   <>
-    <Breadcrumbs
-      breadCrumbTitle="Usuários"
-      breadCrumbParent="Sistema"
-      breadCrumbActive="Usuários"
-    />
     <Row className="app-user-list">
       <Col sm="12">
         <Card>
@@ -403,7 +235,7 @@ export default function UserList(props) {
             <div className="ag-theme-material ag-grid-table">
               <div className="ag-grid-actions d-flex justify-content-between flex-wrap mb-1">
                 <div className="sort-dropdown">
-                  <UncontrolledDropdown className="ag-dropdown p-1">
+                  {/* <UncontrolledDropdown className="ag-dropdown p-1">
                     <DropdownToggle tag="div">
                       1 - {pageSize} of 150
                       <ChevronDown className="ml-50" size={15} />
@@ -443,7 +275,7 @@ export default function UserList(props) {
                     placeholder="search..."
                     onChange={e => updateSearchQuery(e.target.value)}
                     value={searchVal}
-                  />
+                  /> */}
                  <ToolBar toolBarList={toolBarList} typeBar="1"/>
                 </div>
               </div>
@@ -459,11 +291,13 @@ export default function UserList(props) {
                       onGridReady={onGridReady}
                       colResizeDefault={"shift"}
                       animateRows={true}
-                      floatingFilter={agFilter}
-                      pagination={true}
-                      pivotPanelShow="always"
+                      floatingFilter={false}
+                      suppressPaginationPanel={true}
+                      pagination={false}
+                      // pivotPanelShow="always"
                       paginationPageSize={pageSize}
-                      resizable={true}
+                      // resizable={true}
+
                       enableRtl={context.state.direction === "rtl"}
                     />
                   )}
@@ -480,9 +314,9 @@ export default function UserList(props) {
                     Exclusão
                   </ModalHeader>
                   <ModalBody>
-                    Confirma a exclusão do Usuário? <br></br><br></br>
+                    Confirma a exclusão do Tipo de Agenda? <br></br><br></br>
                     <span className="text-center">
-                      {userDelete ? userDelete.username : null}
+                      {itemDelete ? itemDelete.name : null}
                     </span>
                   </ModalBody>
                   <ModalFooter>
