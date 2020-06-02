@@ -1,24 +1,24 @@
 import React from "react"
 import * as Icon from "react-feather"
 const navigationConfig = [
-  {
-    id: "favorite",
-    title: "Favorites",
-    type: "collapse",
-    icon: <Icon.Star size={20} />,
-    badge: "warning",
-    children: [
-      {
-        id: "appointment",
-        title: "Appointment",
-        type: "item",
-        icon: <Icon.Calendar size={20} />,
-        permissions: ["admin", "editor"],
-        userPermission: 19,
-        navLink: "/appointment"
-      }
-    ]
-  },
+  // {
+  //   id: "favorite",
+  //   title: "Favorites",
+  //   type: "collapse",
+  //   icon: <Icon.Star size={20} />,
+  //   badge: "warning",
+  //   children: [
+  //     {
+  //       id: "appointment",
+  //       title: "Appointment",
+  //       type: "item",
+  //       icon: <Icon.Calendar size={20} />,
+  //       permissions: ["admin", "editor"],
+  //       userPermission: 19,
+  //       navLink: "/appointment"
+  //     }
+  //   ]
+  // },
   {
     type: "groupHeader",
     groupTitle: "APPS"
@@ -127,14 +127,14 @@ const navigationConfig = [
   //   ]
   // },
   {
-    id: "tables",
-    title: "Tables",
+    id: "doctoroffice",
+    title: "Doctor's Office",
     type: "collapse",
-    icon: <Icon.Copy size={20} />,
+    icon: <Icon.Activity size={20} />,
     children: [
       {
-        id: "prestadores",
-        title: "Providers",
+        id: "professionals",
+        title: "Professionals",
         type: "item",
         icon: <Icon.Shield size={20} />,
         permissions: ["admin"],
@@ -153,10 +153,51 @@ const navigationConfig = [
     ]
   },
   {
-    id: "system",
-    title: "System",
+    id: "tables",
+    title: "Tables",
     type: "collapse",
     icon: <Icon.Copy size={20} />,
+    children: [
+      {
+        id: "general",
+        title: "General",
+        type: "collapse",
+        icon: <Icon.MoreHorizontal size={20} />,
+        children: [
+        ]
+      },
+      {
+        id: "management",
+        title: "Management",
+        type: "collapse",
+        icon: <Icon.Grid size={20} />,
+        children: [
+          {
+            id: "company",
+            title: "Companies",
+            type: "item",
+            icon: <Icon.Globe size={20} />,
+            permissions: ["admin"],
+            userPermission: 43,
+            navLink: "/app/company"
+          }
+        ]
+      },
+      {
+        id: "finantials",
+        title: "Finantials",
+        type: "collapse",
+        icon: <Icon.DollarSign size={20} />,
+        children: [
+        ]
+      },
+    ]
+  },
+  {
+    id: "security",
+    title: "Security",
+    type: "collapse",
+    icon: <Icon.Lock size={20} />,
     children: [
       {
         id: "profiles",

@@ -1,0 +1,93 @@
+// Core variables and mixins
+@import "~bootstrap/scss/_functions.scss";
+@import "~bootstrap/scss/mixins";
+
+// Core variables and mixins overrides
+@import "../core/variables/variables";
+@import "~bootstrap/scss/_variables.scss";
+
+// Overrides user variable
+@import "../core/variables/components-variables";
+
+.app-cadastros {
+  z-index: 1;
+  .add-event-sidebar {
+    min-height: calc(100% - 15.5rem);
+    height: 100%;
+    width: 500px;
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 5;
+    background: $white;
+    overflow: hidden;
+    // transform: translateX(0%);
+    // transition: all 0.25s ease-in-out;
+    &.show {
+      transform: translateX(0);
+    }
+    .header {
+      background-color: $body-bg;
+      padding: 1rem;
+    }
+
+    .add-event-body {
+      padding: 1rem;
+    }
+    &.width-600 {
+      width: 600px;
+    }
+    &.width-800 {
+      width: 800px;
+    }
+    &.width-1000 {
+      width: 1000px;
+    }
+  }
+
+  .app-content-overlay {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    display: block;
+    z-index: 5;
+    visibility: hidden;
+    opacity: 0;
+    // transition: all 0.3s ease;
+    &.show {
+      visibility: visible;
+      // transition: all 0.3s ease;
+      opacity: 1;
+      background-color: rgba(0, 0, 0, 0.2);
+      border-radius: 0.25rem;
+    }
+  }
+}
+
+
+@include media-breakpoint-down(sm) {
+  .app-cadastros {
+    .add-event-sidebar {
+      width: 260px;
+    }
+  }
+}
+
+@media (max-width: 815px) {
+  .app-cadastros {
+    .event-tags {
+      justify-content: center !important;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .app-cadastros {
+    .view-options {
+      width: 100%;
+    }
+  }
+}

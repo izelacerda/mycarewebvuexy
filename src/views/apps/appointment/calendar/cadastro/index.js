@@ -423,7 +423,7 @@ export default function CalendarCadastro(props) {
                       </NavItem>
                     </Nav>
                   </div>
-                  <div className="filter-actions d-flex">
+                  <div className="filter-actions d-flex justify-content-end">
                     <ToolBar toolBarList={toolBarList} typeBar="1"/>
                   </div>
                   <Modal

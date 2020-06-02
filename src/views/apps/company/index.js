@@ -14,14 +14,14 @@ import classnames from "classnames"
 import { User, Users } from "react-feather"
 
 import "flatpickr/dist/themes/light.css";
-import "../../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
-import { history } from "../../../../history"
-import ProfilePermission from "./profilePermission"
-import UserPermission from "./userPermission"
-import Breadcrumbs from "../../../../components/@vuexy/breadCrumbs/BreadCrumb"
+import "../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
+import { history } from "../../../history"
+import CompanyGroupList from "./list/companygrouplist"
+import CompanyList from "./list/companylist"
+import Breadcrumbs from "../../../components/@vuexy/breadCrumbs/BreadCrumb"
 
-export default function PermissionList(props) {
-  let AcessoPermission = props.userPermission.includes(13)
+export default function Company(props) {
+  let AcessoPermission = props.userPermission.includes(43)
   const [load, setLoad] = useState(true)
   const [activeTab, setTab] = useState("1")
   // const dispatch = useDispatch()
@@ -58,12 +58,12 @@ export default function PermissionList(props) {
   return (
   <>
     <Breadcrumbs
-      breadCrumbTitle="Permissões"
-      breadCrumbParent="Sistema"
-      breadCrumbActive="Permissões"
+      breadCrumbTitle="Empresas"
+      breadCrumbParent="Gerencial"
+      breadCrumbActive="Empresas"
     />
     <Row>
-      <Col sm="12">
+      <Col sm="6">
         <Card>
           <CardBody className="pt-1">
 
@@ -81,7 +81,7 @@ export default function PermissionList(props) {
                           }}
                         >
                           <Users size={16} />
-                          <span className="align-middle ml-50">Perfis</span>
+                          <span className="align-middle ml-50">Grupos Empresariais</span>
                         </NavLink>
                       </NavItem>
                       <NavItem>
@@ -94,7 +94,7 @@ export default function PermissionList(props) {
                           }}
                         >
                           <User size={16} />
-                          <span className="align-middle ml-50">Usuários</span>
+                          <span className="align-middle ml-50">Empresas</span>
                         </NavLink>
                       </NavItem>
 
@@ -104,10 +104,10 @@ export default function PermissionList(props) {
                 {
                   <TabContent activeTab={activeTab}>
                     <TabPane tabId="1">
-                      <ProfilePermission {...props} />
+                      <CompanyGroupList {...props} />
                     </TabPane>
                     <TabPane tabId="2">
-                      <UserPermission {...props} />
+                      <CompanyList {...props} />
                     </TabPane>
 
                   </TabContent>

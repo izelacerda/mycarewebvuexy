@@ -11,16 +11,19 @@ import {
   FormFeedback,
   Spinner
 } from "reactstrap"
+
+
 import _ from 'lodash';
 import { useSelector } from "react-redux";
 import { toast, Flip } from "react-toastify"
 import * as Yup from "yup";
 
+import "flatpickr/dist/themes/light.css";
+
 import Chip from "../../../../components/@vuexy/chips/ChipComponent"
 import "../../../../assets/scss/pages/users.scss"
 import Radio from "../../../../components/@vuexy/radio/RadioVuexy"
 
-import "flatpickr/dist/themes/light.css";
 import "../../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
 import api from "../../../../services/api"
 import ToolBar from "../../../../components/especificos/toolbar"
@@ -34,11 +37,11 @@ const schema = Yup.object().shape({
   // exemplos https://github.com/jquense/yup#usage
 });
 
-export default function ProfileCadastro(props) {
-  let listaPermission = props.userPermission.includes(7)
-  let insertPermission = props.userPermission.includes(8)
-  let updatePermission = props.userPermission.includes(9)
-  let dadosdoCadastroPermission = props.userPermission.includes(12)
+export default function CompanyGroupData(props) {
+  let listaPermission = props.userPermission.includes(43)
+  let insertPermission = props.userPermission.includes(43+1)
+  let updatePermission = props.userPermission.includes(43+2)
+  let dadosdoCadastroPermission = props.userPermission.includes(43+5)
   let salvarPermission = true
 
   const [id, setId]  = useState(props.id)
@@ -64,31 +67,31 @@ export default function ProfileCadastro(props) {
   }
   const [rowData, setRowData] = useState(baseData)
   const toolBarList = [
-    {
-      id: 'toolbar2',
-      color: 'warning',
-      buttomClassName: "btn-icon mb-1",
-      icon: 'Save',
-      size: 21,
-      label: null,
-      outline: false,
-      tooltip: "Salvar",
-      disabled: !salvarPermission,
-      action: () => handleSubmit()
-    },
-    {
-      id: 'toolbar4',
-      color: 'primary',
-      buttomClassName: "btn-icon mb-1",
-      icon: 'XCircle',
-      size: 21,
-      label: null,
-      outline: false,
-      tooltip:  'Fechar',
-      disabled: !listaPermission,
-      action: () => props.handleSidebar(false)
-    }
-  ]
+      {
+        id: 'toolbar2',
+        color: 'warning',
+        buttomClassName: "btn-icon mb-1",
+        icon: 'Save',
+        size: 21,
+        label: null,
+        outline: false,
+        tooltip: "Salvar",
+        disabled: !salvarPermission,
+        action: () => handleSubmit()
+      },
+      {
+        id: 'toolbar4',
+        color: 'primary',
+        buttomClassName: "btn-icon mb-1",
+        icon: 'XCircle',
+        size: 21,
+        label: null,
+        outline: false,
+        tooltip:  'Fechar',
+        disabled: !listaPermission,
+        action: () => props.handleSidebar(false)
+      }
+    ]
 
   const auth = useSelector(state => state.auth);
 
@@ -112,6 +115,7 @@ export default function ProfileCadastro(props) {
       }
       setLoad(false)
       setAtualiza(!atualiza)
+
     }
     if (id >=0 && auth !== undefined) {
       loadrowData();
@@ -137,6 +141,7 @@ export default function ProfileCadastro(props) {
     _.set(rowData, id, value);
   }
 
+
   async function handleSubmit() {
     try {
       for(var row in rowData){
@@ -159,16 +164,14 @@ export default function ProfileCadastro(props) {
             licence_id: auth.login.licence_id,
             name: rowData.name.value,
             is_active: rowData.is_active.value,
-            is_system: false,
-            systemname: "system",
             userlog_id: auth.login.values.loggedInUser.id
           }
-          const response = await api.post(`/profiles`, data);
+          const response = await api.post(`/companygroups`, data);
           rowData.id.value = response.data.id
           props.handleSidebar(false)
           props.handleAdd(response.data)
           setRowData(baseData)
-          toast.success("Perfil incluido com sucesso!", { transition: Flip });
+          toast.success("Grupo Empresarial incluido com sucesso!", { transition: Flip });
         } catch (error) {
           if (typeof error.response !== 'undefined')
           {
@@ -178,12 +181,12 @@ export default function ProfileCadastro(props) {
                 toast.error(error.response.data.message, { transition: Flip });
               }
               else{
-                toast.error(`Erro ao Incluir o Perfil! ${error.message}`, { transition: Flip });
+                toast.error(`Erro ao Incluir o Grupo Empresarial! ${error.message}`, { transition: Flip });
               }
             }
           }
           else {
-            toast.error(`Erro ao Incluir o Perfil! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao Incluir o Grupo Empresarial! ${error.message}`, { transition: Flip });
           }
         }
       } else {
@@ -195,11 +198,11 @@ export default function ProfileCadastro(props) {
             is_active: rowData.is_active.value,
             userlog_id: auth.login.values.loggedInUser.id
           }
-          await api.put(`/profiles`, data)
+          await api.put(`/companygroups`, data);
           props.handleSidebar(false)
           props.handleUpdate(data)
           setRowData(baseData)
-          toast.success("Perfil atualizado com sucesso!", { transition: Flip });
+          toast.success("Grupo Empresarial atualizado com sucesso!", { transition: Flip });
         } catch (error) {
           if (typeof error.response !== 'undefined')
           {
@@ -209,12 +212,12 @@ export default function ProfileCadastro(props) {
                 toast.error(error.response.data.message, { transition: Flip });
               }
               else{
-                toast.error(`Erro ao Incluir o Perfil! ${error.message}`, { transition: Flip });
+                toast.error(`Erro ao Incluir o Grupo Empresarial! ${error.message}`, { transition: Flip });
               }
             }
           }
           else {
-            toast.error(`Erro ao atualizar o Perfil! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao atualizar o Grupo Empresarial! ${error.message}`, { transition: Flip });
           }
         }
       }
@@ -234,15 +237,15 @@ export default function ProfileCadastro(props) {
         if (validErrors.length > 0) {
           toast.error(
             `Dados incorretos ao ${
-              id === "0" ? "incluir" : "alterar"
-            } o Perfil.`
+              id === 0 ? "incluir" : "alterar"
+            } o Grupo Empresarial.`
           , { transition: Flip });
         }
         toggle(tabAux)
         setAtualiza(!atualiza)
       } else {
         toast.error(
-          `Não foi possível ${id === "0" ? "incluir" : "alterar"} o Perfil. ${error.message}`
+          `Não foi possível ${ id === 0 ? "incluir" : "alterar"} o Grupo Empresarial. ${error.message}`
         , { transition: Flip });
       }
     }
@@ -299,47 +302,47 @@ export default function ProfileCadastro(props) {
     )
   }
   return (
-    <Modal
-        isOpen={props.sidebar ? true : false}
-        className="modal-dialog-centered modal-lg"
-        toggle={() => props.handleSidebar(false)}
-      >
-      <ModalBody>
-        <div className="add-event-body">
-          <div className="d-flex justify-content-between flex-wrap mb-1">
-            <div>
-              <span className="align-middle ml-50">
+  <Modal
+      isOpen={props.sidebar ? true : false}
+      className="modal-dialog-centered modal-lg"
+      toggle={() => props.handleSidebar(false)}
+    >
+    <ModalBody>
+      <div className="add-event-body">
+        <div className="d-flex justify-content-between flex-wrap mb-1">
+          <div>
+            <span className="align-middle ml-50">
 
-              { edicao ?
-                <Chip
-                className="mr-1"
-                avatarColor="primary"
-                // avatarIcon={<Edit />}
-                text="Alteração"
-                />
-              :
-                <Chip
-                className="mr-1"
-                avatarColor="primary"
-                // avatarIcon={<Plus />}
-                text="Inclusão"
-                />
-              }
+            { edicao ?
+              <Chip
+              className="mr-1"
+              avatarColor="primary"
+              // avatarIcon={<Edit />}
+              text="Alteração"
+              />
+            :
+              <Chip
+              className="mr-1"
+              avatarColor="primary"
+              // avatarIcon={<Plus />}
+              text="Inclusão"
+              />
+            }
 
-              </span>
+            </span>
 
-            </div>
-            <div className="d-flex justify-content-end">
-              <ToolBar toolBarList={toolBarList} typeBar="1"/>
-            </div>
           </div>
-          {load === false ?
-            <FormTab1 />
-          :
-            <Spinner color="primary" className="reload-spinner" />
-          }
+          <div className="d-flex justify-content-end">
+            <ToolBar toolBarList={toolBarList} typeBar="1"/>
+          </div>
         </div>
-      </ModalBody>
-    </Modal>
+        {load === false ?
+          <FormTab1 />
+        :
+          <Spinner color="primary" className="reload-spinner" />
+        }
+      </div>
+    </ModalBody>
+  </Modal>
   )
 }

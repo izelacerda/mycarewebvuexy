@@ -233,7 +233,7 @@ export default function CalendarList(props) {
         <Card>
           <CardBody>
             <div className="ag-theme-material ag-grid-table">
-              <div className="ag-grid-actions d-flex justify-content-between flex-wrap mb-1">
+              <div className="ag-grid-actions d-flex justify-content-end flex-wrap mb-1">
                 <div className="sort-dropdown">
                   {/* <UncontrolledDropdown className="ag-dropdown p-1">
                     <DropdownToggle tag="div">

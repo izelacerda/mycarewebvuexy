@@ -1,18 +1,14 @@
 import React, { useState, useEffect, useRef } from "react"
 import {
-  Card,
-  CardBody,
   Row,
   Col,
   Nav,
   NavItem,
   NavLink,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   TabContent,
   TabPane,
+  Modal,
+  ModalBody,
   Media,
   Button,
   Form,
@@ -29,16 +25,17 @@ import { User, Info } from "react-feather"
 import { toast, Flip } from "react-toastify"
 import * as Yup from "yup";
 import InputMask from "react-input-mask"
-
 import Select from "react-select"
 
+
+import Chip from "../../../../components/@vuexy/chips/ChipComponent"
 import "../../../../assets/scss/pages/users.scss"
 import Checkbox from "../../../../components/@vuexy/checkbox/CheckboxesVuexy"
 import Radio from "../../../../components/@vuexy/radio/RadioVuexy"
 import { Check, MapPin } from "react-feather"
 import Flatpickr from "react-flatpickr";
 import { dicalogin } from "../../../../shared/geral"
-import { Container } from "./styles";
+import { ContainerAvatar } from "./styles";
 import * as crypto from "../../../../shared/crypto";
 
 import "flatpickr/dist/themes/light.css";
@@ -46,9 +43,9 @@ import "../../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
 import api from "../../../../services/api"
 import { testaCPFCNPJ } from "../../../../shared/geral"
 import { loginWithJWT } from "../../../../redux/actions/auth/loginActions"
-import { history } from "../../../../history"
 import ToolBar from "../../../../components/especificos/toolbar"
-import Breadcrumbs from "../../../../components/@vuexy/breadCrumbs/BreadCrumb"
+
+import "../../../../assets/scss/especificos/mymodal.css"
 
 const schema = Yup.object().shape({
   username: Yup.string()
@@ -57,6 +54,9 @@ const schema = Yup.object().shape({
   email: Yup.string()
     .email("Insira um e-mail válido")
     .required("O e-mail é obrigatório"),
+  documenttype: Yup.string()
+    .required("CPF/CNPJ é obrigatório")
+    .oneOf(["F","J"],"CPF/CNPJ é obrigatório"),
   document: Yup.string()
     // .nullable()
     .required("CPF/CNPJ é obrigatório")
@@ -69,9 +69,6 @@ const schema = Yup.object().shape({
   gender: Yup.string()
     .required("Gênero é obrigatório")
     .oneOf(["F","M"],"Gênero é obrigatório"),
-  documenttype: Yup.string()
-    .required("CPF/CNPJ é obrigatório")
-    .oneOf(["F","J"],"CPF/CNPJ é obrigatório"),
   is_active: Yup
     .boolean(),
   contact_email: Yup
@@ -99,12 +96,11 @@ export default function CustomerCadastro(props) {
   let listaPermission = props.userPermission.includes(31)
   let insertPermission = props.userPermission.includes(32)
   let updatePermission = props.userPermission.includes(33)
-  let deletePermission = props.userPermission.includes(34)
   let dadosdoCadastroPermission = props.userPermission.includes(36)
   let salvarPermission = true
 
-  let { id } = props.match.params
-  const edicao = id > 0;
+  const [id, setId]  = useState(props.id)
+  const [edicao, setEdicao] = useState(props.id > 0)
   if(edicao) {
     if(!updatePermission) {
       salvarPermission = false
@@ -114,106 +110,45 @@ export default function CustomerCadastro(props) {
     if(!insertPermission) {
       salvarPermission = false
     }
-    deletePermission = false
   }
   const [activeTab, setTab] = useState("1")
-  const [load, setLoad] = useState(true)
+  const [loaded, setLoaded] = useState(false)
   const [atualiza, setAtualiza] = useState(true);
-  const [countries, setCountries] = useState([])
+
+  const baseData = {
+    id: { value: 0,  invalid: false, tab: '1', msg:'' },
+    login:    { value: '',  invalid: false, tab: '1', msg:'' },
+    username: { value: '',  invalid: false, tab: '1', msg:'' },
+    email:    { value: '',  invalid: false, tab: '1', msg:'' },
+    avatar: { value: null,  invalid: false, tab: '1', msg:'' },
+    avatar_id: { value: null,  invalid: false, tab: '1', msg:'' },
+    is_active: { value: true, invalid: false, tab: '1', msg:'' },
+    document: { value: '',  invalid: false, tab: '1', msg:'', mask: '999-999-999-99', valueMask:'', label: 'CPF' },
+    documenttype: { value: 'F', invalid: false, tab: '1', msg:'' },
+    dob:      { value: null, invalid: false, tab: '2', msg:'' },
+    mobile:    { value: '',  invalid: false, tab: '2', msg:'', mask: '(99)9999-9999', valueMask:'', label: 'celular' },
+    phone:    { value: '',  invalid: false, tab: '2', msg:'', mask: '(99)9999-9999', valueMask:'', label: 'fixo' },
+    gender:    { value: '',  invalid: false, tab: '2', msg:'' },
+    contact_email:  { value: false, invalid: false, tab: '2', msg:'' },
+    contact_message:  { value: false, invalid: false, tab: '2', msg:'' },
+    contact_phone:  { value: false, invalid: false, tab: '2', msg:'' },
+    country_id: { value: 1,  invalid: false, tab: '2', msg:'', select: { value: 0, label: "Brasil"} },
+    state_id: { value: 0,  invalid: false, tab: '2', msg:'', select: { value: 0, label: "RS"} },
+    city_id: { value: 0,  invalid: false, tab: '2', msg:'', select: { value: 0, label: "POA"} },
+    street: { value: '',  invalid: false, tab: '2', msg:'' },
+    number: { value: 0,  invalid: false, tab: '2', msg:'' },
+    complement: { value: '',  invalid: false, tab: '2', msg:'' },
+    addresstype: { value: '1',  invalid: false, tab: '2', msg:'' },
+    zip: { value: '',  invalid: false, tab: '2', msg:'', mask: '99999-999', valueMask:'', label: 'zip' },
+  }
+  const [rowData, setRowData] = useState(baseData)
+
   const [estados, setEstados] = useState([])
   const [cities, setCities] = useState([])
 
-  const [showModalDelete, setShowModalDelete] = useState(false)
-
   const dispatch = useDispatch()
 
-  const [rowData] = useState(
-    {
-      id: { value: 0,  invalid: false, tab: '1', msg:'' },
-      login: { value: '',  invalid: false, tab: '1', msg:'' },
-      username: { value: '',  invalid: false, tab: '1', msg:'' },
-      email:    { value: '',  invalid: false, tab: '1', msg:'' },
-      avatar: { value: null,  invalid: false, tab: '1', msg:'' },
-      avatar_id: { value: null,  invalid: false, tab: '1', msg:'' },
-      is_active: { value: true, invalid: false, tab: '1', msg:'' },
-      document: { value: '',  invalid: false, tab: '2', msg:'', mask: '999-999-999-99', valueMask:'', label: 'CPF' },
-      documenttype: { value: 'F', invalid: false, tab: '2', msg:'' },
-      dob:      { value: null, invalid: false, tab: '2', msg:'' },
-      mobile:    { value: '',  invalid: false, tab: '2', msg:'', mask: '(99)9999-9999', valueMask:'', label: 'celular' },
-      phone:    { value: '',  invalid: false, tab: '2', msg:'', mask: '(99)9999-9999', valueMask:'', label: 'fixo' },
-      gender:    { value: '',  invalid: false, tab: '2', msg:'' },
-      contact_email:  { value: false, invalid: false, tab: '2', msg:'' },
-      contact_message:  { value: false, invalid: false, tab: '2', msg:'' },
-      contact_phone:  { value: false, invalid: false, tab: '2', msg:'' },
-      country_id: { value: 1,  invalid: false, tab: '2', msg:'', select: { value: 0, label: "Brasil"} },
-      state_id: { value: 0,  invalid: false, tab: '2', msg:'', select: { value: 0, label: "RS"} },
-      city_id: { value: 0,  invalid: false, tab: '2', msg:'', select: { value: 0, label: "POA"} },
-      street: { value: '',  invalid: false, tab: '2', msg:'' },
-      number: { value: 0,  invalid: false, tab: '2', msg:'' },
-      complement: { value: '',  invalid: false, tab: '2', msg:'' },
-      addresstype: { value: '1',  invalid: false, tab: '2', msg:'' },
-      zip: { value: '',  invalid: false, tab: '2', msg:'', mask: '99999-999', valueMask:'', label: 'zip' },
-    } )
-    const toolBarList = [
-      {
-        id: 'toolbar1',
-        color: 'primary',
-        buttomClassName: "btn-icon mb-1",
-        icon: 'PlusCircle',
-        size: 21,
-        label: null,
-        outline: false,
-        tooltip: "Incluir",
-        disabled: !insertPermission,
-        action: () => {  history.push(`/app/customer/cadastro/0`); window.location.reload() }
-      },
-
-      {
-        id: 'toolbar3',
-        color: 'primary',
-        buttomClassName: "btn-icon mb-1",
-        icon: 'RefreshCw',
-        size: 21,
-        label:  null,
-        outline: false,
-        tooltip: 'Atualiza',
-        action: () => window.location.reload()
-      },
-      {
-        id: 'toolbar4',
-        color: 'primary',
-        buttomClassName: "btn-icon mb-1",
-        icon: 'List',
-        size: 21,
-        label: null,
-        outline: false,
-        tooltip:  'Lista',
-        disabled: !listaPermission,
-        action: () => history.push(`/app/customer/list`)
-      },
-      {
-        id: 'toolbar5',
-        color: 'primary',
-        buttomClassName: "btn-icon mb-1",
-        icon: 'ArrowRight',
-        size: 21,
-        label: null,
-        outline: false,
-        tooltip: 'Próximo',
-        action: () => toggle("-1")
-      },
-      {
-        id: 'toolbar6',
-        color: 'primary',
-        buttomClassName: "btn-icon mb-1",
-        icon: 'Trash',
-        size: 21,
-        label: null,
-        outline: false,
-        tooltip: "Excluir",
-        disabled: !deletePermission,
-        action: () => toggleModalDelete(true)
-      },
+  const toolBarList = [
       {
         id: 'toolbar2',
         color: 'warning',
@@ -225,11 +160,22 @@ export default function CustomerCadastro(props) {
         tooltip: "Salvar",
         disabled: !salvarPermission,
         action: () => handleSubmit()
+      },
+      {
+        id: 'toolbar4',
+        color: 'primary',
+        buttomClassName: "btn-icon mb-1",
+        icon: 'XCircle',
+        size: 21,
+        label: null,
+        outline: false,
+        tooltip:  'Fechar',
+        disabled: !listaPermission,
+        action: () => props.handleSidebar(false)
       }
     ]
   const [iniciais, setIniciais] = useState("")
   const [url, setUrl] = useState(null)
-
 
   const auth = useSelector(state => state.auth);
 
@@ -265,90 +211,63 @@ export default function CustomerCadastro(props) {
     async function loadrowData() {
       //Profile
       if(!dadosdoCadastroPermission) {
-        history.push(`/`)
+        props.handleSidebar(false)
+        return
       }
 
-      let body = {
-        licence_id: auth.login.licence_id,
-        id: 0
-      };
-      let response = null
+      setId(props.id)
+      setEdicao(props.id>0)
+      if(props.id > 0 && props.data) {
 
-      //Countries
-      body = {
-        id: 0
-      };
-      response = await api.post("/countries.list", {
-        ...body
-      });
-      setCountries(response.data)
-
-      // Paciente
-      if(id > 0) {
-        body = {
-          licence_id: auth.login.licence_id,
-          id: parseInt(id),
-          active: "all"
-        };
-        response = await api.post("/customers.list", {
-          ...body
-        });
-        if(response.data !== undefined && response.data[0] !== undefined )
+        if(props.data.addresses !== undefined)
         {
-          let dados = response.data[0]
-          if(dados.addresses !== undefined)
+          if(props.data.addresses[0] !== undefined)
           {
-            if(dados.addresses[0] !== undefined)
-            {
-              rowData.street.value = dados.addresses[0].street
-              rowData.number.value = dados.addresses[0].number
-              rowData.complement.value = dados.addresses[0].complement
-              rowData.addresstype.value = dados.addresses[0].addresstype
-              rowData.zip.value = dados.addresses[0].zip
-              rowData.country_id.value = dados.addresses[0].cities.states.countries.id ? dados.addresses[0].cities.states.countries.id : 0
-              rowData.state_id.value = dados.addresses[0].cities.states.id ? dados.addresses[0].cities.states.id : 0
-              rowData.city_id.value = dados.addresses[0].cities.id ? dados.addresses[0].cities.id : 0
-            }
+            rowData.street.value = props.data.addresses[0].street
+            rowData.number.value = props.data.addresses[0].number
+            rowData.complement.value = props.data.addresses[0].complement
+            rowData.addresstype.value = props.data.addresses[0].addresstype
+            rowData.zip.value = props.data.addresses[0].zip
+            rowData.country_id.value = props.data.addresses[0].cities.states.countries.id ? props.data.addresses[0].cities.states.countries.id : 0
+            rowData.state_id.value = props.data.addresses[0].cities.states.id ? props.data.addresses[0].cities.states.id : 0
+            rowData.city_id.value = props.data.addresses[0].cities.id ? props.data.addresses[0].cities.id : 0
+            handlePopula(true,true,rowData.country_id.value,rowData.state_id.value)
           }
-
-          _.unset(dados,'addresses')
-          rowData.id.value = parseInt(id)
-          rowData.login.value = dados.login
-          rowData.username.value = dados.username
-          rowData.email.value = dados.email
-          rowData.document.value = dados.document
-          rowData.documenttype.value = dados.documenttype
-          rowData.dob.value = dados.dob
-          rowData.mobile.value = dados.mobile
-          rowData.phone.value = dados.phone
-          rowData.gender.value = dados.gender
-          rowData.contact_email.value = dados.contact_email
-          rowData.contact_message.value = dados.contact_message
-          rowData.contact_phone.value = dados.contact_phone
-          rowData.avatar_id.value = dados.avatar_id
-          rowData.is_active.value = dados.is_active
-          rowData.avatar.value = dados.files
-          setIniciais(dicalogin(dados.username))
-          setUrl(dados.files ? dados.files.url : null)
-
         }
+        rowData.id.value =  props.data.id
+        rowData.login.value = props.data.login
+        rowData.username.value = props.data.username
+        rowData.email.value = props.data.email
+        rowData.document.value = props.data.document
+        rowData.documenttype.value = props.data.documenttype
+        rowData.dob.value = props.data.dob
+        rowData.mobile.value = props.data.mobile
+        rowData.phone.value = props.data.phone
+        rowData.gender.value = props.data.gender
+        rowData.contact_email.value = props.data.contact_email
+        rowData.contact_message.value = props.data.contact_message
+        rowData.contact_phone.value = props.data.contact_phone
+        rowData.avatar_id.value = props.data.avatar_id
+        rowData.is_active.value = props.data.is_active
+        rowData.avatar.value = props.data.files
+        setIniciais(dicalogin(props.data.username))
+        setUrl(props.data.files ? props.data.files.url : null)
       }
-      setLoad(false)
+      else {
+        setRowData(baseData)
+      }
+      setLoaded(true)
+      setAtualiza(!atualiza)
     }
-    if (id !== null && auth !== undefined && load) {
+    if (id >=0 && auth !== undefined) {
       loadrowData();
     }
-  }, [auth, id, load]); // eslint-disable-line
-  useEffect(() => {
-    if(countries.length>0 && !load) {
-      handlePopula(true,true,rowData.country_id.value,rowData.state_id.value)
-    }
-  }, [countries, load]); // eslint-disable-line
+  }, [auth, props.id, props.data]) // eslint-disable-line
 
   function toggle(tab) {
     if(tab==='-1'){
       const tabNro = parseInt(activeTab)+1
-      if(tabNro > 2) {
+      if(tabNro > 3) {
         tab="1"
       }
       else
@@ -374,7 +293,7 @@ export default function CustomerCadastro(props) {
     let statesAux=[]
     let citiesAux=[]
     if(popEstado) {
-      const pais =  countries.find(
+      const pais =  props.countries.find(
         country => country.id === valueCountry
       )
       if(pais !== undefined) {
@@ -453,12 +372,12 @@ export default function CustomerCadastro(props) {
           street: rowData.street.value,
           number: rowData.number.value ,
           zip: rowData.zip.value,
-          city_id: rowData.city_id.value,
+          city_id: rowData.city_id.value
         },
         {
           abortEarly: false
         }
-      );
+      )
       let data=null
       if(rowData.avatar.value !== null && rowData.avatar_id.value === null) {
         data = rowData.avatar.value
@@ -468,7 +387,6 @@ export default function CustomerCadastro(props) {
       }
 
       data = {
-        user: {
           id: rowData.id.value,
           login: edicao === false ? rowData.email.value : rowData.login.value,
           username: rowData.username.value,
@@ -485,26 +403,26 @@ export default function CustomerCadastro(props) {
           contact_phone:  rowData.contact_phone.value,
           avatar_id: rowData.avatar_id.value,
           userlog_id:   auth.login.values.loggedInUser.id,
-          licence_id: auth.login.licence_id
-        },
-        addresses: [{
-          street: rowData.street.value,
-          number: rowData.number.value ,
-          complement: rowData.complement.value,
-          addresstype: rowData.addresstype.value,
-          zip: rowData.zip.value,
-          city_id: rowData.city_id.value,
-          userlog_id:   auth.login.values.loggedInUser.id
-        }]
+          licence_id: auth.login.licence_id,
+          addresses: [{
+            street: rowData.street.value,
+            number: rowData.number.value ,
+            complement: rowData.complement.value,
+            addresstype: rowData.addresstype.value,
+            zip: rowData.zip.value,
+            city_id: rowData.city_id.value,
+            userlog_id:   auth.login.values.loggedInUser.id
+          }]
       }
       if (!edicao) {
         try {
           const response = await api.post(`/customers`, data);
-          id = response.data.id
-          rowData.id.value = id
+          rowData.id.value = response.data.id
+          props.handleSidebar(false)
+          props.handleAdd(response.data[0])
+          setRowData(baseData)
           setIniciais(dicalogin(response.data.username))
-          history.push(`/app/customer/cadastro/${id}`)
-          toast.success("Paciente incluído com sucesso!", { transition: Flip });
+          toast.success("Paciente incluido com sucesso!", { transition: Flip });
         } catch (error) {
           if (typeof error.response !== 'undefined')
           {
@@ -514,17 +432,17 @@ export default function CustomerCadastro(props) {
                 toast.error(error.response.data.message, { transition: Flip });
               }
               else{
-                toast.error(`Erro ao Incluir o paciente! ${error.message}`, { transition: Flip });
+                toast.error(`Erro ao Incluir o Paciente! ${error.message}`, { transition: Flip });
               }
             }
           }
           else {
-            toast.error(`Erro ao Incluir o paciente! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao Incluir o Paciente! ${error.message}`, { transition: Flip });
           }
         }
       } else {
         try {
-          await api.put(`/customers`, data);
+          const response = await api.put(`/customers`, data);
           if(auth.login.values.loggedInUser.id === parseInt(id)) {
             let cryptoPassword = crypto.decryptByDESModeCBC(auth.login.values.loggedInUser.password)
             dispatch(loginWithJWT({
@@ -541,6 +459,9 @@ export default function CustomerCadastro(props) {
               permissions:  auth.login.permissions,
             }));
           }
+          props.handleSidebar(false)
+          props.handleUpdate(response.data[0])
+          setRowData(baseData)
           toast.success("Paciente atualizado com sucesso!", { transition: Flip });
         } catch (error) {
           if (typeof error.response !== 'undefined')
@@ -551,12 +472,12 @@ export default function CustomerCadastro(props) {
                 toast.error(error.response.data.message, { transition: Flip });
               }
               else{
-                toast.error(`Erro ao Incluir o paciente! ${error.message}`, { transition: Flip });
+                toast.error(`Erro ao Incluir o Paciente! ${error.message}`, { transition: Flip });
               }
             }
           }
           else {
-            toast.error(`Erro ao atualizar o paciente! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao atualizar o Paciente! ${error.message}`, { transition: Flip });
           }
         }
       }
@@ -577,63 +498,17 @@ export default function CustomerCadastro(props) {
           toast.error(
             `Dados incorretos ao ${
               id === "0" ? "incluir" : "alterar"
-            } o paciente.`
+            } o Paciente.`
           , { transition: Flip });
         }
         toggle(tabAux)
         setAtualiza(!atualiza)
       } else {
         toast.error(
-          `Não foi possível ${id === "0" ? "incluir" : "alterar"} o paciente. ${error.message}`
+          `Não foi possível ${id === "0" ? "incluir" : "alterar"} o Paciente. ${error.message}`
         , { transition: Flip });
       }
     }
-  }
-
-  function toggleModalDelete(status) {
-    setShowModalDelete(status)
-  }
-
-  async function handleDelete() {
-    try {
-      if(id){
-        let data = {
-          user: {
-            licence_id: auth.login.licence_id,
-            id,
-            login: rowData.login.value
-          }
-        };
-        await api.delete("/customers",
-          { data }
-        );
-        setShowModalDelete(false)
-        history.push(`/app/customer/list`)
-        // let rowDataAux = rowData.filter(function(row){ return row.id !== userDelete.id; })
-        // setrowData(rowDataAux)
-        toast.success("Paciente excluído com sucesso!", { transition: Flip });
-      }
-
-    } catch (error) {
-      if (typeof error.response !== 'undefined')
-      {
-        if(typeof error.response.status !== 'undefined' && (error.response.status === 401 || error.response.status === 400  || error.response.status === 500 ))
-        {
-          if(error.response.data.message !== undefined) {
-            toast.error(error.response.data.message, { transition: Flip });
-          }
-          else{
-            toast.error(`Erro ao Excluir o paciente! ${error.message}`, { transition: Flip });
-          }
-        }
-      }
-      else {
-        toast.error(`Erro ao Excluir o paciente! ${error.message}`, { transition: Flip });
-      }
-      setShowModalDelete(false)
-
-    }
-
   }
 
   function FormTab1() {
@@ -642,7 +517,7 @@ export default function CustomerCadastro(props) {
         <Col sm="12">
           <Media className="mb-2">
             <Media className="mr-2 my-25" left href="#">
-                <Container>
+                <ContainerAvatar>
                   <label htmlFor="avatar">
                     {url ? (
                         <img
@@ -666,7 +541,7 @@ export default function CustomerCadastro(props) {
                       disabled={!salvarPermission}
                     />
                   </label>
-                </Container>
+                </ContainerAvatar>
             </Media>
             <Media className="mt-2" body>
               <Media className="font-medium-1 text-bold-600" tag="p" heading>
@@ -714,7 +589,48 @@ export default function CustomerCadastro(props) {
               </Col>
               <Col md="6" sm="12">
                 <FormGroup>
-                  <Label className="d-block mb-50">Ativo</Label>
+                  <Label className="d-block mb-50">Pessoa</Label>
+                  <div className="d-inline-block mr-1">
+                    <Radio
+                      label="Física"
+                      color="primary"
+                      defaultChecked={rowData.documenttype.value==="F"}
+                      name="documenttype.value"
+                      onChange={e => onChangeDocumentType("F")}
+                      disabled={!salvarPermission}
+                    />
+                  </div>
+                  <div className="d-inline-block mr-1">
+                    <Radio
+                      label="Jurídica"
+                      color="primary"
+                      defaultChecked={rowData.documenttype.value==="J"}
+                      name="documenttype.value"
+                      onChange={e => onChangeDocumentType("J")}
+                      disabled={!salvarPermission}
+                    />
+                  </div>
+                  {rowData.documenttype.invalid ? <td className="text-danger font-small-2" >{rowData.documenttype.msg}</td>: null }
+                </FormGroup>
+                <FormGroup className="form-label-group">
+                  <Input
+                    type="text"
+                    placeholder={rowData.document.label}
+                    required
+                    defaultValue={rowData.document.value}
+                    mask={rowData.document.mask}
+                    onChange={e => handleChangeMask("document.value",'document.valueMask',e.target.value)}
+                    invalid={rowData.document.invalid}
+                    disabled={!salvarPermission}
+                    tag={InputMask}
+                  />
+                  <Label>{rowData.document.label}</Label>
+                  <FormFeedback>{rowData.document.msg}</FormFeedback>
+                </FormGroup>
+              </Col>
+              <Col md="6" sm="12">
+                <FormGroup>
+                  <Label className="d-block">Ativo</Label>
                   <div className="d-inline-block mr-1">
                     <Radio
                       label="Sim"
@@ -736,6 +652,7 @@ export default function CustomerCadastro(props) {
                     />
                   </div>
                 </FormGroup>
+
 
               </Col>
             </Row>
@@ -861,47 +778,6 @@ export default function CustomerCadastro(props) {
                 />
               </div>
             </FormGroup>
-
-            <FormGroup>
-              <Label className="d-block mb-50">Pessoa</Label>
-              <div className="d-inline-block mr-1">
-                <Radio
-                  label="Física"
-                  color="primary"
-                  defaultChecked={rowData.documenttype.value==="F"}
-                  name="documenttype.value"
-                  onChange={e => onChangeDocumentType("F")}
-                  disabled={!salvarPermission}
-                />
-              </div>
-              <div className="d-inline-block mr-1">
-                <Radio
-                  label="Jurídica"
-                  color="primary"
-                  defaultChecked={rowData.documenttype.value==="J"}
-                  name="documenttype.value"
-                  onChange={e => onChangeDocumentType("J")}
-                  disabled={!salvarPermission}
-                />
-              </div>
-              {rowData.documenttype.invalid ? <td className="text-danger font-small-2" >{rowData.documenttype.msg}</td>: null }
-            </FormGroup>
-            <FormGroup className="form-label-group">
-              <Input
-                type="text"
-                placeholder={rowData.document.label}
-                required
-                defaultValue={rowData.document.value}
-                mask={rowData.document.mask}
-                onChange={e => handleChangeMask("document.value",'document.valueMask',e.target.value)}
-                invalid={rowData.document.invalid}
-                disabled={!salvarPermission}
-                tag={InputMask}
-              />
-              <Label>{rowData.document.label}</Label>
-              <FormFeedback>{rowData.document.msg}</FormFeedback>
-            </FormGroup>
-
           </Col>
           <Col className="mt-1" md="6" sm="12">
             <h5 className="mb-1">
@@ -973,8 +849,8 @@ export default function CustomerCadastro(props) {
                     classNamePrefix="select"
                     isSearchable={false}
                     name="country"
-                    options={countries}
-                    value={countries.filter(option => option.id === rowData.country_id.value)}
+                    options={props.countries}
+                    value={props.countries.filter(option => option.id === rowData.country_id.value)}
                     onChange={e => handleChangeSelect("country_id.value","country_id.select",e.id,e)}
                     isDisabled={!salvarPermission}
                   />
@@ -1025,91 +901,92 @@ export default function CustomerCadastro(props) {
   }
 
   return (
-  <>
-    <Breadcrumbs
-      breadCrumbTitle="Paciente"
-      breadCrumbParent="Cadastro"
-      breadCrumbActive="Pacientes"
-    />
-    <Row>
-      <Col sm="12">
-        <Card>
-          <CardBody className="pt-1">
+    <Modal
+        isOpen={props.sidebar ? true : false}
+        className="modal-dialog-centered"
+        style={{minWidth: '1000px', width: '100%'}}
+        toggle={() => props.handleSidebar(false)}
+        // style={{minWidth: '1200px', minHeight: '900px', width: '80%', height: '808px', margin: '10px auto'}}
 
-              <div>
-                <div className="d-flex justify-content-between flex-wrap mb-1">
-                  <div>
-                    <Nav tabs>
-                      <NavItem>
-                        <NavLink
-                          className={classnames({
-                            active: activeTab === "1"
-                          })}
-                          onClick={() => {
-                            toggle("1")
-                          }}
-                        >
-                          <User size={16} />
-                          <span className="align-middle ml-50">Dados Gerais</span>
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          className={classnames({
-                            active: activeTab === "2"
-                          })}
-                          onClick={() => {
-                            toggle("2")
-                          }}
-                        >
-                          <Info size={16} />
-                          <span className="align-middle ml-50">Informações</span>
-                        </NavLink>
-                      </NavItem>
-                    </Nav>
-                  </div>
-                  <div className="filter-actions d-flex">
-                    <ToolBar toolBarList={toolBarList} typeBar="1"/>
-                  </div>
-                  <Modal
-                    isOpen={showModalDelete}
-                    toggle={() => toggleModalDelete(false)}
-                    className="modal-dialog-centered"
+      >
+      {/* <ModalHeader toggle={() => toggleModalDelete(null,false)} className="bg-danger">
+        Exclusão
+      </ModalHeader> */}
+      <ModalBody  className="mh-700">
+      <div>
+          <div>
+            <span className="align-middle ml-50">
+
+            { edicao ?
+              <Chip
+              className="mr-1"
+              avatarColor="primary"
+              // avatarIcon={<Edit />}
+              text="Alteração"
+              />
+            :
+              <Chip
+              className="mr-1"
+              avatarColor="primary"
+              // avatarIcon={<Plus />}
+              text="Inclusão"
+              />
+            }
+
+            </span>
+            <div>
+              <Nav tabs>
+                <NavItem>
+                  <NavLink
+                    className={classnames({
+                      active: activeTab === "1"
+                    })}
+                    onClick={() => {
+                      toggle("1")
+                    }}
                   >
-                    <ModalHeader toggle={() => toggleModalDelete(false)} className="bg-warning">
-                      Exclusão
-                    </ModalHeader>
-                    <ModalBody>
-                      Confirma a exclusão do Paciente? <br></br><br></br>
-                      <span className="text-center">
-                        {rowData.username.value}
-                      </span>
-                    </ModalBody>
-                    <ModalFooter>
-                      <Button color="warning" onClick={() => handleDelete()}>
-                        Confirmar
-                      </Button>{" "}
-                    </ModalFooter>
-                  </Modal>
-                </div>
-                {load === false ?
-                  <TabContent activeTab={activeTab}>
-                    <TabPane tabId="1">
-                      <FormTab1 />
-                    </TabPane>
-                    <TabPane tabId="2">
-                      <FormTab2 />
-                    </TabPane>
-                  </TabContent>
-                :
-                    <Spinner color="primary" className="reload-spinner" />
-                }
+                    <User size={16} />
+                    <span className="align-middle ml-50">Acesso</span>
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink
+                    className={classnames({
+                      active: activeTab === "2"
+                    })}
+                    onClick={() => {
+                      toggle("2")
+                    }}
+                  >
+                    <Info size={16} />
+                    <span className="align-middle ml-50">Informações</span>
+                  </NavLink>
+                </NavItem>
+              </Nav>
             </div>
-          </CardBody>
-        </Card>
-      </Col>
-    </Row>
-  </>
+          </div>
+          <div className="d-flex justify-content-end">
+            <ToolBar toolBarList={toolBarList} typeBar="1"/>
+          </div>
+        </div>
+        {loaded === true ?
+          <TabContent activeTab={activeTab}>
+            <TabPane tabId="1">
+              <FormTab1 />
+            </TabPane>
+            <TabPane tabId="2">
+              <FormTab2 />
+            </TabPane>
+          </TabContent>
+        :
+            <Spinner color="primary" className="reload-spinner" />
+        }
+      </ModalBody>
+      {/* <ModalFooter>
+        <Button color="danger" onClick={() => handleDelete()}>
+          Confirmar
+        </Button>{" "}
+      </ModalFooter> */}
+    </Modal>
   )
-
 }

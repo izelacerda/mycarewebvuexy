@@ -25,26 +25,21 @@ const ecommerceDashboard = lazy(() =>
   import("./views/dashboard/ecommerce/EcommerceDashboard")
 )
 
-const userList = lazy(() => import("./views/apps/user/list/List"))
-const userCadastro = lazy(() => import("./views/apps/user/cadastro"))
+const userList = lazy(() => import("./views/apps/user/list"))
 
 const permissionList = lazy(() => import("./views/apps/permission/list"))
 
 const Login = lazy(() => import("./views/pages/authentication/login/Login"))
 
-const profileList = lazy(() => import("./views/apps/profile/list/List"))
-const profileCadastro = lazy(() => import("./views/apps/profile/cadastro"))
+const profileList = lazy(() => import("./views/apps/profile/list"))
 
 const userLicence = lazy(() => import("./views/apps/licence/cadastro"))
 
-const providerList = lazy(() => import("./views/apps/provider/list/List"))
-const providerCadastro = lazy(() => import("./views/apps/provider/cadastro"))
+const providerList = lazy(() => import("./views/apps/provider/list"))
 
-const customerList = lazy(() => import("./views/apps/customer/list/List"))
-const customerCadastro = lazy(() => import("./views/apps/customer/cadastro"))
+const customerList = lazy(() => import("./views/apps/customer/list"))
 
-// const calendarList = lazy(() => import("./views/apps/calendar/list/List"))
-// const calendarCadastro = lazy(() => import("./views/apps/calendar/cadastro"))
+const company = lazy(() => import("./views/apps/company"))
 
 const email = lazy(() => import("./views/apps/email/Email"))
 const chat = lazy(() => import("./views/apps/chat/Chat"))
@@ -417,23 +412,18 @@ class AppRouter extends React.Component {
             fullLayout
           />
           <AppRoute path="/app/user/list" component={userList} />
-          <AppRoute path="/app/user/cadastro/:id" component={userCadastro} />
 
           <AppRoute path="/app/profile/list" component={profileList} />
-          <AppRoute path="/app/profile/cadastro/:id" component={profileCadastro} />
 
           <AppRoute path="/app/provider/list" component={providerList} />
-          <AppRoute path="/app/provider/cadastro/:id" component={providerCadastro} />
 
           <AppRoute path="/app/customer/list" component={customerList} />
-          <AppRoute path="/app/customer/cadastro/:id" component={customerCadastro} />
 
           <AppRoute path="/app/permission/list" component={permissionList} />
 
           <AppRoute path="/app/user/licence/" component={userLicence} />
 
-          {/* <AppRoute path="/app/calendar/list" component={calendarList} /> */}
-          {/* <AppRoute path="/app/calendar/cadastro/:id" component={calendarCadastro} /> */}
+          <AppRoute path="/app/company" component={company} />
 
           <AppRoute path="/appointment" component={appointment} />
 

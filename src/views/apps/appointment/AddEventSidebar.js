@@ -8,8 +8,11 @@ import {
   FormGroup,
   Input,
   Label,
-  Button
+  Button,
+  Modal,
+  ModalBody
 } from "reactstrap"
+
 import {
   setHours,
   setMinutes,
@@ -125,11 +128,12 @@ export default function AddEvent(props) {
   }
 
   return (
-    <div
-        className={`add-event-sidebar ${
-          props.sidebar ? "show" : "hidden"
-        }`}
+  <Modal
+      isOpen={props.sidebar ? true : false}
+      className="modal-dialog-centered modal-lg"
+      toggle={() => props.handleSidebar(false)}
     >
+    <ModalBody>
       <div className="header d-flex justify-content-between">
         <h3 className="text-bold-600 mb-0">
           {props.eventInfo !== null &&
@@ -273,7 +277,16 @@ export default function AddEvent(props) {
           }
         </div>
       </div>
-    </div>
+    </ModalBody>
+  </Modal>
+
+    // <div
+    //     className={`add-event-sidebar ${
+    //       props.sidebar ? "show" : "hidden"
+    //     }`}
+    // >
+
+    // </div>
   )
   // }
 }

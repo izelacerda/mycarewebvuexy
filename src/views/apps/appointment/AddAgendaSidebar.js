@@ -1,6 +1,9 @@
 import React, { useState} from "react"
 import { X } from "react-feather"
-
+import {
+  Modal,
+  ModalBody
+} from "reactstrap"
 
 import "flatpickr/dist/themes/light.css";
 import "../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
@@ -19,11 +22,12 @@ export default function AddAgendaSidebar(props) {
     setScreen(screen)
   }
   return (
-    <div
-        className={`add-event-sidebar ${
-          props.sidebar ? "show" : "hidden"
-        }`}
+  <Modal
+      isOpen={props.sidebar ? true : false}
+      className="modal-dialog-centered modal-lg"
+      toggle={() => props.handleSidebar(false)}
     >
+    <ModalBody>
       <div className="header d-flex justify-content-between">
         <h3 className="text-bold-600 mb-0">
             Agendas
@@ -42,7 +46,9 @@ export default function AddAgendaSidebar(props) {
           <Cadastro {...props} handleChangeScreen={handleChangeScreen} id={id} />
         }
       </div>
-    </div>
+    </ModalBody>
+  </Modal>
+
   )
   // }
 }

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const Container = styled.div`
+export const ContainerAvatar = styled.div`
   align-self: center;
   margin-bottom: 30px;
   label {
@@ -44,4 +44,8 @@ export const Container = styled.div`
       display: none;
     }
   }
+`;
+export const Container = styled.div`
+  height: 900px;
+  width: 1000px;
 `;
