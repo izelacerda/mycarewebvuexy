@@ -360,9 +360,7 @@ export default function MaterialList(props) {
     setId(id)
     setSidebar(sidebar)
     if(sidebar) {
-      console.log(rowData)
       let groups = rowData.filter(i => i.is_group) // && (id===0 || i.id !== id))
-      console.log(groups)
       setGroups(groups)
     }
   }

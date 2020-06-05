@@ -19,7 +19,7 @@ $secondary-font-size: inherit;
 $secondary-font-weight: 600;
 
 @import "~ag-grid-community/src/styles/ag-grid.scss";
-@import "~ag-grid-community/src/styles/ag-theme-material/sass/ag-theme-material.scss";
+@import "~ag-grid-community/src/styles/ag-theme-material/sass/legacy/ag-theme-material-v22-compat.scss";
 
 .ag-grid-table {
   height: calc(100vh - 30rem);
