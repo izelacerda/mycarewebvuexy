@@ -319,9 +319,9 @@ export default function ProviderList(props) {
   return (
   <>
     <Breadcrumbs
-    breadCrumbTitle="Profissionais"
-    breadCrumbParent="Doctor´s Office"
-    breadCrumbActive="Profissionais"
+    breadCrumbTitle="Doctor´s Office"
+    breadCrumbParent="Profissionais"
+    breadCrumbActive=""
     />
     <Row>
       <Col sm="12">

@@ -31,7 +31,8 @@ import { toast, Flip } from "react-toastify"
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 
 import "ag-grid-community/dist/styles/ag-theme-balham.css";
-import "../../../../assets/scss/pages/permissions.scss"
+// import "../../../../assets/scss/pages/permissions.scss"
+import "../../../../assets/scss/pages/users.scss"
 
 import "flatpickr/dist/themes/light.css";
 import "../../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
@@ -348,7 +349,7 @@ export default function UserPermission(props) {
                       colResizeDefault={"shift"}
                       animateRows={true}
                       // rowHeight={30}
-                      floatingFilter={true}
+                      // floatingFilter={true}
                       pagination={true}
                       pivotPanelShow="always"
                       paginationPageSize={pageSize}

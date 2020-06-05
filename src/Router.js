@@ -26,20 +26,14 @@ const ecommerceDashboard = lazy(() =>
 )
 
 const userList = lazy(() => import("./views/apps/user/list"))
-
 const permissionList = lazy(() => import("./views/apps/permission/list"))
-
 const Login = lazy(() => import("./views/pages/authentication/login/Login"))
-
 const profileList = lazy(() => import("./views/apps/profile/list"))
-
 const userLicence = lazy(() => import("./views/apps/licence/cadastro"))
-
 const providerList = lazy(() => import("./views/apps/provider/list"))
-
 const customerList = lazy(() => import("./views/apps/customer/list"))
-
 const company = lazy(() => import("./views/apps/company"))
+const materialList = lazy(() => import("./views/apps/material/list"))
 
 const email = lazy(() => import("./views/apps/email/Email"))
 const chat = lazy(() => import("./views/apps/chat/Chat"))
@@ -412,20 +406,14 @@ class AppRouter extends React.Component {
             fullLayout
           />
           <AppRoute path="/app/user/list" component={userList} />
-
           <AppRoute path="/app/profile/list" component={profileList} />
-
           <AppRoute path="/app/provider/list" component={providerList} />
-
           <AppRoute path="/app/customer/list" component={customerList} />
-
           <AppRoute path="/app/permission/list" component={permissionList} />
-
           <AppRoute path="/app/user/licence/" component={userLicence} />
-
-          <AppRoute path="/app/company" component={company} />
-
+          <AppRoute path="/app/company/list" component={company} />
           <AppRoute path="/appointment" component={appointment} />
+          <AppRoute path="/app/material/list" component={materialList} />
 
           <AppRoute path="/charts/apex" component={apex} />
           <AppRoute path="/charts/chartjs" component={chartjs} />

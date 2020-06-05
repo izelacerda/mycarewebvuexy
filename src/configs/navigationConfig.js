@@ -164,6 +164,15 @@ const navigationConfig = [
         type: "collapse",
         icon: <Icon.MoreHorizontal size={20} />,
         children: [
+          {
+            id: "material",
+            title: "Materials",
+            type: "item",
+            icon: <Icon.Globe size={20} />,
+            permissions: ["admin"],
+            userPermission: 61,
+            navLink: "/app/material/list"
+          }
         ]
       },
       {
@@ -179,7 +188,7 @@ const navigationConfig = [
             icon: <Icon.Globe size={20} />,
             permissions: ["admin"],
             userPermission: 43,
-            navLink: "/app/company"
+            navLink: "/app/company/list"
           }
         ]
       },
