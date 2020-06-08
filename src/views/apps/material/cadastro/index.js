@@ -249,7 +249,7 @@ export default function MaterialCadastro(props) {
         setAtualiza(!atualiza)
         return
       }
-      if(rowData.id.value === rowData.group_id.value) {
+      if(rowData.id.value === rowData.group_id.value && edicao) {
         rowData.group_id.invalid = true
         rowData.group_id.msg = "Grupo Inválido"
         setAtualiza(!atualiza)
@@ -272,6 +272,9 @@ export default function MaterialCadastro(props) {
         }
       );
       let data=null
+      if(rowData.group_id.value === 0 ) {
+        rowData.group_id.value = null
+      }
       if (!edicao) {
         try {
           data = {
