@@ -130,7 +130,7 @@ export default function AddEvent(props) {
   return (
   <Modal
       isOpen={props.sidebar ? true : false}
-      className="modal-dialog-centered modal-lg"
+      className="modal-dialog-centered"
       toggle={() => props.handleSidebar(false)}
     >
     <ModalBody>
@@ -149,21 +149,11 @@ export default function AddEvent(props) {
         </div>
       </div>
       <div className="add-event-body">
-        <div className="category-action d-flex justify-content-between my-50">
-          <div className="event-category">
-            {label !== null ? (
-              <div className={`chip ${props.handleEventColorsW(label)}`}>
-                <div className="chip-body">
-                  <div className="chip-text text-capitalize">
-                    {label}
-                  </div>
-                </div>
-              </div>
-            ) : null}
-          </div>
+        <div className="category-action d-flex justify-content-start my-50">
+
           <div className="category-dropdown">
             <UncontrolledDropdown>
-              <DropdownToggle tag="div" className="cursor-pointer">
+              <DropdownToggle tag="div" className="cursor-pointer mr-1">
                 <Tag size={18} />
               </DropdownToggle>
               <DropdownMenu tag="ul" right>
@@ -183,13 +173,24 @@ export default function AddEvent(props) {
               </DropdownMenu>
             </UncontrolledDropdown>
           </div>
+          <div className="event-category">
+            {label !== null ? (
+              <div className={`chip ${props.handleEventColorsW(label)}`}>
+                <div className="chip-body">
+                  <div className="chip-text text-capitalize">
+                    {label}
+                  </div>
+                </div>
+              </div>
+            ) : null}
+          </div>
         </div>
         <div className="add-event-fields mt-2">
           <FormGroup className="form-label-group">
             <Input
               type="text"
               id="EventTitle"
-              placeholder="Event Title"
+              placeholder="Título"
               value={title}
               onChange={e => setTitle(e.target.value)}
             />
@@ -225,7 +226,7 @@ export default function AddEvent(props) {
             />
           </FormGroup>
         </div>
-        <hr className="my-2" />
+        {/* <hr className="my-2" /> */}
         <div className="add-event-actions text-right">
 
           <Button.Ripple

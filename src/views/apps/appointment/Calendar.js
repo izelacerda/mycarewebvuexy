@@ -428,7 +428,7 @@ export default function AppointmentApp(props) {
                 // isDisabled={!salvarPermission}
             />
           </div>
-          <div className="event-tags d-none d-sm-flex justify-content-start mt-1">
+          <div className="event-tags d-none d-sm-flex justify-content-start align-items-center mt-1">
             {calendars.map(calendar => {
               return (
               calendar.id>0 ? <div key={calendar.id} className="tag mr-1">
