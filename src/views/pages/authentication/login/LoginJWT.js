@@ -46,8 +46,8 @@ export default function LoginJWT() {
               if(rowData.remember.value) {
                 let cryptoLogin = crypto.decryptByDESModeCBC(auth.login.values.loggedInUser.login);
                 handleChange("login.value", cryptoLogin)
-                let cryptoPassword = crypto.decryptByDESModeCBC(auth.login.values.loggedInUser.password)
-                handleChange("password.value", cryptoPassword)
+                // let cryptoPassword = crypto.decryptByDESModeCBC(auth.login.values.loggedInUser.password)
+                // handleChange("password.value", cryptoPassword)
                 handleChange("remember.value", true)
               }
               else

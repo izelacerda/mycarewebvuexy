@@ -506,7 +506,9 @@ export default function UserCadastro(props) {
             }));
           }
           props.handleSidebar(false)
-          props.handleUpdate(response.data[0])
+          if(props.handleUpdate) {
+            props.handleUpdate(response.data[0])
+          }
           setRowData(baseData)
           toast.success("Usuário atualizado com sucesso!", { transition: Flip });
         } catch (error) {

@@ -29,22 +29,22 @@ const handleNavigation = (e, path) => {
 
 const UserDropdown = props => {
   const { logout, isAuthenticated } = useAuth0()
-  let id = null;
-  if (props.userName.props.user !== undefined ) {
-    if (props.userName.props.user.login !== undefined ) {
-      if (props.userName.props.user.login.values !== undefined ) {
-          if (props.userName.props.user.login.values.loggedInUser !== undefined ) {
-           id= props.userName.props.user.login.values.loggedInUser.id
-          }
-      }
-    }
-  }
+  // // let id = null;
+  // if (props.userName.props.user !== undefined ) {
+  //   if (props.userName.props.user.login !== undefined ) {
+  //     if (props.userName.props.user.login.values !== undefined ) {
+  //         if (props.userName.props.user.login.values.loggedInUser !== undefined ) {
+  //          id= props.userName.props.user.login.values.loggedInUser.id
+  //         }
+  //     }
+  //   }
+  // }
   return (
     <DropdownMenu right>
       <DropdownItem
         tag="a"
         href="#"
-        onClick={e => handleNavigation(e, `/app/user/cadastro/${id}`)}
+        onClick={e => handleNavigation(e, `/app/profile/profile`)}
       >
         <Icon.User size={14} className="mr-50" />
         <span className="align-middle">Altera Profile</span>

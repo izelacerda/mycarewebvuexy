@@ -242,7 +242,7 @@ export default function AppointmentApp(props) {
         start: event.start
         ? format(
             zonedTimeToUtc(event.start, timezone),
-            'MM/dd/yyyy HH:mm:ss',
+            'MM/dd/yyyy HH:mmXXX',
             {
               locale: pt,
             }
@@ -251,7 +251,7 @@ export default function AppointmentApp(props) {
         end: event.end
         ? format(
             zonedTimeToUtc(event.end, timezone),
-            'MM/dd/yyyy HH:mm:ss',
+            'MM/dd/yyyy HH:mmXXX',
             {
               locale: pt,
             }
@@ -303,7 +303,7 @@ export default function AppointmentApp(props) {
         start: event.start
         ? format(
             zonedTimeToUtc(event.start, timezone),
-            'MM/dd/yyyy HH:mm:ss',
+            'MM/dd/yyyy HH:mm:ssXXX',
             {
               locale: pt,
             }
@@ -312,7 +312,7 @@ export default function AppointmentApp(props) {
         end: event.end
         ? format(
             zonedTimeToUtc(event.end, timezone),
-            'MM/dd/yyyy HH:mm:ss',
+            'MM/dd/yyyy HH:mm:ssXXX',
             {
               locale: pt,
             }

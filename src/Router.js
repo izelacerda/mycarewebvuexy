@@ -29,6 +29,7 @@ const userList = lazy(() => import("./views/apps/user/list"))
 const permissionList = lazy(() => import("./views/apps/permission/list"))
 const Login = lazy(() => import("./views/pages/authentication/login/Login"))
 const profileList = lazy(() => import("./views/apps/profile/list"))
+const profile = lazy(() => import("./views/apps/profile/profile"))
 const userLicence = lazy(() => import("./views/apps/licence/cadastro"))
 const providerList = lazy(() => import("./views/apps/provider/list"))
 const customerList = lazy(() => import("./views/apps/customer/list"))
@@ -143,7 +144,7 @@ const ReactTables = lazy(() =>
 )
 const Aggrid = lazy(() => import("./views/tables/aggrid/Aggrid"))
 const DataTable = lazy(() => import("./views/tables/data-tables/DataTables"))
-const profile = lazy(() => import("./views/pages/profile/Profile"))
+// const profile = lazy(() => import("./views/pages/profile/Profile"))
 const faq = lazy(() => import("./views/pages/faq/FAQ"))
 const knowledgeBase = lazy(() =>
   import("./views/pages/knowledge-base/KnowledgeBase")
@@ -349,7 +350,7 @@ class AppRouter extends React.Component {
           <AppRoute path="/tables/react-tables" component={ReactTables} />
           <AppRoute path="/tables/agGrid" component={Aggrid} />
           <AppRoute path="/tables/data-tables" component={DataTable} />
-          <AppRoute path="/pages/profile" component={profile} />
+          {/* <AppRoute path="/pages/profile" component={profile} /> */}
           <AppRoute path="/pages/faq" component={faq} />
           <AppRoute
             path="/pages/knowledge-base"
@@ -407,6 +408,7 @@ class AppRouter extends React.Component {
           />
           <AppRoute path="/app/user/list" component={userList} />
           <AppRoute path="/app/profile/list" component={profileList} />
+          <AppRoute path="/app/profile/profile" component={profile} />
           <AppRoute path="/app/provider/list" component={providerList} />
           <AppRoute path="/app/customer/list" component={customerList} />
           <AppRoute path="/app/permission/list" component={permissionList} />

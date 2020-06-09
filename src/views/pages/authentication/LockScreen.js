@@ -40,7 +40,7 @@ class LockScreen extends React.Component {
                 <Card className="rounded-0 mb-0 px-1 pb-2 w-100 lg-mx-5">
                   <CardHeader className="pb-1">
                     <CardTitle>
-                      <h4 className="mb-0">Your Session is locked</h4>
+                      <h4 className="mb-0">Sua Sessão esta bloqueada</h4>
                     </CardTitle>
                   </CardHeader>
                   <CardBody className="pt-1 pb-0">
@@ -50,7 +50,7 @@ class LockScreen extends React.Component {
                         <div className="form-control-position">
                           <User size={15} />
                         </div>
-                        <Label>Username</Label>
+                        <Label>Usuário</Label>
                       </FormGroup>
                       <FormGroup className="form-label-group position-relative has-icon-left">
                         <Input
