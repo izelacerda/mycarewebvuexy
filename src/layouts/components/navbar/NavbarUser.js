@@ -21,6 +21,7 @@ import { history } from "../../../history"
 import { IntlContext } from "../../../utility/context/Internationalization"
 import { dicalogin } from "../../../shared/geral"
 import { Container, Content  } from "./styles";
+import api from "../../../services/api"
 
 const handleNavigation = (e, path) => {
   e.preventDefault()
@@ -39,6 +40,12 @@ const UserDropdown = props => {
   //     }
   //   }
   // }
+  async function handleLogout() {
+    await api.put("/sessions", {
+      user_id: props.userName.props.user.login.values.loggedInUser.id,
+      licence_id: props.userName.props.user.login.licence_id,
+    });
+  }
   return (
     <DropdownMenu right>
       <DropdownItem
@@ -99,6 +106,7 @@ const UserDropdown = props => {
             const provider = props.loggedInWith
             if (provider !== null) {
               if (provider === "jwt") {
+                handleLogout()
                 return props.logoutWithJWT()
               }
               if (provider === "firebase") {

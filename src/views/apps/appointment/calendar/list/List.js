@@ -147,7 +147,8 @@ export default function CalendarList(props) {
           let body = {
             licence_id: auth.login.licence_id,
             id: 0,
-            active: 'all'
+            active: 'all',
+            userlog_id: auth.login.values.loggedInUser.id
           };
           let response = await api.post("/calendars.list", {
             ...body
@@ -178,6 +179,7 @@ export default function CalendarList(props) {
         let data = {
           licence_id: auth.login.licence_id,
           id: itemDelete.id,
+          userlog_id: auth.login.values.loggedInUser.id
         };
         await api.delete("/calendars",
           { data }

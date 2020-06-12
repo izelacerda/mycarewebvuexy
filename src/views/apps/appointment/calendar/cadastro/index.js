@@ -156,7 +156,8 @@ export default function CalendarCadastro(props) {
       if(id > 0) {
         body = {
           licence_id: auth.login.licence_id,
-          id: parseInt(id)
+          id: parseInt(id),
+          userlog_id: auth.login.values.loggedInUser.id
         };
         response = await api.post("/calendars.list", {
           ...body
@@ -313,7 +314,8 @@ export default function CalendarCadastro(props) {
       if(id){
         let data = {
           licence_id: auth.login.licence_id,
-          id
+          id,
+          userlog_id: auth.login.values.loggedInUser.id
         };
         await api.delete("/calendars",
           { data }

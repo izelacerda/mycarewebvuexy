@@ -18,7 +18,7 @@ import "../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
 import { history } from "../../../history"
 import CompanyGroupList from "./list/companygrouplist"
 import CompanyList from "./list/companylist"
-import Breadcrumbs from "../../../components/@vuexy/breadCrumbs/BreadCrumb"
+// import Breadcrumbs from "../../../components/@vuexy/breadCrumbs/BreadCrumb"
 
 export default function Company(props) {
   let AcessoPermission = props.userPermission.includes(43)
@@ -57,11 +57,11 @@ export default function Company(props) {
 
   return (
   <>
-    <Breadcrumbs
+    {/* <Breadcrumbs
       breadCrumbTitle="Empresas"
       breadCrumbParent="Gerencial"
       breadCrumbActive="Empresas"
-    />
+    /> */}
     <Row>
       <Col sm="6">
         <Card>

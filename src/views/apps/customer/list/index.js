@@ -34,7 +34,6 @@ import "../../../../assets/scss/especificos/cadastros.scss"
 import { dicalogin } from "../../../../shared/geral"
 import { Container, Content  } from "./styles";
 import ToolBar from "../../../../components/especificos/toolbar"
-import Breadcrumbs from "../../../../components/@vuexy/breadCrumbs/BreadCrumb"
 import UserCadastro from "../cadastro"
 
 export default function CustomerList(props) {
@@ -195,7 +194,8 @@ export default function CustomerList(props) {
           body = {
             licence_id: auth.login.licence_id,
             id: 0,
-            active: 'all'
+            active: 'all',
+            userlog_id: auth.login.values.loggedInUser.id
           };
           response = await api.post("/customers.list",
             body
@@ -233,8 +233,9 @@ export default function CustomerList(props) {
   async function handleAdd(data) {
     const dados = rowData.map(e => { return e })
     dados.push(data)
-    setRowData(dados)
+    console.log(data)
     console.log(dados)
+    setRowData(dados)
   }
 
   async function handleUpdate(data) {
@@ -258,7 +259,8 @@ export default function CustomerList(props) {
         let data = {
           licence_id: auth.login.licence_id,
           id: itemDelete.id,
-          login: itemDelete.login
+          login: itemDelete.login,
+          userlog_id: auth.login.values.loggedInUser.id
         };
         await api.delete("/customers",
           { data }
@@ -318,11 +320,7 @@ export default function CustomerList(props) {
 
   return (
   <>
-    <Breadcrumbs
-    breadCrumbTitle="Pacientes"
-    breadCrumbParent="Doctor´s Office"
-    breadCrumbActive="Pacientes"
-    />
+
     <Row>
       <Col sm="12">
         <Card >
@@ -338,7 +336,12 @@ export default function CustomerList(props) {
                   <Card className="overflow-hidden">
                     <CardBody>
                       <div className="ag-theme-material ag-grid-table">
-                        <div className="ag-grid-actions d-flex justify-content-end flex-wrap mb-1">
+                        <div className="ag-grid-actions d-flex justify-content-between flex-wrap mb-1">
+                          <div className="sort-dropdown">
+                            <h3 className="primary">
+                              Pacientes
+                            </h3>
+                          </div>
                           <div className="d-flex justify-content-end">
                             <Input
                               className="w-50 mr-1 mb-1 mb-sm-0"

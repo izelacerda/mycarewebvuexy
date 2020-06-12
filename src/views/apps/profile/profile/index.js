@@ -34,7 +34,8 @@ export default function Profile(props) {
         if (auth.login.licence_id !== undefined) {
           let body = {
             licence_id: auth.login.licence_id,
-            id: 0
+            id: 0,
+            userlog_id: auth.login.values.loggedInUser.id
           };
           let response = await api.post("/profiles.list", {
             ...body
@@ -52,7 +53,8 @@ export default function Profile(props) {
           body = {
             licence_id: auth.login.licence_id,
             id: auth.login.values.loggedInUser.id,
-            active: 'all'
+            active: 'all',
+            userlog_id: auth.login.values.loggedInUser.id
           };
           response = await api.post("/users.list",
             body

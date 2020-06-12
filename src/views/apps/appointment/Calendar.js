@@ -76,7 +76,8 @@ export default function AppointmentApp(props) {
           let body = {
             licence_id: auth.login.licence_id,
             id: 0,
-            active: "active"
+            active: "active",
+            userlog_id: auth.login.values.loggedInUser.id
           };
           response = await api.post("/providers.list",
             body
@@ -93,7 +94,8 @@ export default function AppointmentApp(props) {
           body = {
             licence_id: auth.login.licence_id,
             id: 0,
-            active: "active"
+            active: "active",
+            userlog_id: auth.login.values.loggedInUser.id
           };
           response = await api.post("/calendars.list",
             body
@@ -125,7 +127,8 @@ export default function AppointmentApp(props) {
             licence_id: auth.login.licence_id,
             user_id: provider_id,
             id: 0,
-          	calendar_id: calendar_id
+            calendar_id: calendar_id,
+            userlog_id: auth.login.values.loggedInUser.id
           };
           let response = await api.post("/appointments.list",
             body
@@ -341,6 +344,7 @@ export default function AppointmentApp(props) {
       let data = {
         licence_id: auth.login.licence_id,
         id:  event.id,
+        userlog_id: auth.login.values.loggedInUser.id
       };
       await api.delete("/appointments",
         { data }

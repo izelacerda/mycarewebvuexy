@@ -162,7 +162,8 @@ export default function UserPermission(props) {
           let body = {
             application_id: 1,
             licence_id: auth.login.licence_id,
-            id: 0
+            id: 0,
+            userlog_id: auth.login.values.loggedInUser.id
           };
           // let response = await api.post("/profiles.list", {
           //   ...body
@@ -247,6 +248,8 @@ export default function UserPermission(props) {
   }
   async function handleSave(dados) {
     try {
+      dados.licence_id = auth.login.licence_id
+      dados.userlog_id=  auth.login.values.loggedInUser.id
 
       await api.put(`/userpermission`, dados);
 

@@ -34,7 +34,6 @@ import "../../../../assets/scss/especificos/cadastros.scss"
 import { dicalogin } from "../../../../shared/geral"
 import { Container, Content  } from "./styles";
 import ToolBar from "../../../../components/especificos/toolbar"
-import Breadcrumbs from "../../../../components/@vuexy/breadCrumbs/BreadCrumb"
 import UserCadastro from "../cadastro"
 
 export default function ProviderList(props) {
@@ -195,7 +194,8 @@ export default function ProviderList(props) {
           body = {
             licence_id: auth.login.licence_id,
             id: 0,
-            active: 'all'
+            active: 'all',
+            userlog_id: auth.login.values.loggedInUser.id
           };
           response = await api.post("/providers.list",
             body
@@ -234,7 +234,6 @@ export default function ProviderList(props) {
     const dados = rowData.map(e => { return e })
     dados.push(data)
     setRowData(dados)
-    console.log(dados)
   }
 
   async function handleUpdate(data) {
@@ -258,7 +257,8 @@ export default function ProviderList(props) {
         let data = {
           licence_id: auth.login.licence_id,
           id: itemDelete.id,
-          login: itemDelete.login
+          login: itemDelete.login,
+          userlog_id: auth.login.values.loggedInUser.id
         };
         await api.delete("/providers",
           { data }
@@ -317,12 +317,6 @@ export default function ProviderList(props) {
   }
 
   return (
-  <>
-    <Breadcrumbs
-    breadCrumbTitle="Doctor´s Office"
-    breadCrumbParent="Profissionais"
-    breadCrumbActive=""
-    />
     <Row>
       <Col sm="12">
         <Card >
@@ -338,7 +332,12 @@ export default function ProviderList(props) {
                   <Card className="overflow-hidden">
                     <CardBody>
                       <div className="ag-theme-material ag-grid-table">
-                        <div className="ag-grid-actions d-flex justify-content-end flex-wrap mb-1">
+                        <div className="ag-grid-actions d-flex justify-content-between flex-wrap mb-1">
+                          <div className="sort-dropdown">
+                            <h3 className="primary">
+                              Profissionais
+                            </h3>
+                          </div>
                           <div className="d-flex justify-content-end">
                             <Input
                               className="w-50 mr-1 mb-1 mb-sm-0"
@@ -451,6 +450,5 @@ export default function ProviderList(props) {
         </Card>
       </Col>
     </Row>
-  </>
   )
 }

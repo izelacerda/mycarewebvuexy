@@ -33,7 +33,6 @@ import "../../../../assets/scss/especificos/cadastros.scss"
 
 import ToolBar from "../../../../components/especificos/toolbar"
 import ProfileData from "../cadastro"
-import Breadcrumbs from "../../../../components/@vuexy/breadCrumbs/BreadCrumb"
 
 export default function ProfileList(props) {
   const auth = useSelector(state => state.auth);
@@ -165,7 +164,8 @@ export default function ProfileList(props) {
           let body = {
             licence_id: auth.login.licence_id,
             id: 0,
-            active: 'all'
+            active: 'all',
+            userlog_id: auth.login.values.loggedInUser.id
           };
           let response = await api.post("/profiles.list", {
             ...body
@@ -276,12 +276,6 @@ export default function ProfileList(props) {
   }
 
   return (
-  <>
-    <Breadcrumbs
-      breadCrumbTitle="Perfis"
-      breadCrumbParent="Segurança"
-      breadCrumbActive="Perfis"
-    />
     <Row>
       <Col sm="6">
         <Card>
@@ -297,7 +291,12 @@ export default function ProfileList(props) {
                   <Card>
                     <CardBody>
                       <div className="ag-theme-material ag-grid-table">
-                        <div className="ag-grid-actions d-flex justify-content-end flex-wrap mb-1">
+                        <div className="ag-grid-actions d-flex justify-content-between flex-wrap mb-1">
+                          <div className="sort-dropdown">
+                            <h3 className="primary">
+                              Perfis
+                            </h3>
+                          </div>
                           <div className="d-flex justify-content-end">
                             <Input
                               className="w-50 mr-1 mb-1 mb-sm-0"
@@ -409,6 +408,5 @@ export default function ProfileList(props) {
         </Card>
       </Col>
     </Row>
-  </>
   )
 }

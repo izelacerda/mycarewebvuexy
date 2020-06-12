@@ -34,7 +34,6 @@ import "../../../../assets/scss/especificos/cadastros.scss"
 import { dicalogin } from "../../../../shared/geral"
 import { Container, Content  } from "./styles";
 import ToolBar from "../../../../components/especificos/toolbar"
-import Breadcrumbs from "../../../../components/@vuexy/breadCrumbs/BreadCrumb"
 import UserCadastro from "../cadastro"
 
 export default function UserList(props) {
@@ -205,7 +204,8 @@ export default function UserList(props) {
         if (auth.login.licence_id !== undefined) {
           let body = {
             licence_id: auth.login.licence_id,
-            id: 0
+            id: 0,
+            userlog_id: auth.login.values.loggedInUser.id
           };
           let response = await api.post("/profiles.list", {
             ...body
@@ -223,7 +223,8 @@ export default function UserList(props) {
           body = {
             licence_id: auth.login.licence_id,
             id: 0,
-            active: 'all'
+            active: 'all',
+            userlog_id: auth.login.values.loggedInUser.id
           };
           response = await api.post("/users.list",
             body
@@ -293,7 +294,8 @@ export default function UserList(props) {
         let data = {
           licence_id: auth.login.licence_id,
           id: itemDelete.id,
-          login: itemDelete.login
+          login: itemDelete.login,
+          userlog_id: auth.login.values.loggedInUser.id
         };
         await api.delete("/users",
           { data }
@@ -352,12 +354,6 @@ export default function UserList(props) {
   }
 
   return (
-  <>
-    <Breadcrumbs
-    breadCrumbTitle="Usuários"
-    breadCrumbParent="Sistema"
-    breadCrumbActive="Usuários"
-    />
     <Row>
       <Col sm="12">
         <Card >
@@ -373,7 +369,12 @@ export default function UserList(props) {
                   <Card className="overflow-hidden">
                     <CardBody>
                       <div className="ag-theme-material ag-grid-table">
-                        <div className="ag-grid-actions d-flex justify-content-end flex-wrap mb-1">
+                        <div className="ag-grid-actions d-flex justify-content-between flex-wrap mb-1">
+                          <div className="sort-dropdown">
+                            <h3 className="primary">
+                              Usuários
+                            </h3>
+                          </div>
                           <div className="d-flex justify-content-end">
                             <Input
                               className="w-50 mr-1 mb-1 mb-sm-0"
@@ -487,6 +488,5 @@ export default function UserList(props) {
         </Card>
       </Col>
     </Row>
-  </>
   )
 }

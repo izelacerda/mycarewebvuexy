@@ -16,8 +16,6 @@ export default function AddAgendaSidebar(props) {
   const [id, setId] = useState(0)
 
   function handleChangeScreen(screen, id) {
-    console.log(id)
-    console.log(screen)
     setId(id)
     setScreen(screen)
   }

@@ -127,7 +127,8 @@ export default function CompanyData(props) {
       }
       let body = {
         licence_id: auth.login.licence_id,
-        id: 0
+        id: 0,
+        userlog_id: auth.login.values.loggedInUser.id
       };
       let response = await api.post("/companygroups.list", {
         ...body

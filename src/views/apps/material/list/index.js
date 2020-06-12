@@ -39,7 +39,6 @@ import "../../../../assets/scss/especificos/cadastros.scss"
 
 import ToolBar from "../../../../components/especificos/toolbar"
 import CadastroData from "../cadastro"
-import Breadcrumbs from "../../../../components/@vuexy/breadCrumbs/BreadCrumb"
 import "./styles.css"
 
 export default function MaterialList(props) {
@@ -300,7 +299,8 @@ export default function MaterialList(props) {
           let body = {
             licence_id: auth.login.licence_id,
             company_id: 1,
-	          un_id: 0
+            un_id: 0,
+            userlog_id: auth.login.values.loggedInUser.id
           };
           let response = await api.post("/materials.config", {
             ...body
@@ -310,7 +310,8 @@ export default function MaterialList(props) {
           body = {
             licence_id: auth.login.licence_id,
             id: 0,
-            active: "all"
+            active: "all",
+            userlog_id: auth.login.values.loggedInUser.id
           };
           response = await api.post("/measurements.list", {
             ...body
@@ -322,7 +323,8 @@ export default function MaterialList(props) {
             id: 0,
             active: 'all',
             company_id: 1,
-	          un_id: 0
+            un_id: 0,
+            userlog_id: auth.login.values.loggedInUser.id
           };
           response = await api.post("/materials.list", {
             ...body
@@ -390,6 +392,7 @@ export default function MaterialList(props) {
         let data = {
           licence_id: auth.login.licence_id,
           id: itemDelete.id,
+          userlog_id: auth.login.values.loggedInUser.id
         };
         await api.delete("/materials",
           { data }
@@ -522,11 +525,7 @@ export default function MaterialList(props) {
 
   return (
   <>
-    <Breadcrumbs
-      breadCrumbTitle="Cadastros"
-      breadCrumbParent="Geral"
-      breadCrumbActive="Materiais"
-    />
+
     <Row>
       <Col sm="12">
         <Card>
@@ -542,7 +541,12 @@ export default function MaterialList(props) {
                   <Card>
                     <CardBody>
                       <div className="ag-theme-alpine ag-grid-table" >
-                        <div className="ag-grid-actions d-flex justify-content-end flex-wrap mb-1">
+                        <div className="ag-grid-actions d-flex justify-content-between flex-wrap mb-1">
+                          <div className="sort-dropdown">
+                            <h3 className="primary">
+                              Materiais
+                            </h3>
+                          </div>
                           <div className="d-flex justify-content-end">
                             <Input
                               className="w-50 mr-1 mb-1 mb-sm-0"

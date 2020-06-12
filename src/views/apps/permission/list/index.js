@@ -18,7 +18,6 @@ import "../../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
 import { history } from "../../../../history"
 import ProfilePermission from "./profilePermission"
 import UserPermission from "./userPermission"
-import Breadcrumbs from "../../../../components/@vuexy/breadCrumbs/BreadCrumb"
 
 export default function PermissionList(props) {
   let AcessoPermission = props.userPermission.includes(13)
@@ -56,20 +55,13 @@ export default function PermissionList(props) {
   }
 
   return (
-  <>
-    <Breadcrumbs
-      breadCrumbTitle="Permissões"
-      breadCrumbParent="Sistema"
-      breadCrumbActive="Permissões"
-    />
     <Row>
       <Col sm="12">
         <Card>
-          <CardBody className="pt-1">
+          <CardBody>
 
               <div>
-                <div className="d-flex justify-content-between flex-wrap mb-1">
-                  <div>
+                <div className="d-flex justify-content-between flex-wrap">
                     <Nav tabs>
                       <NavItem>
                         <NavLink
@@ -81,7 +73,7 @@ export default function PermissionList(props) {
                           }}
                         >
                           <Users size={16} />
-                          <span className="align-middle ml-50">Perfis</span>
+                          <span className="align-middle ml-50">Permissões p/Perfis</span>
                         </NavLink>
                       </NavItem>
                       <NavItem>
@@ -94,12 +86,11 @@ export default function PermissionList(props) {
                           }}
                         >
                           <User size={16} />
-                          <span className="align-middle ml-50">Usuários</span>
+                          <span className="align-middle ml-50">p/Usuário</span>
                         </NavLink>
                       </NavItem>
 
                     </Nav>
-                  </div>
                 </div>
                 {
                   <TabContent activeTab={activeTab}>
@@ -118,7 +109,6 @@ export default function PermissionList(props) {
         </Card>
       </Col>
     </Row>
-  </>
   )
 
 }

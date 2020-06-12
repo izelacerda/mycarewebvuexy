@@ -162,7 +162,8 @@ export default function CompanyGroupList(props) {
           let body = {
             licence_id: auth.login.licence_id,
             id: 0,
-            active: 'all'
+            active: 'all',
+            userlog_id: auth.login.values.loggedInUser.id
           };
           let response = await api.post("/companygroups.list", {
             ...body
@@ -221,6 +222,7 @@ export default function CompanyGroupList(props) {
         let data = {
           licence_id: auth.login.licence_id,
           id: itemDelete.id,
+          userlog_id: auth.login.values.loggedInUser.id
         };
         await api.delete("/companygroups",
           { data }

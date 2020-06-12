@@ -164,6 +164,7 @@ const navigationConfig = [
         type: "collapse",
         icon: <Icon.MoreHorizontal size={20} />,
         children: [
+
           {
             id: "material",
             title: "Materials",
