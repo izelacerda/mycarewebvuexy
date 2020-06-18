@@ -18,6 +18,7 @@ import "../../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
 import { history } from "../../../../history"
 import ProfilePermission from "./profilePermission"
 import UserPermission from "./userPermission"
+import CompanyPermission from "./companyPermission"
 
 export default function PermissionList(props) {
   let AcessoPermission = props.userPermission.includes(13)
@@ -73,7 +74,7 @@ export default function PermissionList(props) {
                           }}
                         >
                           <Users size={16} />
-                          <span className="align-middle ml-50">Permissões p/Perfis</span>
+                          <span className="align-middle ml-50">Perfis</span>
                         </NavLink>
                       </NavItem>
                       <NavItem>
@@ -86,7 +87,20 @@ export default function PermissionList(props) {
                           }}
                         >
                           <User size={16} />
-                          <span className="align-middle ml-50">p/Usuário</span>
+                          <span className="align-middle ml-50">Usuários</span>
+                        </NavLink>
+                      </NavItem>
+                      <NavItem>
+                        <NavLink
+                          className={classnames({
+                            active: activeTab === "3"
+                          })}
+                          onClick={() => {
+                            toggle("3")
+                          }}
+                        >
+                          <User size={16} />
+                          <span className="align-middle ml-50">Empresas</span>
                         </NavLink>
                       </NavItem>
 
@@ -100,6 +114,10 @@ export default function PermissionList(props) {
                     <TabPane tabId="2">
                       <UserPermission {...props} />
                     </TabPane>
+                    <TabPane tabId="3">
+                      <CompanyPermission {...props} />
+                    </TabPane>
+
 
                   </TabContent>
 

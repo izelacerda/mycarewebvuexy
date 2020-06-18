@@ -35,6 +35,9 @@ const providerList = lazy(() => import("./views/apps/provider/list"))
 const customerList = lazy(() => import("./views/apps/customer/list"))
 const company = lazy(() => import("./views/apps/company"))
 const materialList = lazy(() => import("./views/apps/material/list"))
+const measureList = lazy(() => import("./views/apps/measure/list"))
+const financialaccountList = lazy(() => import("./views/apps/financialaccount/list"))
+const accountingaccountList = lazy(() => import("./views/apps/accountingaccount/list"))
 
 const email = lazy(() => import("./views/apps/email/Email"))
 const chat = lazy(() => import("./views/apps/chat/Chat"))
@@ -416,6 +419,9 @@ class AppRouter extends React.Component {
           <AppRoute path="/app/company/list" component={company} />
           <AppRoute path="/appointment" component={appointment} />
           <AppRoute path="/app/material/list" component={materialList} />
+          <AppRoute path="/app/measure/list" component={measureList} />
+          <AppRoute path="/app/financialaccount/list" component={financialaccountList} />
+          <AppRoute path="/app/accountingaccount/list" component={accountingaccountList} />
 
           <AppRoute path="/charts/apex" component={apex} />
           <AppRoute path="/charts/chartjs" component={chartjs} />

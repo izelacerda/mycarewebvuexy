@@ -28,18 +28,18 @@ import api from "../../../../services/api"
 import { ContextLayout } from "../../../../utility/context/Layout"
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 import "../../../../assets/scss/pages/users.scss"
-
 import "../../../../assets/scss/especificos/cadastros.scss"
-
-import CompanyGroupData from "../cadastro/companygroupdata"
+import BusinessData from "../cadastro/businessdata"
 import ToolBar from "../../../../components/especificos/toolbar"
+import { dicalogin } from "../../../../shared/geral"
+import { Container, Content  } from "./styles";
 
-export default function CompanyGroupList(props) {
+export default function BusinessUnitList(props) {
   const auth = useSelector(state => state.auth);
-  let insertPermission = props.userPermission.includes(43+1)
-  let deletePermission = props.userPermission.includes(43+3)
-  let reportPermission = props.userPermission.includes(43+4)
-  let dadosdoCadastroPermission = props.userPermission.includes(43+5)
+  let insertPermission = props.userPermission.includes(76+1)
+  let deletePermission = props.userPermission.includes(76+3)
+  let reportPermission = props.userPermission.includes(76+4)
+  let dadosdoCadastroPermission = props.userPermission.includes(76+5)
 
   const [gridApi, setGridApi] = useState(null)
   const [rowData, setRowData] = useState(null)
@@ -105,6 +105,21 @@ export default function CompanyGroupList(props) {
             className="d-flex align-items-center cursor-pointer"
             onClick={() => dadosdoCadastroPermission ? handleId(params.data,params.data.id,true)  : null}
           >
+            {params.data.files ? (
+                <img
+                className="rounded-circle mr-50"
+                src={params.data.files.url}
+                alt="user avatar"
+                height="30"
+                width="30"
+              />
+            ) : (
+              <Container>
+                <Content>
+                  <span className="nome">{dicalogin(params.data.name)}</span>
+                </Content>
+              </Container>
+            )}
             <span>{params.data.name}</span>
           </div>
         )
@@ -165,7 +180,7 @@ export default function CompanyGroupList(props) {
             active: 'all',
             userlog_id: auth.login.values.loggedInUser.id
           };
-          let response = await api.post("/companygroups.list", {
+          let response = await api.post("/businessunits.list", {
             ...body
           });
           setRowData(response.data)
@@ -224,14 +239,14 @@ export default function CompanyGroupList(props) {
           id: itemDelete.id,
           userlog_id: auth.login.values.loggedInUser.id
         };
-        await api.delete("/companygroups",
+        await api.delete("/businessunits",
           { data }
         );
         setItemDelete(null)
         setShowModalDelete(false)
         let rowDataAux = rowData.filter(function(row){ return row.id !== itemDelete.id; })
         setRowData(rowDataAux)
-        toast.success("Grupo Empresarial excluído com sucesso!", { transition: Flip });
+        toast.success("Unidade de Negócio excluída com sucesso!", { transition: Flip });
       }
 
     } catch (error) {
@@ -243,12 +258,12 @@ export default function CompanyGroupList(props) {
             toast.error(error.response.data.message, { transition: Flip });
           }
           else{
-            toast.error(`Erro ao Excluir o Grupo Empresarial! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao Excluir a Unidade de Negócio! ${error.message}`, { transition: Flip });
           }
         }
       }
       else {
-        toast.error(`Erro ao Excluir o Grupo Empresarial! ${error.message}`, { transition: Flip });
+        toast.error(`Erro ao Excluir a Unidade de Negócio! ${error.message}`, { transition: Flip });
       }
       setShowModalDelete(false)
 
@@ -328,7 +343,7 @@ export default function CompanyGroupList(props) {
                     Exclusão
                   </ModalHeader>
                   <ModalBody>
-                    Confirma a exclusão do Grupo Empresarial? <br></br><br></br>
+                    Confirma a exclusão da Unidade de Negócio? <br></br><br></br>
                     <span className="text-center">
                       {itemDelete ? itemDelete.name : null}
                     </span>
@@ -378,11 +393,10 @@ export default function CompanyGroupList(props) {
                   </ModalFooter>
                 </Modal>
             </div>
-
           </CardBody>
         </Card>
       </Col>
-      <CompanyGroupData
+      <BusinessData
         sidebar={sidebar}
         handleSidebar={handleSidebar}
         handleUpdate={handleUpdate}
@@ -391,6 +405,6 @@ export default function CompanyGroupList(props) {
         userPermission={props.userPermission}
         data={data}
       />
-  </div>
+    </div>
   )
 }

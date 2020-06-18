@@ -43,12 +43,12 @@ import CadastroData from "../cadastro"
 import "./styles.css"
 import { Content  } from "./styles.js";
 
-export default function MaterialList(props) {
+export default function FinancialAccountList(props) {
   const auth = useSelector(state => state.auth);
-  let insertPermission = props.userPermission.includes(61+1)
-  let deletePermission = props.userPermission.includes(61+3)
-  let reportPermission = props.userPermission.includes(61+4)
-  let dadosdoCadastroPermission = props.userPermission.includes(61+5)
+  let insertPermission = props.userPermission.includes(67+1)
+  let deletePermission = props.userPermission.includes(67+3)
+  let reportPermission = props.userPermission.includes(67+4)
+  let dadosdoCadastroPermission = props.userPermission.includes(67+5)
 
   const [gridApi, setGridApi] = useState(null)
   const [rowData, setRowData] = useState(null)
@@ -304,7 +304,7 @@ export default function MaterialList(props) {
           let body = {
             licence_id: auth.login.licence_id,
             userlog_id: auth.login.values.loggedInUser.id,
-            tablename: "materials"
+            tablename: "financialaccounts"
           };
           let response = await api.post("/configurationtables", {
             ...body
@@ -372,7 +372,7 @@ export default function MaterialList(props) {
             un_id: 0,
             userlog_id: auth.login.values.loggedInUser.id
           };
-          let response = await api.post("/materials.list", {
+          let response = await api.post("/financialaccounts.list", {
             ...body
           });
           setRowData(response.data)
@@ -448,14 +448,14 @@ export default function MaterialList(props) {
           id: itemDelete.id,
           userlog_id: auth.login.values.loggedInUser.id
         };
-        await api.delete("/materials",
+        await api.delete("/financialaccounts",
           { data }
         );
         setItemDelete(null)
         setShowModalDelete(false)
         let rowDataAux = rowData.filter(function(row){ return row.id !== itemDelete.id; })
         setRowData(rowDataAux)
-        toast.success("Material excluído com sucesso!", { transition: Flip });
+        toast.success("Conta excluída com sucesso!", { transition: Flip });
       }
 
     } catch (error) {
@@ -467,12 +467,12 @@ export default function MaterialList(props) {
             toast.error(error.response.data.message, { transition: Flip });
           }
           else{
-            toast.error(`Erro ao Excluir o Material! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao Excluir a Conta! ${error.message}`, { transition: Flip });
           }
         }
       }
       else {
-        toast.error(`Erro ao Excluir o Material! ${error.message}`, { transition: Flip });
+        toast.error(`Erro ao Excluir a Conta! ${error.message}`, { transition: Flip });
       }
       setShowModalDelete(false)
 
@@ -598,7 +598,7 @@ export default function MaterialList(props) {
                         <div className="ag-grid-actions d-flex justify-content-between flex-wrap mb-1">
                           <div className="sort-dropdown">
                             <h3 className="primary">
-                              Materiais
+                              Plano Financeiro
                             </h3>
                           </div>
 
@@ -663,7 +663,7 @@ export default function MaterialList(props) {
                               Exclusão
                             </ModalHeader>
                             <ModalBody>
-                              Confirma a exclusão do Material? <br></br><br></br>
+                              Confirma a exclusão da Conta? <br></br><br></br>
                               <span className="text-center">
                                 {itemDelete ? itemDelete.name : null}
                               </span>

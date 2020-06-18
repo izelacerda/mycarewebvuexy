@@ -32,14 +32,14 @@ import "../../../../assets/scss/pages/users.scss"
 import "../../../../assets/scss/especificos/cadastros.scss"
 
 import ToolBar from "../../../../components/especificos/toolbar"
-import ProfileData from "../cadastro"
+import MeasureData from "../cadastro"
 
-export default function ProfileList(props) {
+export default function MeasureList(props) {
   const auth = useSelector(state => state.auth);
-  let insertPermission = props.userPermission.includes(8)
-  let deletePermission = props.userPermission.includes(10)
-  let reportPermission = props.userPermission.includes(11)
-  let dadosdoCadastroPermission = props.userPermission.includes(12)
+  let insertPermission = props.userPermission.includes(55+1)
+  let deletePermission = props.userPermission.includes(55+3)
+  let reportPermission = props.userPermission.includes(55+4)
+  let dadosdoCadastroPermission = props.userPermission.includes(55+4)
 
   const [gridApi, setGridApi] = useState(null)
   const [rowData, setRowData] = useState(null)
@@ -88,14 +88,14 @@ export default function ProfileList(props) {
     {
       headerName: "ID",
       field: "id",
-      width: 150,
+      width: 80,
       filter: true,
       checkboxSelection: false,
       headerCheckboxSelectionFilteredOnly: true,
       headerCheckboxSelection: false
     },
     {
-      headerName: "Perfil",
+      headerName: "Unidade de Medida",
       field: "name",
       filter: true,
       width: 250,
@@ -110,6 +110,12 @@ export default function ProfileList(props) {
           </div>
         )
       }
+    },
+    {
+      headerName: "Sigla",
+      field: "initials",
+      width: 100,
+      filter: true,
     },
     {
       headerName: "Ativo",
@@ -167,7 +173,7 @@ export default function ProfileList(props) {
             active: 'all',
             userlog_id: auth.login.values.loggedInUser.id
           };
-          let response = await api.post("/profiles.list", {
+          let response = await api.post("/measurements.list", {
             ...body
           });
           setRowData(response.data)
@@ -229,14 +235,14 @@ export default function ProfileList(props) {
           id: itemDelete.id,
           userlog_id: auth.login.values.loggedInUser.id
         };
-        await api.delete("/profiles",
+        await api.delete("/measurements",
           { data }
         );
         setItemDelete(null)
         setShowModalDelete(false)
         let rowDataAux = rowData.filter(function(row){ return row.id !== itemDelete.id; })
         setRowData(rowDataAux)
-        toast.success("Perfil excluído com sucesso!", { transition: Flip });
+        toast.success("Unidade de Medida excluída com sucesso!", { transition: Flip });
       }
 
     } catch (error) {
@@ -248,12 +254,12 @@ export default function ProfileList(props) {
             toast.error(error.response.data.message, { transition: Flip });
           }
           else{
-            toast.error(`Erro ao Excluir o Perfil! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao Excluir a Unidade de Medida! ${error.message}`, { transition: Flip });
           }
         }
       }
       else {
-        toast.error(`Erro ao Excluir o Perfil! ${error.message}`, { transition: Flip });
+        toast.error(`Erro ao Excluir a Unidade de Medida! ${error.message}`, { transition: Flip });
       }
       setShowModalDelete(false)
 
@@ -295,7 +301,7 @@ export default function ProfileList(props) {
                         <div className="ag-grid-actions d-flex justify-content-between flex-wrap mb-1">
                           <div className="sort-dropdown">
                             <h3 className="primary">
-                              Perfis
+                              Unidades de Medida
                             </h3>
                           </div>
                           <div className="d-flex justify-content-end">
@@ -342,7 +348,7 @@ export default function ProfileList(props) {
                               Exclusão
                             </ModalHeader>
                             <ModalBody>
-                              Confirma a exclusão do Perfil? <br></br><br></br>
+                              Confirma a exclusão da Unidade de Medida? <br></br><br></br>
                               <span className="text-center">
                                 {itemDelete ? itemDelete.name : null}
                               </span>
@@ -395,7 +401,7 @@ export default function ProfileList(props) {
                     </CardBody>
                   </Card>
                 </Col>
-                <ProfileData
+                <MeasureData
                   sidebar={sidebar}
                   handleSidebar={handleSidebar}
                   handleUpdate={handleUpdate}

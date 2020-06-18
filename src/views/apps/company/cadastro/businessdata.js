@@ -13,7 +13,6 @@ import {
   FormFeedback,
   Spinner
 } from "reactstrap"
-import Select from "react-select"
 import InputMask from "react-input-mask"
 
 import _ from 'lodash';
@@ -30,7 +29,6 @@ import Radio from "../../../../components/@vuexy/radio/RadioVuexy"
 import "../../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
 import api from "../../../../services/api"
 import ToolBar from "../../../../components/especificos/toolbar"
-import { testaCPFCNPJ } from "../../../../shared/geral"
 import { dicalogin } from "../../../../shared/geral"
 import { ContainerAvatar } from "./styles";
 
@@ -40,29 +38,16 @@ const schema = Yup.object().shape({
   is_active: Yup
     .boolean(),
   documenttype: Yup.string()
-    .required("CPF/CNPJ é obrigatório")
     .oneOf(["F","J"],"CPF/CNPJ é obrigatório"),
   document: Yup.string()
-    // .nullable()
-    .required("CPF/CNPJ é obrigatório")
-    .min(11, "Mínimo 11 caracteres")
-    .max(14, 'Máximo 14 caracteres')
-    .test("test-name", "CPF/CNPJ inválido",
-      function(value) {
-        return testaCPFCNPJ(value,true)
-    }),
-  companygroup_id: Yup.number()
-    .min(1,"O Perfil é obrigatório")
-    .required("O Perfil é obrigatório"),
-  // outros notOneof(['admin','teste'], 'este nome nao pode')
-  // exemplos https://github.com/jquense/yup#usage
+    .nullable()
 });
 
-export default function CompanyData(props) {
-  let listaPermission = props.userPermission.includes(49)
-  let insertPermission = props.userPermission.includes(49+1)
-  let updatePermission = props.userPermission.includes(49+2)
-  let dadosdoCadastroPermission = props.userPermission.includes(49+5)
+export default function BusinessData(props) {
+  let listaPermission = props.userPermission.includes(76)
+  let insertPermission = props.userPermission.includes(76+1)
+  let updatePermission = props.userPermission.includes(76+2)
+  let dadosdoCadastroPermission = props.userPermission.includes(76+5)
   let salvarPermission = true
 
   const [id, setId]  = useState(props.id)
@@ -80,7 +65,6 @@ export default function CompanyData(props) {
   const [activeTab, setTab] = useState("1")
   const [load, setLoad] = useState(true)
   const [atualiza, setAtualiza] = useState(true);
-  const [companygroups, setCompanyGroups] = useState([])
 
   const baseData =   {
     id: { value: 0,  invalid: false, tab: '1', msg:'' },
@@ -161,47 +145,15 @@ export default function CompanyData(props) {
         props.handleSidebar(false)
         return
       }
-      let body = {
-        licence_id: auth.login.licence_id,
-        id: 0,
-        userlog_id: auth.login.values.loggedInUser.id
-      };
-      let response = await api.post("/companygroups.list", {
-        ...body
-      });
-      setCompanyGroups(response.data)
 
-      body = {
-        licence_id: auth.login.licence_id,
-        id: 0
-      };
       setId(props.id)
       setEdicao(props.id>0)
       if(props.id > 0 && props.data) {
-        // body = {
-        //   licence_id: auth.login.licence_id,
-        //   id: parseInt(id)
-        // };
-        // response = await api.post("/companies.list", {
-        //   ...body
-        // });
-        // if(response.data !== undefined && response.data[0] !== undefined )
-        // {
-        //   let dados = response.data[0]
-
-          // rowData.id.value = parseInt(id)
-          // rowData.name.value = dados.name
-          // rowData.is_active.value = dados.is_active
-          // rowData.document.value = dados.document
-          // rowData.documenttype.value = dados.documenttype
-          // rowData.companygroup_id.value = dados.companygroup_id
-        // }
         rowData.id.value = props.data.id
         rowData.name.value = props.data.name
         rowData.is_active.value = props.data.is_active
         rowData.document.value = props.data.document
         rowData.documenttype.value = props.data.documenttype
-        rowData.companygroup_id.value = props.data.companygroup_id
 
         rowData.avatar_id.value = props.data.avatar_id
         rowData.is_active.value = props.data.is_active
@@ -245,13 +197,7 @@ export default function CompanyData(props) {
     let value = valueMask.replace(/\D/g, '')
     _.set(rowData, id, value)
   }
-  function handleChangeSelect(id, idSelect, value, select) {
-    _.set(rowData, id, value);
-    if(select !== undefined) {
-      _.set(rowData, idSelect, select)
-    }
-    setAtualiza(!atualiza)
-  }
+
   function onChangeDocumentType(par) {
     // if (/^3[47]/.test(value)) {
     if (par==="F"){
@@ -281,7 +227,6 @@ export default function CompanyData(props) {
           is_active: rowData.is_active.value,
           document: rowData.document.value,
           documenttype: rowData.documenttype.value,
-          companygroup_id: rowData.companygroup_id.value,
         },
         {
           abortEarly: false
@@ -304,15 +249,14 @@ export default function CompanyData(props) {
             userlog_id: auth.login.values.loggedInUser.id,
             document: rowData.document.value,
             documenttype: rowData.documenttype.value,
-            companygroup_id: rowData.companygroup_id.value,
             avatar_id: rowData.avatar_id.value,
           }
-          const response = await api.post(`/companies`, data);
+          const response = await api.post(`/businessunits`, data);
           props.handleSidebar(false)
           props.handleAdd(response.data)
           setRowData(baseData)
           setIniciais(dicalogin(response.data.name))
-          toast.success("Empresa incluida com sucesso!", { transition: Flip });
+          toast.success("Unidade de Negócio incluida com sucesso!", { transition: Flip });
         } catch (error) {
           if (typeof error.response !== 'undefined')
           {
@@ -322,12 +266,12 @@ export default function CompanyData(props) {
                 toast.error(error.response.data.message, { transition: Flip });
               }
               else{
-                toast.error(`Erro ao Incluir a Empresa! ${error.message}`, { transition: Flip });
+                toast.error(`Erro ao Incluir a Unidade de Negócio! ${error.message}`, { transition: Flip });
               }
             }
           }
           else {
-            toast.error(`Erro ao Incluir a Empresa! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao Incluir a Unidade de Negócio! ${error.message}`, { transition: Flip });
           }
         }
       } else {
@@ -340,13 +284,12 @@ export default function CompanyData(props) {
             userlog_id: auth.login.values.loggedInUser.id,
             document: rowData.document.value,
             documenttype: rowData.documenttype.value,
-            companygroup_id: rowData.companygroup_id.value
           }
-          await api.put(`/companies`, data);
+          await api.put(`/businessunits`, data);
           props.handleSidebar(false)
           props.handleUpdate(data)
           setRowData(baseData)
-          toast.success("Empresa atualizada com sucesso!", { transition: Flip });
+          toast.success("Unidade de Negócio atualizada com sucesso!", { transition: Flip });
         } catch (error) {
           if (typeof error.response !== 'undefined')
           {
@@ -356,12 +299,12 @@ export default function CompanyData(props) {
                 toast.error(error.response.data.message, { transition: Flip });
               }
               else{
-                toast.error(`Erro ao Incluir a Empresa! ${error.message}`, { transition: Flip });
+                toast.error(`Erro ao Incluir a Unidade de Negócio! ${error.message}`, { transition: Flip });
               }
             }
           }
           else {
-            toast.error(`Erro ao atualizar a Empresa! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao atualizar a Unidade de Negócio! ${error.message}`, { transition: Flip });
           }
         }
       }
@@ -382,14 +325,14 @@ export default function CompanyData(props) {
           toast.error(
             `Dados incorretos ao ${
               id === "0" ? "incluir" : "alterar"
-            } a Empresa.`
+            } a Unidade de Negócio.`
           , { transition: Flip });
         }
         toggle(tabAux)
         setAtualiza(!atualiza)
       } else {
         toast.error(
-          `Não foi possível ${id === "0" ? "incluir" : "alterar"} a Empresa. ${error.message}`
+          `Não foi possível ${id === "0" ? "incluir" : "alterar"} a Unidade de Negócio. ${error.message}`
         , { transition: Flip });
       }
     }
@@ -460,20 +403,27 @@ export default function CompanyData(props) {
                 </Col>
                 <Col md="6" sm="12">
                   <FormGroup>
-                    <Label className="d-block mb-50">Grupo Empresarial</Label>
-                    <Select
-                      getOptionLabel={option => option.name}
-                      getOptionValue={option => option.id}
-                      className="React"
-                      classNamePrefix="select"
-                      isSearchable={false}
-                      name="profile"
-                      options={companygroups}
-                      value={companygroups.filter(option => option.id === rowData.companygroup_id.value)}
-                      onChange={e => handleChangeSelect("companygroup_id.value","companygroup_id.select",e.id,e)}
-                      isDisabled={!salvarPermission}
-                    />
-                    {rowData.companygroup_id.invalid ? <div className="text-danger font-small-2">{rowData.companygroup_id.msg}</div>: null }
+                    <Label className="d-block mb-50">Ativo</Label>
+                    <div className="d-inline-block mr-1">
+                      <Radio
+                        label="Sim"
+                        color="primary"
+                        defaultChecked={rowData.is_active.value}
+                        onChange={e => handleChange("is_active.value", true)}
+                        name="is_active"
+                        disabled={!salvarPermission}
+                      />
+                    </div>
+                    <div className="d-inline-block mr-1">
+                      <Radio
+                        label="Não"
+                        color="primary"
+                        defaultChecked={!rowData.is_active.value}
+                        onChange={e => handleChange("is_active.value",false)}
+                        name="is_active"
+                        disabled={!salvarPermission}
+                      />
+                    </div>
                   </FormGroup>
                 </Col>
                 <Col md="6" sm="12">
@@ -517,31 +467,7 @@ export default function CompanyData(props) {
                     <FormFeedback>{rowData.document.msg}</FormFeedback>
                   </FormGroup>
                 </Col>
-                <Col md="6" sm="12">
-                  <FormGroup>
-                    <Label className="d-block mb-50">Ativo</Label>
-                    <div className="d-inline-block mr-1">
-                      <Radio
-                        label="Sim"
-                        color="primary"
-                        defaultChecked={rowData.is_active.value}
-                        onChange={e => handleChange("is_active.value", true)}
-                        name="is_active"
-                        disabled={!salvarPermission}
-                      />
-                    </div>
-                    <div className="d-inline-block mr-1">
-                      <Radio
-                        label="Não"
-                        color="primary"
-                        defaultChecked={!rowData.is_active.value}
-                        onChange={e => handleChange("is_active.value",false)}
-                        name="is_active"
-                        disabled={!salvarPermission}
-                      />
-                    </div>
-                  </FormGroup>
-                  </Col>
+
             </Row>
           </Form>
         </Col>
@@ -552,7 +478,7 @@ export default function CompanyData(props) {
     <Modal
       isOpen={props.sidebar ? true : false}
       className="modal-dialog-centered"
-      style={{minWidth: '1000px', width: '100%'}}
+      style={{minWidth: '700px', width: '100%'}}
       toggle={() => props.handleSidebar(false)}
       // style={{minWidth: '1200px', minHeight: '900px', width: '80%', height: '808px', margin: '10px auto'}}
 

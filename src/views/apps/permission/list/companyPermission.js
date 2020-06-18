@@ -12,10 +12,6 @@ import {
   Input,
   FormGroup,
   Spinner,
-  UncontrolledDropdown,
-  DropdownMenu,
-  DropdownItem,
-  DropdownToggle,
   CustomInput
 } from "reactstrap"
 import { useSelector } from "react-redux";
@@ -23,10 +19,8 @@ import XLSX from "xlsx"
 
 import { ContextLayout } from "../../../../utility/context/Layout"
 import { AgGridReact } from "ag-grid-react"
-import {
-  ChevronDown
-} from "react-feather"
 import { toast, Flip } from "react-toastify"
+import Select from "react-select"
 
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 
@@ -38,17 +32,21 @@ import "flatpickr/dist/themes/light.css";
 import "../../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
 import api from "../../../../services/api"
 import ToolBar from "../../../../components/especificos/toolbar"
+import { Content  } from "./styles";
 
-export default function UserPermission(props) {
-  let updatePermission = props.userPermission.includes(14)
-  let reportPermission = props.userPermission.includes(15)
+export default function CompanyPermission(props) {
+  let updatePermission = props.userPermission.includes(73+1)
+  let reportPermission = props.userPermission.includes(73+2)
 
   const [gridApi, setgridApi] = useState(null)
   const [rowData, setrowData] = useState(null)
-  const [pageSize, setpageSize] = useState(20)
+  const [pageSize] = useState(50)
   const [showModalExport, setShowModalExport] = useState(false)
   const [fileName, setFileName] = useState("")
   const [fileFormat, setFileFormat] = useState("xlsx")
+  const [users, setUsers] = useState([])
+  const [user_id, setUser_id] = useState(0)
+  const [loaded, setLoaded] = useState(false)
 
   const toolBarList = [
     {
@@ -94,35 +92,10 @@ export default function UserPermission(props) {
  const [searchVal, setsearchVal] = useState("")
  const columnDefs = [
    {
-    headerName: "Usuário",
-    field: "users_username",
-    filter: true,
-    width: 250,
-    cellRendererFramework: params => {
-      return (
-        <span>
-          {params.value}
-        </span>
-      )
-    }
-   },
-   {
-    headerName: "Modulo",
-    field: "modules_name",
+    headerName: "Empresa",
+    field: "companies_name",
     filter: true,
     width: 250
-   },
-   {
-    headerName: "Rotina",
-    field: "routines_name",
-    filter: true,
-    width: 250
-  },
-   {
-     headerName: "Funcionalidade",
-     field: "functionalities_name",
-     filter: true,
-     width: 250
    },
    {
      headerName: "Permissão",
@@ -153,6 +126,34 @@ export default function UserPermission(props) {
   // const dispatch = useDispatch()
 
   const auth = useSelector(state => state.auth);
+  useEffect(() =>
+  {
+     async function loadDados() {
+      let response = null
+      let body = {
+        licence_id: auth.login.licence_id,
+        id: 0,
+        active: "active",
+        userlog_id: auth.login.values.loggedInUser.id
+      };
+      response = await api.post("/users.list",
+        body
+      );
+      const users = response.data
+      let user_id = 0
+      setUsers(users)
+      if(users.length>0) {
+        user_id = users[0].id
+        setUser_id(user_id)
+      }
+      setLoaded(true)
+
+    }
+    if(auth !== undefined && !loaded)
+      {
+        loadDados();
+      }
+  }, [auth, loaded]);
 
   useEffect(() =>
   {
@@ -162,7 +163,7 @@ export default function UserPermission(props) {
           let body = {
             application_id: 1,
             licence_id: auth.login.licence_id,
-            id: 0,
+            user_id: user_id,
             userlog_id: auth.login.values.loggedInUser.id
           };
           // let response = await api.post("/profiles.list", {
@@ -170,30 +171,23 @@ export default function UserPermission(props) {
           // });
           // setProfiles(response.data)
 
-          let response = await api.post("/userpermission.list",
+          let response = await api.post("/companypermission.list",
             body
           );
           let rowData = response.data;
           setrowData(rowData)
-          // setLoad(false)
+          // setLoaded(true)
         }
       }
      }
-     if(auth !== undefined)
+     if(loaded && user_id>0)
       {
         loadDados();
       }
-  }, [auth]);
+  }, [loaded, user_id]) // eslint-disable-line
 
   const onGridReady = params => {
     setgridApi(params.api)
-  }
-
-  const filterSize = val => {
-    if (gridApi) {
-      gridApi.paginationSetPageSize(Number(val))
-      setpageSize(val)
-    }
   }
 
   const updateSearchQuery = val => {
@@ -207,15 +201,18 @@ export default function UserPermission(props) {
       selecionados.push(
         {
           licence_id: auth.login.licence_id,
-          user_id: element.users_id,
-          functionality_id: element.functionalities_id,
-          is_permission: param
+          user_id: user_id,
+          company_id: element.companies_id,
+          is_permission: param,
+          userlog_id: auth.login.values.loggedInUser.id
         }
       )
     })
     try {
       let data =
       {
+        userlog_id: auth.login.values.loggedInUser.id,
+ 	      licence_id: auth.login.licence_id,
         permissions: selecionados
       }
       await handleSave(data)
@@ -232,12 +229,15 @@ export default function UserPermission(props) {
     try {
       let data =
       {
+        userlog_id: auth.login.values.loggedInUser.id,
+        licence_id: auth.login.licence_id,
         permissions: [
           {
             licence_id: auth.login.licence_id,
-            user_id: param.data.users_id,
-            functionality_id: param.data.functionalities_id,
-            is_permission: value
+            user_id: user_id,
+            company_id: param.data.companies_id,
+            is_permission: value,
+            userlog_id: auth.login.values.loggedInUser.id
           }
         ]
       }
@@ -248,10 +248,7 @@ export default function UserPermission(props) {
   }
   async function handleSave(dados) {
     try {
-      dados.licence_id = auth.login.licence_id
-      dados.userlog_id=  auth.login.values.loggedInUser.id
-
-      await api.put(`/userpermission`, dados);
+      await api.put(`/companypermission`, dados);
 
     } catch (error) {
       if (typeof error.response !== 'undefined')
@@ -286,48 +283,33 @@ export default function UserPermission(props) {
     XLSX.utils.book_append_sheet(wbout, wb, 'teste')
     XLSX.writeFile(wbout, fileNameArq);
   }
-
+  function handleChangeSelect(select, value) {
+    if(select==="user") {
+      setUser_id(value.id)
+    }
+  }
   return (
     <Row>
       <Col sm="12">
         <Card>
           <CardBody>
             <div className="ag-theme-alpine ag-grid-table">
-              <div className="ag-grid-actions d-flex justify-content-between flex-wrap mb-1">
-                <div className="sort-dropdown">
-                  <UncontrolledDropdown className="ag-dropdown p-1">
-                    <DropdownToggle tag="div">
-                      1 - {pageSize} of 150
-                      <ChevronDown className="ml-50" size={15} />
-                    </DropdownToggle>
-                    <DropdownMenu right>
-                      <DropdownItem
-                        tag="div"
-                        onClick={() => filterSize(20)}
-                      >
-                        20
-                      </DropdownItem>
-                      <DropdownItem
-                        tag="div"
-                        onClick={() => filterSize(50)}
-                      >
-                        50
-                      </DropdownItem>
-                      <DropdownItem
-                        tag="div"
-                        onClick={() => filterSize(100)}
-                      >
-                        100
-                      </DropdownItem>
-                      <DropdownItem
-                        tag="div"
-                        onClick={() => filterSize(150)}
-                      >
-                        150
-                      </DropdownItem>
-                    </DropdownMenu>
-                  </UncontrolledDropdown>
-                </div>
+              <div className="ag-grid-actions d-flex justify-content-between">
+                <Content>
+                  <Select
+                      getOptionLabel={option => option.username}
+                      getOptionValue={option => option.id}
+                      className="React"
+                      classNamePrefix="select"
+                      isSearchable={true}
+                      name="user"
+                      options={users}
+                      value={users.filter(option => option.id === user_id)}
+                      onChange={e => handleChangeSelect("user", e)}
+                      // isDisabled={!salvarPermission}
+                  />
+                </Content>
+
                 <div className="filter-actions d-flex">
                   <Input
                     className="w-50 mr-1 mb-1 mb-sm-0"
@@ -339,7 +321,7 @@ export default function UserPermission(props) {
                 <ToolBar toolBarList={toolBarList} typeBar="1"/>
                 </div>
               </div>
-              {rowData !== null ? (
+              {loaded ? (
                 <ContextLayout.Consumer>
                   {context => (
                     <AgGridReact

@@ -174,23 +174,6 @@ const horizontalMenuConfig = [
         icon: <Icon.MoreHorizontal size={20} />,
         children: [
           {
-            id: "material",
-            title: "Materials",
-            type: "item",
-            icon: <Icon.Globe size={20} />,
-            permissions: ["admin"],
-            userPermission: 61,
-            navLink: "/app/material/list"
-          }
-        ]
-      },
-      {
-        id: "management",
-        title: "Management",
-        type: "dropdown",
-        icon: <Icon.Grid size={20} />,
-        children: [
-          {
             id: "company",
             title: "Companies",
             type: "item",
@@ -198,17 +181,45 @@ const horizontalMenuConfig = [
             permissions: ["admin"],
             userPermission: 43,
             navLink: "/app/company/list"
+          },
+          {
+            id: "measure",
+            title: "Measure unit",
+            type: "item",
+            icon: <Icon.Globe size={20} />,
+            permissions: ["admin"],
+            userPermission: 55,
+            navLink: "/app/measure/list"
+          },
+          {
+            id: "material",
+            title: "Materials",
+            type: "item",
+            icon: <Icon.Globe size={20} />,
+            permissions: ["admin"],
+            userPermission: 61,
+            navLink: "/app/material/list"
+          },
+          {
+            id: "financialaccount",
+            title: "Financial Plan",
+            type: "item",
+            icon: <Icon.Globe size={20} />,
+            permissions: ["admin"],
+            userPermission: 61,
+            navLink: "/app/financialaccount/list"
+          },
+          {
+            id: "accountingaccount",
+            title: "Accounting Plan",
+            type: "item",
+            icon: <Icon.Globe size={20} />,
+            permissions: ["admin"],
+            userPermission: 61,
+            navLink: "/app/accountingaccount/list"
           }
         ]
-      },
-      {
-        id: "finantials",
-        title: "Finantials",
-        type: "dropdown",
-        icon: <Icon.DollarSign size={20} />,
-        children: [
-        ]
-      },
+      }
     ]
   },
   {

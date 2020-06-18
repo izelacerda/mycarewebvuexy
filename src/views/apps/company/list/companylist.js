@@ -28,11 +28,11 @@ import api from "../../../../services/api"
 import { ContextLayout } from "../../../../utility/context/Layout"
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 import "../../../../assets/scss/pages/users.scss"
-
 import "../../../../assets/scss/especificos/cadastros.scss"
-
 import CompanyData from "../cadastro/companydata"
 import ToolBar from "../../../../components/especificos/toolbar"
+import { dicalogin } from "../../../../shared/geral"
+import { Container, Content  } from "./styles";
 
 export default function CompanyList(props) {
   const auth = useSelector(state => state.auth);
@@ -88,7 +88,7 @@ export default function CompanyList(props) {
     {
       headerName: "ID",
       field: "id",
-      width: 150,
+      width: 90,
       filter: true,
       checkboxSelection: false,
       headerCheckboxSelectionFilteredOnly: true,
@@ -105,6 +105,21 @@ export default function CompanyList(props) {
             className="d-flex align-items-center cursor-pointer"
             onClick={() => dadosdoCadastroPermission ? handleId(params.data,params.data.id,true)  : null}
           >
+            {params.data.files ? (
+                <img
+                className="rounded-circle mr-50"
+                src={params.data.files.url}
+                alt="user avatar"
+                height="30"
+                width="30"
+              />
+            ) : (
+              <Container>
+                <Content>
+                  <span className="nome">{dicalogin(params.data.name)}</span>
+                </Content>
+              </Container>
+            )}
             <span>{params.data.name}</span>
           </div>
         )

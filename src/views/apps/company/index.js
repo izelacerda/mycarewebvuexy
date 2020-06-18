@@ -18,7 +18,7 @@ import "../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
 import { history } from "../../../history"
 import CompanyGroupList from "./list/companygrouplist"
 import CompanyList from "./list/companylist"
-// import Breadcrumbs from "../../../components/@vuexy/breadCrumbs/BreadCrumb"
+import BusinessUnitList from "./list/businessunitlist"
 
 export default function Company(props) {
   let AcessoPermission = props.userPermission.includes(43)
@@ -97,6 +97,19 @@ export default function Company(props) {
                           <span className="align-middle ml-50">Empresas</span>
                         </NavLink>
                       </NavItem>
+                      <NavItem>
+                        <NavLink
+                          className={classnames({
+                            active: activeTab === "3"
+                          })}
+                          onClick={() => {
+                            toggle("3")
+                          }}
+                        >
+                          <User size={16} />
+                          <span className="align-middle ml-50">Unidades de Negócio</span>
+                        </NavLink>
+                      </NavItem>
 
                     </Nav>
                   </div>
@@ -108,6 +121,9 @@ export default function Company(props) {
                     </TabPane>
                     <TabPane tabId="2">
                       <CompanyList {...props} />
+                    </TabPane>
+                    <TabPane tabId="3">
+                      <BusinessUnitList {...props} />
                     </TabPane>
 
                   </TabContent>

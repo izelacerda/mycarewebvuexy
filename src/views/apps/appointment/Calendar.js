@@ -426,6 +426,7 @@ export default function AppointmentApp(props) {
                 className="React"
                 classNamePrefix="select"
                 name="provider"
+                isSearchable={true}
                 options={providers}
                 defaultValue={providers.filter(option => option.id === provider_id)}
                 onChange={e => handleChangeSelect("provider", e)}

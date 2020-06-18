@@ -37,8 +37,8 @@ const schema = Yup.object().shape({
   structure: Yup.string()
     .required("Estruturado é obrigatório"),
   measurement_id: Yup.number()
-    .min(1,"Unidade de Medida é obrigatório")
-    .required("Unidade de Medida é obrigatório"),
+    .min(1,"Unidade é obrigatório")
+    .required("Unidade é obrigatório"),
   level: Yup.number()
     .min(0,"Nivel inválido")
     .required("Nivel inválido"),
@@ -51,11 +51,11 @@ const schema = Yup.object().shape({
   // exemplos https://github.com/jquense/yup#usage
 });
 
-export default function MaterialCadastro(props) {
-  let listaPermission = props.userPermission.includes(61)
-  let insertPermission = props.userPermission.includes(61+1)
-  let updatePermission = props.userPermission.includes(61+2)
-  let dadosdoCadastroPermission = props.userPermission.includes(61+5)
+export default function FinancialAccountCadastro(props) {
+  let listaPermission = props.userPermission.includes(67)
+  let insertPermission = props.userPermission.includes(67+1)
+  let updatePermission = props.userPermission.includes(67+2)
+  let dadosdoCadastroPermission = props.userPermission.includes(67+5)
   let salvarPermission = true
 
   const [id, setId]  = useState(props.id)
@@ -294,12 +294,12 @@ export default function MaterialCadastro(props) {
             table_number: props.config.table_number,
             table_subnumber: props.config.table_subnumber,
           }
-          const response = await api.post(`/materials`, data);
+          const response = await api.post(`/financialaccounts`, data);
           rowData.id.value = response.data.id
           props.handleSidebar(false)
           props.handleAdd(response.data)
           setRowData(baseData)
-          toast.success("Material incluído com sucesso!", { transition: Flip });
+          toast.success("Conta incluída com sucesso!", { transition: Flip });
         } catch (error) {
           if (typeof error.response !== 'undefined')
           {
@@ -309,12 +309,12 @@ export default function MaterialCadastro(props) {
                 toast.error(error.response.data.message, { transition: Flip });
               }
               else{
-                toast.error(`Erro ao Incluir o Material! ${error.message}`, { transition: Flip });
+                toast.error(`Erro ao Incluir a Conta! ${error.message}`, { transition: Flip });
               }
             }
           }
           else {
-            toast.error(`Erro ao Incluir o Material! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao Incluir a Conta! ${error.message}`, { transition: Flip });
           }
         }
       } else {
@@ -332,11 +332,11 @@ export default function MaterialCadastro(props) {
             sequence: rowData.sequence.value,
             is_group: rowData.is_group.value,
           }
-          await api.put(`/materials`, data)
+          await api.put(`/financialaccounts`, data)
           props.handleSidebar(false)
           props.handleUpdate(data)
           setRowData(baseData)
-          toast.success("Material atualizado com sucesso!", { transition: Flip });
+          toast.success("Conta atualizada com sucesso!", { transition: Flip });
         } catch (error) {
           if (typeof error.response !== 'undefined')
           {
@@ -346,12 +346,12 @@ export default function MaterialCadastro(props) {
                 toast.error(error.response.data.message, { transition: Flip });
               }
               else{
-                toast.error(`Erro ao Incluir o Material! ${error.message}`, { transition: Flip });
+                toast.error(`Erro ao Incluir a Conta! ${error.message}`, { transition: Flip });
               }
             }
           }
           else {
-            toast.error(`Erro ao atualizar o Material! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao atualizar a Conta! ${error.message}`, { transition: Flip });
           }
         }
       }
@@ -372,14 +372,14 @@ export default function MaterialCadastro(props) {
           toast.error(
             `Dados incorretos ao ${
               id === "0" ? "incluir" : "alterar"
-            } o Material.`
+            } a Conta.`
           , { transition: Flip });
         }
         toggle(tabAux)
         setAtualiza(!atualiza)
       } else {
         toast.error(
-          `Não foi possível ${id === "0" ? "incluir" : "alterar"} o Material. ${error.message}`
+          `Não foi possível ${id === "0" ? "incluir" : "alterar"} a Conta. ${error.message}`
         , { transition: Flip });
       }
     }
@@ -410,7 +410,7 @@ export default function MaterialCadastro(props) {
             <Row>
               <Col>
                 <FormGroup>
-                  <Label className="d-block mb-50">Unidade de Medida</Label>
+                  <Label className="d-block mb-50">Unidade</Label>
                   <Select
                     getOptionLabel={option => `${option.name} (${option.initials})`}
                     getOptionValue={option => option.id}
