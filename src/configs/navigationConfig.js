@@ -205,14 +205,23 @@ const navigationConfig = [
       }
     ]
   },
-  // {
-  //   id: "finantials",
-  //   title: "Finantials",
-  //   type: "collapse",
-  //   icon: <Icon.DollarSign size={20} />,
-  //   children: [
-  //   ]
-  // },
+  {
+    id: "finantials",
+    title: "Finantial",
+    type: "collapse",
+    icon: <Icon.DollarSign size={20} />,
+    children: [
+      {
+        id: "invoice",
+        title: "Invoice Providers",
+        type: "item",
+        icon: <Icon.DollarSign size={20} />,
+        permissions: ["admin"],
+        userPermission: 94,
+        navLink: "/app/invoice/list"
+      },
+    ]
+  },
   {
     id: "security",
     title: "Security",

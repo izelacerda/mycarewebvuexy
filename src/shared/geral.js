@@ -119,3 +119,18 @@ export function pad(n, width, z) {
   n = n + '';
   return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
 }
+
+
+export function currencyFormatter(params,locale,currency,digits) {
+  let braFormat = new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: digits
+  });
+  // return 'R$ '+ formatNumber(params.value)
+  return braFormat.format(params)
+}
+export function dateFormatter(params,locale) {
+  let newDate = new Date(params)
+  return newDate.toLocaleDateString(locale);
+}
