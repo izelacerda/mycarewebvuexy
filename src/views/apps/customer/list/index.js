@@ -99,7 +99,7 @@ export default function CustomerList(props) {
     },
     {
       headerName: "Nome",
-      field: "username",
+      field: "name",
       filter: true,
       width: 250,
       cellRendererFramework: params => {
@@ -120,11 +120,11 @@ export default function CustomerList(props) {
             ) : (
               <Container>
                 <Content>
-                  <span className="nome">{dicalogin(params.data.username)}</span>
+                  <span className="nome">{dicalogin(params.data.name)}</span>
                 </Content>
               </Container>
             )}
-            <span>{params.data.username}</span>
+            <span>{params.data.name}</span>
           </div>
         )
       }
@@ -233,8 +233,6 @@ export default function CustomerList(props) {
   async function handleAdd(data) {
     const dados = rowData.map(e => { return e })
     dados.push(data)
-    console.log(data)
-    console.log(dados)
     setRowData(dados)
   }
 

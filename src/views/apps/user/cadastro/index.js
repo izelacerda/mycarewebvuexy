@@ -55,7 +55,7 @@ import ToolBar from "../../../../components/especificos/toolbar"
 import "../../../../assets/scss/especificos/mymodal.css"
 
 const schema = Yup.object().shape({
-  username: Yup.string()
+  name: Yup.string()
   .required("O nome é obrigatório")
   .min(10, "Mínimo 10 caracteres"),
   login: Yup.string()
@@ -143,7 +143,7 @@ export default function UserCadastro(props) {
   const baseData = {
     id: { value: 0,  invalid: false, tab: '1', msg:'' },
     login:    { value: '',  invalid: false, tab: '1', msg:'' },
-    username: { value: '',  invalid: false, tab: '1', msg:'' },
+    name: { value: '',  invalid: false, tab: '1', msg:'' },
     email:    { value: '',  invalid: false, tab: '1', msg:'' },
     avatar: { value: null,  invalid: false, tab: '1', msg:'' },
     avatar_id: { value: null,  invalid: false, tab: '1', msg:'' },
@@ -266,7 +266,7 @@ export default function UserCadastro(props) {
         }
         rowData.id.value =  props.data.id
         rowData.login.value = props.data.login
-        rowData.username.value = props.data.username
+        rowData.name.value = props.data.name
         rowData.email.value = props.data.email
         rowData.document.value = props.data.document
         rowData.documenttype.value = props.data.documenttype
@@ -285,7 +285,7 @@ export default function UserCadastro(props) {
         rowData.is_active.value = props.data.is_active
         rowData.avatar.value = props.data.files
         rowData.profile_id.value = props.data.pivot && props.data.pivot.profile_id ? props.data.pivot.profile_id : 0
-        setIniciais(dicalogin(props.data.username))
+        setIniciais(dicalogin(props.data.name))
         setUrl(props.data.files ? props.data.files.url : null)
       }
       else {
@@ -392,7 +392,7 @@ export default function UserCadastro(props) {
       await schema.validate(
         {
           login: rowData.login.value,
-          username: rowData.username.value,
+          name: rowData.name.value,
           email: rowData.email.value,
           document: rowData.document.value,
           documenttype: rowData.documenttype.value,
@@ -430,7 +430,7 @@ export default function UserCadastro(props) {
       data = {
           id: rowData.id.value,
           login: rowData.login.value,
-          username: rowData.username.value,
+          name: rowData.name.value,
           email: rowData.email.value,
           document: rowData.document.value,
           documenttype: rowData.documenttype.value,
@@ -467,7 +467,7 @@ export default function UserCadastro(props) {
           props.handleSidebar(false)
           props.handleAdd(response.data[0])
           setRowData(baseData)
-          setIniciais(dicalogin(response.data.username))
+          setIniciais(dicalogin(response.data.name))
           toast.success("Usuário incluido com sucesso!", { transition: Flip });
         } catch (error) {
           if (typeof error.response !== 'undefined')
@@ -493,7 +493,7 @@ export default function UserCadastro(props) {
             let cryptoPassword = crypto.decryptByDESModeCBC(auth.login.values.loggedInUser.password)
             dispatch(loginWithJWT({
               id: auth.login.values.loggedInUser.id,
-              name: rowData.username.value,
+              name: rowData.name.value,
               login: rowData.login.value,
               email: rowData.email.value,
               password: cryptoPassword,
@@ -593,7 +593,7 @@ export default function UserCadastro(props) {
             </Media>
             <Media className="mt-2" body>
               <Media className="font-medium-1 text-bold-600" tag="p" heading>
-                {rowData.username ? rowData.username.value : null}
+                {rowData.name ? rowData.name.value : null}
               </Media>
               <div className="d-flex flex-wrap">
                 <Button.Ripple className="mr-1" color="primary" disabled={!salvarPermission} outline onClick={() => handleImg(null)} size="sm" >
@@ -608,17 +608,17 @@ export default function UserCadastro(props) {
           <Form onSubmit={e => e.preventDefault()}>
             <Row>
               <Col md="6" sm="12">
-                  <Label for="username">Nome</Label>
+                  <Label for="name">Nome</Label>
                   <Input
                     type="text"
-                    defaultValue= {rowData.username.value ? rowData.username.value : null}
-                    id="username.value"
+                    defaultValue= {rowData.name.value ? rowData.name.value : null}
+                    id="name.value"
                     placeholder="Nome"
                     onChange={e => handleChange(e.target.id,e.target.value)}
-                    invalid={rowData.username.invalid}
+                    invalid={rowData.name.invalid}
                     disabled={!salvarPermission}
                   />
-                  <FormFeedback>{rowData.username.msg}</FormFeedback>
+                  <FormFeedback>{rowData.name.msg}</FormFeedback>
               </Col>
               <Col md="6" sm="12">
                 <FormGroup>

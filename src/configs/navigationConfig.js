@@ -206,8 +206,8 @@ const navigationConfig = [
     ]
   },
   {
-    id: "finantials",
-    title: "Finantial",
+    id: "financial",
+    title: "Financial",
     type: "collapse",
     icon: <Icon.DollarSign size={20} />,
     children: [

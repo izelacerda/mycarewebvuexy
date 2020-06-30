@@ -100,7 +100,7 @@ export default function UserList(props) {
     },
     {
       headerName: "Nome",
-      field: "username",
+      field: "name",
       filter: true,
       width: 250,
       cellRendererFramework: params => {
@@ -121,11 +121,11 @@ export default function UserList(props) {
             ) : (
               <Container>
                 <Content>
-                  <span className="nome">{dicalogin(params.data.username)}</span>
+                  <span className="nome">{dicalogin(params.data.name)}</span>
                 </Content>
               </Container>
             )}
-            <span>{params.data.username}</span>
+            <span>{params.data.name}</span>
           </div>
         )
       }

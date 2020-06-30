@@ -421,7 +421,7 @@ export default function AppointmentApp(props) {
         <div>
           <div className="w-100 text-bold-500 font-medium-2 align-left">
             <Select
-                getOptionLabel={option => option.username}
+                getOptionLabel={option => option.name}
                 getOptionValue={option => option.id}
                 className="React"
                 classNamePrefix="select"

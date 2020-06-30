@@ -173,7 +173,7 @@ export default function MeasureList(props) {
             active: 'all',
             userlog_id: auth.login.values.loggedInUser.id
           };
-          let response = await api.post("/measurements.list", {
+          let response = await api.post("/measurementunits.list", {
             ...body
           });
           setRowData(response.data)
@@ -235,7 +235,7 @@ export default function MeasureList(props) {
           id: itemDelete.id,
           userlog_id: auth.login.values.loggedInUser.id
         };
-        await api.delete("/measurements",
+        await api.delete("/measurementunits",
           { data }
         );
         setItemDelete(null)

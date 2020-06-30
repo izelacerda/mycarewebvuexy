@@ -98,7 +98,7 @@ export default function ProfilePermission(props) {
  const columnDefs = [
    {
     headerName: "Profile",
-    field: "profiles_name",
+    field: "profile_name",
     filter: true,
     width: 250,
     cellRendererFramework: params => {
@@ -111,19 +111,19 @@ export default function ProfilePermission(props) {
    },
    {
     headerName: "Modulo",
-    field: "modules_name",
+    field: "module_name",
     filter: true,
     width: 250
    },
    {
     headerName: "Rotina",
-    field: "routines_name",
+    field: "routine_name",
     filter: true,
     width: 250
   },
    {
      headerName: "Funcionalidade",
-     field: "functionalities_name",
+     field: "functionality_name",
      filter: true,
      width: 250
    },
@@ -165,7 +165,7 @@ export default function ProfilePermission(props) {
           let body = {
             application_id: 1,
             licence_id: auth.login.licence_id,
-            id: 0,
+            profile_id: 0,
             userlog_id: auth.login.values.loggedInUser.id
           };
           // let response = await api.post("/profiles.list", {
@@ -210,8 +210,8 @@ export default function ProfilePermission(props) {
       selecionados.push(
         {
           licence_id: auth.login.licence_id,
-          profile_id: element.profiles_id,
-          functionality_id: element.functionalities_id,
+          profile_id: element.profile_id,
+          functionality_id: element.functionality_id,
           is_permission: param
         }
       )
@@ -238,8 +238,8 @@ export default function ProfilePermission(props) {
         permissions: [
           {
             licence_id: auth.login.licence_id,
-            profile_id: param.data.profiles_id,
-            functionality_id: param.data.functionalities_id,
+            profile_id: param.data.profile_id,
+            functionality_id: param.data.functionality_id,
             is_permission: value
           }
         ]
@@ -253,7 +253,6 @@ export default function ProfilePermission(props) {
     try {
       dados.licence_id = auth.login.licence_id
       dados.userlog_id=  auth.login.values.loggedInUser.id
-
       await api.put(`/profilepermission`, dados);
 
     } catch (error) {

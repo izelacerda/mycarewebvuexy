@@ -5,7 +5,6 @@ import {
   Form,
   Modal,
   ModalBody,
-  Input,
   Label,
   FormGroup,
   FormFeedback,
@@ -15,32 +14,29 @@ import _ from 'lodash';
 import { useSelector } from "react-redux";
 import { toast, Flip } from "react-toastify"
 import * as Yup from "yup";
+import Flatpickr from "react-flatpickr";
+import NumberFormat from "react-number-format"
 
 import Chip from "../../../../components/@vuexy/chips/ChipComponent"
 import "../../../../assets/scss/pages/users.scss"
-import Radio from "../../../../components/@vuexy/radio/RadioVuexy"
 
 import "flatpickr/dist/themes/light.css";
 import "../../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
-import api from "../../../../services/api"
 import ToolBar from "../../../../components/especificos/toolbar"
 
 const schema = Yup.object().shape({
-  name: Yup.string()
-  .required("O nome é obrigatório"),
-  is_active: Yup
-    .boolean(),
-  // outros notOneof(['admin','teste'], 'este nome nao pode')
-  // exemplos https://github.com/jquense/yup#usage,
-  initials: Yup.string()
-  .required("A sigla é obrigatório"),
+  dueDate: Yup.date()
+  .required("A Data de Vencimento é obrigatória"),
+  value: Yup.number()
+  .min(1, "Valor Total é obrigatório")
+  .required("O Valor Total é obrigatório"),
 });
 
-export default function MeasureCadastro(props) {
-  let listaPermission = props.userPermission.includes(55)
-  let insertPermission = props.userPermission.includes(55+1)
-  let updatePermission = props.userPermission.includes(55+2)
-  let dadosdoCadastroPermission = props.userPermission.includes(55+5)
+export default function InvoiceFinancialCadastro(props) {
+  let listaPermission = true
+  let insertPermission = true
+  let updatePermission = true
+  let dadosdoCadastroPermission = true
   let salvarPermission = true
 
   const [id, setId]  = useState(props.id)
@@ -61,9 +57,8 @@ export default function MeasureCadastro(props) {
 
   const baseData = {
     id: { value: 0,  invalid: false, tab: '1', msg:'' },
-    name: { value: '',  invalid: false, tab: '1', msg:'' },
-    is_active: { value: true, invalid: false, tab: '1', msg:'' },
-    initials: { value: '',  invalid: false, tab: '1', msg:'' },
+    dueDate: { value: '',  invalid: false, tab: '1', msg:'' },
+    value: { value: '', invalid: false, tab: '1', msg:'' },
   }
   const [rowData, setRowData] = useState(baseData)
   const toolBarList = [
@@ -107,9 +102,8 @@ export default function MeasureCadastro(props) {
       setEdicao(props.id>0)
       if(props.id > 0 && props.data) {
         rowData.id.value = props.data.id
-        rowData.name.value = props.data.name
-        rowData.is_active.value = props.data.is_active
-        rowData.initials.value = props.data.initials
+        rowData.dueDate.value = props.data.dueDate
+        rowData.value.value = props.data.value
       }
       else {
         setRowData(baseData)
@@ -149,9 +143,8 @@ export default function MeasureCadastro(props) {
       }
       await schema.validate(
         {
-          name: rowData.name.value,
-          is_active: rowData.is_active.value,
-          initials: rowData.initials.value
+          dueDate: rowData.dueDate.value,
+          value: rowData.value.value,
         },
         {
           abortEarly: false
@@ -160,19 +153,14 @@ export default function MeasureCadastro(props) {
       let data=null
       if (!edicao) {
         try {
-          data = {
-            licence_id: auth.login.licence_id,
-            name: rowData.name.value,
-            is_active: rowData.is_active.value,
-            initials: rowData.initials.value,
-            userlog_id: auth.login.values.loggedInUser.id
+           data =  {
+            dueDate: rowData.dueDate.value,
+            value: rowData.value.value,
+            balance: rowData.value.value
           }
-          const response = await api.post(`/measurementunits`, data);
-          rowData.id.value = response.data.id
           props.handleSidebar(false)
-          props.handleAdd(response.data)
+          props.handleAdd(data)
           setRowData(baseData)
-          toast.success("Unidade de Medida incluida com sucesso!", { transition: Flip });
         } catch (error) {
           if (typeof error.response !== 'undefined')
           {
@@ -182,29 +170,25 @@ export default function MeasureCadastro(props) {
                 toast.error(error.response.data.message, { transition: Flip });
               }
               else{
-                toast.error(`Erro ao Incluir a Unidade de Medida! ${error.message}`, { transition: Flip });
+                toast.error(`Erro ao Incluir o Financeiro! ${error.message}`, { transition: Flip });
               }
             }
           }
           else {
-            toast.error(`Erro ao Incluir a Unidade de Medida! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao Incluir o Financeiro! ${error.message}`, { transition: Flip });
           }
         }
       } else {
         try {
-          data = {
-            id: rowData.id.value,
-            licence_id: auth.login.licence_id,
-            name: rowData.name.value,
-            is_active: rowData.is_active.value,
-            initials: rowData.initials.value,
-            userlog_id: auth.login.values.loggedInUser.id
+          data =  {
+            id: id,
+            dueDate: rowData.dueDate.value,
+            value: rowData.value.value,
+            balance: rowData.value.value
           }
-          await api.put(`/measurementunits`, data)
           props.handleSidebar(false)
           props.handleUpdate(data)
           setRowData(baseData)
-          toast.success("Unidade de Medida atualizada com sucesso!", { transition: Flip });
         } catch (error) {
           if (typeof error.response !== 'undefined')
           {
@@ -214,12 +198,12 @@ export default function MeasureCadastro(props) {
                 toast.error(error.response.data.message, { transition: Flip });
               }
               else{
-                toast.error(`Erro ao Incluir a Unidade de Medida! ${error.message}`, { transition: Flip });
+                toast.error(`Erro ao Incluir o Financeiro! ${error.message}`, { transition: Flip });
               }
             }
           }
           else {
-            toast.error(`Erro ao atualizar a Unidade de Medida! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao atualizar o Financeiro! ${error.message}`, { transition: Flip });
           }
         }
       }
@@ -240,14 +224,14 @@ export default function MeasureCadastro(props) {
           toast.error(
             `Dados incorretos ao ${
               id === "0" ? "incluir" : "alterar"
-            } a Unidade de Medida.`
+            } o Financeiro.`
           , { transition: Flip });
         }
         toggle(tabAux)
         setAtualiza(!atualiza)
       } else {
         toast.error(
-          `Não foi possível ${id === "0" ? "incluir" : "alterar"} a Unidade de Medida. ${error.message}`
+          `Não foi possível ${id === "0" ? "incluir" : "alterar"} o Financeiro. ${error.message}`
         , { transition: Flip });
       }
     }
@@ -259,57 +243,40 @@ export default function MeasureCadastro(props) {
         <Col sm="12">
           <Form onSubmit={e => e.preventDefault()}>
             <Row>
-              <Col md="12" sm="12">
+              <Col sm="12" lg="12">
                 <FormGroup>
-                  <Label className="d-block mb-50">Nome</Label>
-                  <Input
-                    type="text"
-                    defaultValue= {rowData.name.value ? rowData.name.value : null}
-                    id="name.value"
-                    placeholder="Nome"
-                    onChange={e => handleChange(e.target.id,e.target.value)}
-                    invalid={rowData.name.invalid}
+                  <Label>
+                    Data do Vencimento
+                  </Label>
+                  <Flatpickr
+                    id="dobD"
+                    className="form-control"
+                    options={{ dateFormat: "d-m-Y" }}
+                    value={rowData.dueDate.value}
+                    onChange={date => handleChange("dueDate.value", date[0].toJSON())}
+                    disabled={!salvarPermission}
+                    // onChange={date => this.handledob(date)}
+                  />
+                  <FormFeedback>{rowData.dueDate.msg}</FormFeedback>
+                </FormGroup>
+              </Col>
+              <Col sm="12" lg="12">
+                <FormGroup>
+                  <Label>Valor total</Label>
+                  <NumberFormat
+                    prefix={'R$'}
+                    decimalScale={2}
+                    decimalSeparator={','}
+                    thousandSeparator={'.'}
+                    className="form-control"
+                    placeholder="Valor Total"
+                    value={rowData.value.value}
+                    onValueChange={e => handleChange("value.value",e.floatValue)}
+                    invalid={rowData.value.invalid.toString()}
                     disabled={!salvarPermission}
                   />
-                  <FormFeedback>{rowData.name.msg}</FormFeedback>
+                  <FormFeedback>{rowData.value.msg}</FormFeedback>
                 </FormGroup>
-                <FormGroup>
-                  <Label className="d-block mb-50">Sigla</Label>
-                  <Input
-                    type="text"
-                    defaultValue= {rowData.initials.value ? rowData.initials.value : null}
-                    id="initials.value"
-                    placeholder="Sigla"
-                    onChange={e => handleChange(e.target.id,e.target.value)}
-                    invalid={rowData.initials.invalid}
-                    disabled={!salvarPermission}
-                  />
-                  <FormFeedback>{rowData.initials.msg}</FormFeedback>
-                </FormGroup>
-                <FormGroup>
-                  <Label className="d-block mb-50">Ativo</Label>
-                  <div className="d-inline-block mr-1">
-                    <Radio
-                      label="Sim"
-                      color="primary"
-                      defaultChecked={rowData.is_active.value}
-                      onChange={e => handleChange("is_active.value", true)}
-                      name="is_active"
-                      disabled={!salvarPermission}
-                    />
-                  </div>
-                  <div className="d-inline-block mr-1">
-                    <Radio
-                      label="Não"
-                      color="primary"
-                      defaultChecked={!rowData.is_active.value}
-                      onChange={e => handleChange("is_active.value",false)}
-                      name="is_active"
-                      disabled={!salvarPermission}
-                    />
-                  </div>
-                </FormGroup>
-
               </Col>
             </Row>
           </Form>
@@ -320,7 +287,7 @@ export default function MeasureCadastro(props) {
   return (
     <Modal
         isOpen={props.sidebar ? true : false}
-        className="modal-dialog-centered modal-lg"
+        className="modal-dialog-centered modal-sm"
         toggle={() => props.handleSidebar(false)}
       >
       <ModalBody>

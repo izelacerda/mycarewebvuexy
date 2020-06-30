@@ -45,7 +45,7 @@ export default function CompanyPermission(props) {
   const [fileName, setFileName] = useState("")
   const [fileFormat, setFileFormat] = useState("xlsx")
   const [users, setUsers] = useState([])
-  const [user_id, setUser_id] = useState(0)
+  const [person_id, setUser_id] = useState(0)
   const [loaded, setLoaded] = useState(false)
 
   const toolBarList = [
@@ -93,7 +93,7 @@ export default function CompanyPermission(props) {
  const columnDefs = [
    {
     headerName: "Empresa",
-    field: "companies_name",
+    field: "company_name",
     filter: true,
     width: 250
    },
@@ -140,11 +140,11 @@ export default function CompanyPermission(props) {
         body
       );
       const users = response.data
-      let user_id = 0
+      let person_id = 0
       setUsers(users)
       if(users.length>0) {
-        user_id = users[0].id
-        setUser_id(user_id)
+        person_id = users[0].id
+        setUser_id(person_id)
       }
       setLoaded(true)
 
@@ -163,7 +163,7 @@ export default function CompanyPermission(props) {
           let body = {
             application_id: 1,
             licence_id: auth.login.licence_id,
-            user_id: user_id,
+            person_id: person_id,
             userlog_id: auth.login.values.loggedInUser.id
           };
           // let response = await api.post("/profiles.list", {
@@ -180,11 +180,11 @@ export default function CompanyPermission(props) {
         }
       }
      }
-     if(loaded && user_id>0)
+     if(loaded && person_id>0)
       {
         loadDados();
       }
-  }, [loaded, user_id]) // eslint-disable-line
+  }, [loaded, person_id]) // eslint-disable-line
 
   const onGridReady = params => {
     setgridApi(params.api)
@@ -201,8 +201,8 @@ export default function CompanyPermission(props) {
       selecionados.push(
         {
           licence_id: auth.login.licence_id,
-          user_id: user_id,
-          company_id: element.companies_id,
+          person_id: person_id,
+          company_id: element.company_id,
           is_permission: param,
           userlog_id: auth.login.values.loggedInUser.id
         }
@@ -234,8 +234,8 @@ export default function CompanyPermission(props) {
         permissions: [
           {
             licence_id: auth.login.licence_id,
-            user_id: user_id,
-            company_id: param.data.companies_id,
+            person_id: person_id,
+            company_id: param.data.company_id,
             is_permission: value,
             userlog_id: auth.login.values.loggedInUser.id
           }
@@ -297,14 +297,14 @@ export default function CompanyPermission(props) {
               <div className="ag-grid-actions d-flex justify-content-between">
                 <Content>
                   <Select
-                      getOptionLabel={option => option.username}
+                      getOptionLabel={option => option.name}
                       getOptionValue={option => option.id}
                       className="React"
                       classNamePrefix="select"
                       isSearchable={true}
                       name="user"
                       options={users}
-                      value={users.filter(option => option.id === user_id)}
+                      value={users.filter(option => option.id === person_id)}
                       onChange={e => handleChangeSelect("user", e)}
                       // isDisabled={!salvarPermission}
                   />

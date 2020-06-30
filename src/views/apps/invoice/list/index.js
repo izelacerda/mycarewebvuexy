@@ -74,7 +74,7 @@ export default function InvoiceList(props) {
   const [currency, setCurrency] = useState('BRL')
   const [invoicetypes, setInvoiceTypes]  = useState([])
   const [companies, setCompanies]  = useState([])
-  const [users, setUsers]  = useState([])
+  const [persons, setPersons]  = useState([])
 
   const toolBarList = [
     {
@@ -129,7 +129,7 @@ export default function InvoiceList(props) {
     },
     {
       headerName: "Fornecedor",
-      field: "user.username",
+      field: "person.name",
       filter: true,
       width: 200
     },
@@ -240,7 +240,7 @@ export default function InvoiceList(props) {
           response = await api.post("/providers.list", {
             ...body
           });
-          setUsers(response.data)
+          setPersons(response.data)
           // if(response.data.table_type==="G") {
           //   body = {
           //     licence_id: auth.login.licence_id,
@@ -282,7 +282,7 @@ export default function InvoiceList(props) {
           //   active: "all",
           //   userlog_id: auth.login.values.loggedInUser.id
           // };
-          // response = await api.post("/measurements.list", {
+          // response = await api.post("/measurementunits.list", {
           //   ...body
           // });
           // setMeasures(response.data)
@@ -670,7 +670,7 @@ export default function InvoiceList(props) {
                   data={data}
                   invoicetypes={invoicetypes}
                   companies={companies}
-                  users={users}
+                  persons={persons}
                 />
             </div>
           </CardBody>

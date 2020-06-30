@@ -309,7 +309,7 @@ export default function CompanyData(props) {
           }
           const response = await api.post(`/companies`, data);
           props.handleSidebar(false)
-          props.handleAdd(response.data)
+          props.handleAdd(response.data[0])
           setRowData(baseData)
           setIniciais(dicalogin(response.data.name))
           toast.success("Empresa incluida com sucesso!", { transition: Flip });
@@ -340,11 +340,12 @@ export default function CompanyData(props) {
             userlog_id: auth.login.values.loggedInUser.id,
             document: rowData.document.value,
             documenttype: rowData.documenttype.value,
-            companygroup_id: rowData.companygroup_id.value
+            companygroup_id: rowData.companygroup_id.value,
+            avatar_id: rowData.avatar_id.value,
           }
-          await api.put(`/companies`, data);
+          const response = await api.put(`/companies`, data);
           props.handleSidebar(false)
-          props.handleUpdate(data)
+          props.handleUpdate(response.data[0])
           setRowData(baseData)
           toast.success("Empresa atualizada com sucesso!", { transition: Flip });
         } catch (error) {
@@ -429,7 +430,7 @@ export default function CompanyData(props) {
             </Media>
             <Media className="mt-2" body>
               <Media className="font-medium-1 text-bold-600" tag="p" heading>
-                {rowData.username ? rowData.username.value : null}
+                {rowData.name ? rowData.name.value : null}
               </Media>
               <div className="d-flex flex-wrap">
                 <Button.Ripple className="mr-1" color="primary" disabled={!salvarPermission} outline onClick={() => handleImg(null)} size="sm" >

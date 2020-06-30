@@ -46,7 +46,7 @@ class LockScreen extends React.Component {
                   <CardBody className="pt-1 pb-0">
                     <Form>
                       <FormGroup className="form-label-group position-relative has-icon-left">
-                        <Input type="text" placeholder="Username" required />
+                        <Input type="text" placeholder="Usuário" required />
                         <div className="form-control-position">
                           <User size={15} />
                         </div>

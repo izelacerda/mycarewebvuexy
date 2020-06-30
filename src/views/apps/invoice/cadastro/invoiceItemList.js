@@ -32,12 +32,12 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import "../../../../assets/scss/especificos/cadastros.scss"
 
 import ToolBar from "../../../../components/especificos/toolbar"
-import InvoiceFinantialCadastro from "./invoiceFinantialCadastro"
+import InvoiceItemCadastro from "./invoiceItemCadastro"
 // import "./styles.css"
 // import { Content  } from "./styles.js";
-import { currencyFormatter, dateFormatter } from "../../../../shared/geral"
+import { currencyFormatter } from "../../../../shared/geral"
 
-export default function InvoiceFinantialList(props) {
+export default function InvoiceItemList(props) {
   const auth = useSelector(state => state.auth);
   let insertPermission = props.permission.insert
   let deletePermission = props.permission.delete
@@ -79,22 +79,40 @@ export default function InvoiceFinantialList(props) {
   const [searchVal, setsearchVal] = useState("")
   const columnDefs = [
     {
-      headerName: "Vencimento",
-      field: "dueDate",
+      headerName: "Unidade de Negócio",
+      field: "businessUnit.name",
       filter: true,
-      width: 150,
-      valueFormatter: dateFormat
+      width: 150
     },
     {
-      headerName: "Valor",
-      field: "value",
+      headerName: "Conta Financeira",
+      field: "financialAccount.name",
+      filter: true,
+      width: 150
+    },
+    {
+      headerName: "Material",
+      field: "material.name",
+      filter: true,
+      width: 150
+    },
+    {
+      headerName: "Quantidade",
+      field: "qtd",
       filter: true,
       width: 150,
       valueFormatter: currencyFormat
     },
     {
-      headerName: "Saldo",
-      field: "balance",
+      headerName: "Valor Unitário",
+      field: "unitValue",
+      filter: true,
+      width: 150,
+      valueFormatter: currencyFormat
+    },
+    {
+      headerName: "Valor Total",
+      field: "value",
       filter: true,
       width: 150,
       valueFormatter: currencyFormat
@@ -102,7 +120,7 @@ export default function InvoiceFinantialList(props) {
     {
       headerName: "Ações",
       field: "transactions",
-      width: 150,
+      width: 130,
       cellRendererFramework: params => {
         return (
           <div className="actions cursor-pointer">
@@ -180,24 +198,8 @@ export default function InvoiceFinantialList(props) {
   function currencyFormat(params) {
     return currencyFormatter(params.value,language,currency,2)
   }
-  function dateFormat(params) {
-    return dateFormatter(params.value,language)
-  }
-  // function handleChangeSelect(select, value) {
-  //   if(select==="rowSelectTable") {
-  //     let configatu = config
-  //     configatu.table_number = value.id
-  //     setConfig(configatu)
-  //     setLoadedDados(false)
-  //   }
-  // }
-  // const onGridReady = params => {
-  //   setGridApi(params.api)
-  //   // setgridColumnApi(params.columnApi)
-  // }
 
   const updateSearchQuery = val => {
-    // gridApi.setQuickFilter(val)
     setsearchVal(val)
   }
 
@@ -227,10 +229,9 @@ export default function InvoiceFinantialList(props) {
   async function handleDelete() {
     try {
       if(itemDelete){
-        // setItemDelete(null)
-        // setShowModalDelete(false)
-        // let rowDataAux = rowData.filter(function(row){ return row.id !== itemDelete.id; })
-        // setRowData(rowDataAux)
+        props.handleDelete(itemDelete)
+        setItemDelete(null)
+        setShowModalDelete(false)
       }
 
     } catch (error) {
@@ -327,9 +328,9 @@ export default function InvoiceFinantialList(props) {
                               Exclusão
                             </ModalHeader>
                             <ModalBody>
-                              Confirma a exclusão do Vencimento? <br></br><br></br>
+                              Confirma a exclusão do Item? <br></br><br></br>
                               <span className="text-center">
-                                {itemDelete ? itemDelete.name : null}
+                                {itemDelete ? itemDelete.dueDate : null}
                               </span>
                             </ModalBody>
                             <ModalFooter>
@@ -337,10 +338,10 @@ export default function InvoiceFinantialList(props) {
                                 Confirmar
                               </Button>{" "}
                             </ModalFooter>
-                          </Modal>
+                        </Modal>
                       </div>
                 </Col>
-                <InvoiceFinantialCadastro
+                <InvoiceItemCadastro
                   sidebar={sidebar}
                   handleSidebar={handleSidebar}
                   handleUpdate={handleUpdate}

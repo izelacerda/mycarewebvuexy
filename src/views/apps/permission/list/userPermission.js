@@ -95,7 +95,7 @@ export default function UserPermission(props) {
  const columnDefs = [
    {
     headerName: "Usuário",
-    field: "users_username",
+    field: "person_name",
     filter: true,
     width: 250,
     cellRendererFramework: params => {
@@ -108,19 +108,19 @@ export default function UserPermission(props) {
    },
    {
     headerName: "Modulo",
-    field: "modules_name",
+    field: "module_name",
     filter: true,
     width: 250
    },
    {
     headerName: "Rotina",
-    field: "routines_name",
+    field: "routine_name",
     filter: true,
     width: 250
   },
    {
      headerName: "Funcionalidade",
-     field: "functionalities_name",
+     field: "functionality_name",
      filter: true,
      width: 250
    },
@@ -207,8 +207,8 @@ export default function UserPermission(props) {
       selecionados.push(
         {
           licence_id: auth.login.licence_id,
-          user_id: element.users_id,
-          functionality_id: element.functionalities_id,
+          person_id: element.person_id,
+          functionality_id: element.functionality_id,
           is_permission: param
         }
       )
@@ -235,8 +235,8 @@ export default function UserPermission(props) {
         permissions: [
           {
             licence_id: auth.login.licence_id,
-            user_id: param.data.users_id,
-            functionality_id: param.data.functionalities_id,
+            person_id: param.data.person_id,
+            functionality_id: param.data.functionality_id,
             is_permission: value
           }
         ]

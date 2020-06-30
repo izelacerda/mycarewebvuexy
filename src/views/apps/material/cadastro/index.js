@@ -36,7 +36,7 @@ const schema = Yup.object().shape({
     .boolean(),
   structure: Yup.string()
     .required("Estruturado é obrigatório"),
-  measurement_id: Yup.number()
+  measurementunit_id: Yup.number()
     .min(1,"Unidade de Medida é obrigatório")
     .required("Unidade de Medida é obrigatório"),
   level: Yup.number()
@@ -83,7 +83,7 @@ export default function MaterialCadastro(props) {
     name: { value: '',  invalid: false, tab: '1', msg:'' },
     is_active: { value: true, invalid: false, tab: '1', msg:'' },
     structure: { value: '',  invalid: false, tab: '1', msg:'' },
-    measurement_id: { value: 0,  invalid: false, tab: '1', msg:'', select: { value: 0, label: ""} },
+    measurementunit_id: { value: 0,  invalid: false, tab: '1', msg:'', select: { value: 0, label: ""} },
     group_id: { value: 0,  invalid: false, tab: '1', msg:'', select: { value: 0, label: ""} },
     level: { value: 0,  invalid: false, tab: '1', msg:'' },
     sequence: { value: '',  invalid: false, tab: '1', msg:'', mask: '999', valueMask:'', label: 'Sequencial' },
@@ -140,7 +140,7 @@ export default function MaterialCadastro(props) {
         rowData.name.value = props.data.name
         rowData.is_active.value = props.data.is_active
         rowData.structure.value = props.data.structure
-        rowData.measurement_id.value= props.data.measurement_id
+        rowData.measurementunit_id.value= props.data.measurementunit_id
         rowData.group_id.value= props.data.group_id
         rowData.level.value= props.data.level
         rowData.sequence.value= props.data.sequence
@@ -261,7 +261,7 @@ export default function MaterialCadastro(props) {
           name: rowData.name.value,
           is_active: rowData.is_active.value,
           structure: rowData.structure.value,
-          measurement_id: rowData.measurement_id.value,
+          measurementunit_id: rowData.measurementunit_id.value,
           group_id: rowData.group_id.value,
           level: rowData.level.value,
           sequence: rowData.sequence.value,
@@ -285,7 +285,7 @@ export default function MaterialCadastro(props) {
             is_active: rowData.is_active.value,
             userlog_id: auth.login.values.loggedInUser.id,
             structure: rowData.structure.value,
-            measurement_id: rowData.measurement_id.value,
+            measurementunit_id: rowData.measurementunit_id.value,
             group_id: rowData.group_id.value,
             level: rowData.level.value,
             sequence: rowData.sequence.value,
@@ -326,7 +326,7 @@ export default function MaterialCadastro(props) {
             is_active: rowData.is_active.value,
             userlog_id: auth.login.values.loggedInUser.id,
             structure: rowData.structure.value,
-            measurement_id: rowData.measurement_id.value,
+            measurementunit_id: rowData.measurementunit_id.value,
             group_id: rowData.group_id.value,
             level: rowData.level.value,
             sequence: rowData.sequence.value,
@@ -419,11 +419,11 @@ export default function MaterialCadastro(props) {
                     isSearchable={true}
                     name="measure"
                     options={props.measures}
-                    defaultValue={props.measures.filter(option => option.id === rowData.measurement_id.value)}
-                    onChange={e => handleChangeSelect("measurement_id.value","measurement_id.select",e.id,e)}
+                    defaultValue={props.measures.filter(option => option.id === rowData.measurementunit_id.value)}
+                    onChange={e => handleChangeSelect("measurementunit_id.value","measurementunit_id.select",e.id,e)}
                     isDisabled={!salvarPermission}
                   />
-                   {rowData.measurement_id.invalid ? <div className="text-danger font-small-2">{rowData.measurement_id.msg}</div>: null }
+                   {rowData.measurementunit_id.invalid ? <div className="text-danger font-small-2">{rowData.measurementunit_id.msg}</div>: null }
                 </FormGroup>
               </Col>
             </Row>

@@ -8,7 +8,10 @@ import {
   TabContent,
   TabPane,
   Modal,
+  ModalFooter,
+  ModalHeader,
   ModalBody,
+  Button,
   Form,
   // Input,
   Label,
@@ -22,9 +25,7 @@ import classnames from "classnames"
 import { User, Info, Share } from "react-feather"
 import { toast, Flip } from "react-toastify"
 import * as Yup from "yup";
-import {
-  Link
-} from "react-feather"
+
 import Select from "react-select"
 import NumberFormat from "react-number-format"
 import {
@@ -45,7 +46,8 @@ import api from "../../../../services/api"
 import ToolBar from "../../../../components/especificos/toolbar"
 
 import "../../../../assets/scss/especificos/mymodal.css"
-import InvoiceFinantialList from "./invoiceFinantialList"
+import InvoiceFinancialList from "./invoiceFinancialList"
+import InvoiceItemList from "./invoiceItemList"
 
 const schema = Yup.object().shape({
   company_id: Yup.number()
@@ -54,7 +56,7 @@ const schema = Yup.object().shape({
   invoicetype_id: Yup.number()
   .min(1,"Tipo de Documento é obrigatório")
   .required("Tipo de Documento é obrigatório"),
-  user_id: Yup.number()
+  person_id: Yup.number()
   .min(1,"Fornecedor é obrigatório")
   .required("Fornecedor é obrigatório"),
   series: Yup.string()
@@ -110,19 +112,22 @@ export default function InvoiceCadastro(props) {
   const [activeTab, setTab] = useState("1")
   const [loaded, setLoaded] = useState(false)
   const [atualiza, setAtualiza] = useState(true);
+  const [showModalClose, setShowModalClose] = useState(false)
 
   const baseData = {
     id: { value: 0,  invalid: false, tab: '1', msg:'' },
     invoicetype_id: { value: 0,  invalid: false, tab: '1', msg:'', select: { value: 0, label: ""} },
     company_id: { value: 0,  invalid: false, tab: '1', msg:'', select: { value: 0, label: ""} },
-    user_id: { value: 0,  invalid: false, tab: '1', msg:'', select: { value: 0, label: ""} },
+    person_id: { value: 0,  invalid: false, tab: '1', msg:'', select: { value: 0, label: ""} },
     series: { value: 0,  invalid: false, tab: '1', msg:'' },
     number: { value: 0,  invalid: false, tab: '1', msg:'' },
     sequential: { value: 0,  invalid: false, tab: '1', msg:'' },
     dtDocument: { value: '',  invalid: false, tab: '1', msg:'' },
     dtReceived: { value: '',  invalid: false, tab: '1', msg:'' },
     totalValue: { value: 0.00,  invalid: false, tab: '1', msg:'' },
-    invoicefinantials: { value: [],  invalid: false, tab: '1', msg:'' },
+    invoicefinancials: { value: [],  invalid: false, tab: '1', msg:'' },
+    invoiceitems: { value: [],  invalid: false, tab: '1', msg:'' },
+    changed: { value: false }
   }
   const [rowData, setRowData] = useState(baseData)
 
@@ -149,7 +154,7 @@ export default function InvoiceCadastro(props) {
         outline: false,
         tooltip:  'Fechar',
         disabled: !listaPermission,
-        action: () => props.handleSidebar(false)
+        action: () => toggleModalClose(false)
       }
     ]
   const auth = useSelector(state => state.auth);
@@ -184,14 +189,15 @@ export default function InvoiceCadastro(props) {
         rowData.id.value =  props.data.id
         rowData.invoicetype_id.value = props.data.invoicetype_id
         rowData.company_id.value = props.data.company_id
-        rowData.user_id.value = props.data.user_id
+        rowData.person_id.value = props.data.person_id
         rowData.series.value = props.data.series
         rowData.number.value = props.data.number
         rowData.sequential.value = props.data.sequential
         rowData.dtDocument.value = props.data.dtDocument
         rowData.dtReceived.value = props.data.dtReceived
         rowData.totalValue.value = props.data.totalValue
-        rowData.invoicefinantials.value = props.data.invoicefinantials
+        rowData.invoicefinancials.value = props.data.invoicefinancials
+        rowData.invoiceitems.value = props.data.invoiceitems
       }
       else {
         setRowData(baseData)
@@ -229,11 +235,10 @@ export default function InvoiceCadastro(props) {
         setSeconds(setMinutes(setHours(data, hours), minutes), 0),
         0
       );
-      console.log(value)
       value = utcToZonedTime(start, timezone);
-      console.log(value)
     }
     _.set(rowData, id, value);
+    _.set(rowData, 'changed.value', true)
   }
 
 
@@ -242,32 +247,82 @@ export default function InvoiceCadastro(props) {
     if(select !== undefined) {
       _.set(rowData, idSelect, select)
     }
+    _.set(rowData, 'changed.value', true)
     setAtualiza(!atualiza)
   }
-  async function handleAddFinantial(data) {
-    let dados = rowData.invoicefinantials.value.map(e => { return e })
-    let maior = Math.max.apply(Math, rowData.invoicefinantials.value.map(function(e){return e.id}))
-    if(maior === null || maior === undefined || rowData.invoicefinantials.value.length ===0 ){
+  async function handleAddFinancial(data) {
+    let dados = rowData.invoicefinancials.value.map(e => { return e })
+    let maior = Math.max.apply(Math, rowData.invoicefinancials.value.map(function(e){return e.id}))
+    if(maior === null || maior === undefined || rowData.invoicefinancials.value.length ===0 ){
       maior = 0
     }
     data.id = maior + 10001
     data.licence_id = auth.login.licence_id
     data.invoice_id = props.idPai
     dados.push(data)
-    rowData.invoicefinantials.value = dados
+    rowData.invoicefinancials.value = dados
+    _.set(rowData, 'changed.value', true)
     setAtualiza(!atualiza)
   }
 
-  async function handleUpdateFinantial(data) {
-    let updatedData = rowData.invoicefinantials.value.map(e => {
+  async function handleUpdateFinancial(data) {
+    let updatedData = rowData.invoicefinancials.value.map(e => {
       if (e.id === data.id) {
         return data
       }
       return e
     })
-    rowData.invoicefinantials.value = updatedData
+    _.set(rowData, 'changed.value', true)
+    rowData.invoicefinancials.value = updatedData
     setAtualiza(!atualiza)
   }
+  async function handleDeleteFinancial(data) {
+    let rowDataAux = rowData.invoicefinancials.value.filter(function(row){ return row.id !== data.id; })
+    rowData.invoicefinancials.value = rowDataAux
+    _.set(rowData, 'changed.value', true)
+    setAtualiza(!atualiza)
+  }
+  async function handleAddItem(data) {
+    let dados = rowData.invoiceitems.value.map(e => { return e })
+    let maior = Math.max.apply(Math, rowData.invoiceitems.value.map(function(e){return e.id}))
+    if(maior === null || maior === undefined || rowData.invoiceitems.value.length ===0 ){
+      maior = 0
+    }
+    data.id = maior + 10001
+    data.licence_id = auth.login.licence_id
+    data.invoice_id = props.idPai
+    dados.push(data)
+    rowData.invoiceitems.value = dados
+    _.set(rowData, 'changed.value', true)
+    setAtualiza(!atualiza)
+  }
+  async function handleUpdateItem(data) {
+    let updatedData = rowData.invoiceitems.value.map(e => {
+      if (e.id === data.id) {
+        return data
+      }
+      return e
+    })
+    _.set(rowData, 'changed.value', true)
+    rowData.invoiceitems.value = updatedData
+    setAtualiza(!atualiza)
+  }
+  async function handleDeleteItem(data) {
+    let rowDataAux = rowData.invoiceitems.value.filter(function(row){ return row.id !== data.id; })
+    rowData.invoiceitems.value = rowDataAux
+    _.set(rowData, 'changed.value', true)
+    setAtualiza(!atualiza)
+  }
+
+  function toggleModalClose(status) {
+    if(rowData.changed.value) {
+      setShowModalClose(true)
+    }
+    else {
+      props.handleSidebar(false)
+    }
+  }
+
 
   async function handleSubmit() {
     try {
@@ -279,7 +334,7 @@ export default function InvoiceCadastro(props) {
         {
           invoicetype_id: rowData.invoicetype_id.value,
           company_id: rowData.company_id.value,
-          user_id: rowData.user_id.value,
+          person_id: rowData.person_id.value,
           series: rowData.series.value,
           number: rowData.number.value,
           sequential: rowData.sequential.value,
@@ -296,7 +351,7 @@ export default function InvoiceCadastro(props) {
 
           invoicetype_id: rowData.invoicetype_id.value,
           company_id: rowData.company_id.value,
-          user_id: rowData.user_id.value,
+          person_id: rowData.person_id.value,
           series: rowData.series.value,
           number: rowData.number.value,
           sequential: rowData.sequential.value,
@@ -309,7 +364,7 @@ export default function InvoiceCadastro(props) {
           userlog_id:   auth.login.values.loggedInUser.id,
           licence_id: auth.login.licence_id,
           invoiceitems: [],
-          invoicefinantials: rowData.invoicefinantials.value
+          invoicefinancials: rowData.invoicefinancials.value
       }
       if (!edicao) {
         try {
@@ -425,19 +480,19 @@ export default function InvoiceCadastro(props) {
                 <FormGroup>
                   <Label>Fornecedor</Label>
                   <Select
-                    getOptionLabel={option => `${option.id} - ${option.username}`}
+                    getOptionLabel={option => `${option.id} - ${option.name}`}
                     getOptionValue={option => option.id}
                     className="React"
                     placeholder="selecionar fornecedor"
                     classNamePrefix="select"
                     isSearchable={true}
                     name="group"
-                    options={props.users}
-                    defaultValue={props.users.filter(option => option.id === rowData.user_id.value)}
-                    onChange={e =>  handleChangeSelect("user_id.value","user_id.select", e === null ? null : e.id,e)}
+                    options={props.persons}
+                    defaultValue={props.persons.filter(option => option.id === rowData.person_id.value)}
+                    onChange={e =>  handleChangeSelect("person_id.value","person_id.select", e === null ? null : e.id,e)}
                     isDisabled={!salvarPermission}
                   />
-                  {rowData.user_id.invalid ? <div className="text-danger font-small-2">{rowData.user_id.msg}</div>: null }
+                  {rowData.person_id.invalid ? <div className="text-danger font-small-2">{rowData.person_id.msg}</div>: null }
                 </FormGroup>
               </Col>
               <Col sm="3" lg="3">
@@ -609,41 +664,13 @@ export default function InvoiceCadastro(props) {
     )
   }
 
-  // function FormTab2() {
-  //   return (
-  //     <Form onSubmit={e => e.preventDefault()}>
-  //       <Row className="mt-1">
-  //         <Col className="mt-1" md="6" sm="12">
-  //           <h5 className="mb-1">
-  //             <User className="mr-50" size={16} />
-  //             <span className="align-middle">Informações pessoais</span>
-  //           </h5>
-  //         </Col>
-  //       </Row>
-  //     </Form>
-  //   )
-  // }
-  function FormTab3() {
-    return (
-      <Form className="mt-2" onSubmit={e => e.preventDefault()}>
-        <h5 className="mb-1">
-          <Link size={15} />
-          <span className="align-middle ml-50">Social Links</span>
-        </h5>
-        <Row>
-          <Col md="6" sm="12">
-          </Col>
-        </Row>
-      </Form>
-    )
-  }
-
   return (
     <Modal
         isOpen={props.sidebar ? true : false}
         className="modal-dialog-centered"
-        style={{minWidth: '1000px', width: '100%'}}
-        toggle={() => props.handleSidebar(false)}
+        style={{minWidth: '1100px', width: '100%'}}
+        // toggle={() => props.handleSidebar(false)}
+        toggle={() => toggleModalClose(false)}
         // style={{minWidth: '1200px', minHeight: '900px', width: '80%', height: '808px', margin: '10px auto'}}
 
       >
@@ -726,21 +753,46 @@ export default function InvoiceCadastro(props) {
               <FormTab1 />
             </TabPane>
             <TabPane tabId="2">
-              <InvoiceFinantialList
-                rowData={rowData.invoicefinantials.value}
+              <InvoiceFinancialList
+                rowData={rowData.invoicefinancials.value}
                 permission={permission}
                 idPai={id}
-                handleAdd={handleAddFinantial}
-                handleUpdate={handleUpdateFinantial}
+                handleAdd={handleAddFinancial}
+                handleUpdate={handleUpdateFinancial}
+                handleDelete={handleDeleteFinancial}
               />
             </TabPane>
             <TabPane tabId="3">
-              <FormTab3 />
+            <InvoiceItemList
+                rowData={rowData.invoiceitems.value}
+                permission={permission}
+                idPai={id}
+                handleAdd={handleAddItem}
+                handleUpdate={handleUpdateItem}
+                handleDelete={handleDeleteItem}
+              />
             </TabPane>
           </TabContent>
         :
             <Spinner color="primary" className="reload-spinner" />
         }
+        <Modal
+          isOpen={showModalClose}
+          toggle={() => setShowModalClose(false)}
+          className="modal-dialog-centered"
+        >
+          <ModalHeader toggle={() => setShowModalClose(false)} className="bg-warning">
+            Perda Alterações
+          </ModalHeader>
+          <ModalBody>
+            Foram alterados dados no Documento. Confirma perda das alterações? <br></br><br></br>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="warning" onClick={() => { setShowModalClose(false); props.handleSidebar(false); }}>
+              Confirmar
+            </Button>{" "}
+          </ModalFooter>
+        </Modal>
       </ModalBody>
       {/* <ModalFooter>
         <Button color="danger" onClick={() => handleDelete()}>
@@ -748,5 +800,6 @@ export default function InvoiceCadastro(props) {
         </Button>{" "}
       </ModalFooter> */}
     </Modal>
+
   )
 }

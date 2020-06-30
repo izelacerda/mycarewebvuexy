@@ -342,7 +342,7 @@ export default function MaterialList(props) {
             active: "all",
             userlog_id: auth.login.values.loggedInUser.id
           };
-          response = await api.post("/measurements.list", {
+          response = await api.post("/measurementunits.list", {
             ...body
           });
           setMeasures(response.data)

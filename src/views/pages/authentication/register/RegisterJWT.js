@@ -37,7 +37,7 @@ import { testaCPFCNPJ } from "../../../../shared/geral"
 import { loginWithJWT, signFailure } from "../../../../redux/actions/auth/loginActions"
 
 const schema = Yup.object().shape({
-  username: Yup.string()
+  name: Yup.string()
   .required("O nome é obrigatório")
   .min(10, "Mínimo 10 caracteres"),
   login: Yup.string()
@@ -97,7 +97,7 @@ export default function RegisterJWT() {
   const [rowData] = useState(
     {
       login:    { value: '',  invalid: false, tab: '1', msg:'' },
-      username: { value: '',  invalid: false, tab: '1', msg:'' },
+      name: { value: '',  invalid: false, tab: '1', msg:'' },
       company:  { value: '',  invalid: false, tab: '2', msg:''},
       email:    { value: '',  invalid: false, tab: '1',msg:'' },
       password: { value: '',  invalid: false, tab: '1',msg:'' },
@@ -144,7 +144,7 @@ export default function RegisterJWT() {
       await schema.validate(
         {
           login: rowData.login.value,
-          username: rowData.username.value,
+          name: rowData.name.value,
           company: rowData.company.value,
           email: rowData.email.value,
           password: rowData.password.value,
@@ -161,7 +161,7 @@ export default function RegisterJWT() {
       let data = {
         id: 0,
         login: rowData.login.value,
-        username: rowData.username.value,
+        name: rowData.name.value,
         email: rowData.email.value,
         document: rowData.document.value,
         documenttype: rowData.documenttype.value,
@@ -258,13 +258,13 @@ export default function RegisterJWT() {
           <Input
             type="text"
             placeholder="Nome"
-            defaultValue={rowData.username.value}
-            id="username.value"
+            defaultValue={rowData.name.value}
+            id="name.value"
             onChange={e => handleChange(e.target.id,e.target.value)}
-            invalid={rowData.username.invalid}
+            invalid={rowData.name.invalid}
           />
           <Label>Nome</Label>
-          <FormFeedback>{rowData.username.msg}</FormFeedback>
+          <FormFeedback>{rowData.name.msg}</FormFeedback>
         </FormGroup>
         <FormGroup className="form-label-group">
           <Input

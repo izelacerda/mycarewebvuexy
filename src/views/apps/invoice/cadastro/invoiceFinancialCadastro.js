@@ -32,7 +32,7 @@ const schema = Yup.object().shape({
   .required("O Valor Total é obrigatório"),
 });
 
-export default function InvoiceFinantialCadastro(props) {
+export default function InvoiceFinancialCadastro(props) {
   let listaPermission = true
   let insertPermission = true
   let updatePermission = true

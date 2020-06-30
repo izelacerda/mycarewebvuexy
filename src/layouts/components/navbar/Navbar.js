@@ -16,22 +16,22 @@ import { Container, Content  } from "./styles";
 // import userImg from "../../../assets/img/portrait/small/avatar-s-11.jpg"
 
 const UserName = props => {
-  let username = ""
+  let name = ""
   if (props.userdata !== undefined) {
-    username = props.userdata.name
+    name = props.userdata.name
   } else if (props.user.login.values !== undefined) {
-    username = props.user.login.values.name
+    name = props.user.login.values.name
     if (
       props.user.login.values.loggedInWith !== undefined &&
       props.user.login.values.loggedInWith === "jwt"
     ) {
-      username = props.user.login.values.loggedInUser.name
+      name = props.user.login.values.loggedInUser.name
     }
   } else {
-    username = ""
+    name = ""
   }
 
-  return username
+  return name
 }
 const ThemeNavbar = props => {
   const { user } = useAuth0()
