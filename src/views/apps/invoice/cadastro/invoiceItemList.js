@@ -111,6 +111,20 @@ export default function InvoiceItemList(props) {
       valueFormatter: currencyFormat
     },
     {
+      headerName: "Desconto",
+      field: "discValue",
+      filter: true,
+      width: 100,
+      valueFormatter: currencyFormat
+    },
+    {
+      headerName: "Acréscimo",
+      field: "addValue",
+      filter: true,
+      width: 100,
+      valueFormatter: currencyFormat
+    },
+    {
       headerName: "Valor Total",
       field: "value",
       filter: true,
@@ -120,7 +134,7 @@ export default function InvoiceItemList(props) {
     {
       headerName: "Ações",
       field: "transactions",
-      width: 130,
+      width: 110,
       cellRendererFramework: params => {
         return (
           <div className="actions cursor-pointer">
@@ -348,6 +362,9 @@ export default function InvoiceItemList(props) {
                   handleAdd={handleAdd}
                   id={id}
                   data={data}
+                  businessunits = {props.businessunits}
+                  financialaccounts = {props.financialaccounts}
+                  materials = {props.materials}
                 />
             </div>
       </Col>

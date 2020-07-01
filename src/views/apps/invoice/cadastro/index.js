@@ -16,7 +16,6 @@ import {
   // Input,
   Label,
   FormGroup,
-  FormFeedback,
   Spinner
 } from "reactstrap"
 import _ from 'lodash';
@@ -59,24 +58,25 @@ const schema = Yup.object().shape({
   person_id: Yup.number()
   .min(1,"Fornecedor é obrigatório")
   .required("Fornecedor é obrigatório"),
-  series: Yup.string()
+  series: Yup.number()
   .min(0,"Série deve ser 1 digito")
   .max(9,"Série deve ser 1 digito")
   .required("A Série é obrigatório"),
-  number: Yup.string()
-    .min(1,"Número deve ser no mínimo 1 digito")
-    .max(10,"Número deve ser no máximo 10 digitos")
-    .required("O Número é obrigatório"),
-  sequential: Yup.string()
-    .min(0,"Sequencia deve ser 1 digito")
-    .max(9,"Sequencia deve ser 1 digito")
-    .required("A Sequencia é obrigatório"),
+  number: Yup.number()
+  .min(1,"Número deve ser no mínimo 1 digito")
+  .max(9999999999,"Número deve ser no máximo 10 digitos")
+  .required("O Número é obrigatório"),
+  sequential: Yup.number()
+  .min(0,"Sequencia deve ser 1 digito")
+  .max(9,"Sequencia deve ser 1 digito")
+  .required("A Sequencia é obrigatório"),
   dtDocument: Yup.date()
   .required("A Data do Documento é obrigatória"),
-  dtReceived: Yup.date()
-  .required("A Data do Documento é obrigatória"),
+  dtReceived: Yup.date("A Data do Recebimento é obrigatória")
+  .required("A Data do Recebimento é obrigatória"),
   totalValue: Yup.number()
-  .required("O Valor Total é obrigatório"),
+  .min(0.01,"O Valor do Documento é obrigatório")
+  .required("O Valor do Documento é obrigatório"),
   // outros notOneof(['admin','teste'], 'este nome nao pode')
   // exemplos https://github.com/jquense/yup#usage
 });
@@ -113,6 +113,11 @@ export default function InvoiceCadastro(props) {
   const [loaded, setLoaded] = useState(false)
   const [atualiza, setAtualiza] = useState(true);
   const [showModalClose, setShowModalClose] = useState(false)
+  const [businessunits, setBusinessunits] = useState([])
+  const [financialaccounts, setFinancialaccounts] = useState([])
+  const [materials, setMaterials] = useState([])
+  const [loadTables, setLoadTables] = useState(false)
+  const [dataDia, setDataDia] = useState(null)
 
   const baseData = {
     id: { value: 0,  invalid: false, tab: '1', msg:'' },
@@ -202,6 +207,7 @@ export default function InvoiceCadastro(props) {
       else {
         setRowData(baseData)
       }
+      setLoadTables(true)
       setLoaded(true)
       setAtualiza(!atualiza)
     }
@@ -209,6 +215,84 @@ export default function InvoiceCadastro(props) {
       loadrowData();
     }
   }, [auth, props.id, props.data]) // eslint-disable-line
+
+  useEffect(() => {
+    async function loadrowData2() {
+
+      let body = {
+        licence_id: auth.login.licence_id,
+        userlog_id: auth.login.values.loggedInUser.id,
+        tablename: "materials"
+      };
+      let responseMaterial = await api.post("/configurationtables", {
+        ...body
+      });
+      // setConfigMaterial(responseMaterial.data)
+      body = {
+        licence_id: auth.login.licence_id,
+        id: 0,
+        // active: "all",
+        userlog_id: auth.login.values.loggedInUser.id,
+        un_id: 0,
+        table_type: responseMaterial.data.table_type,
+        table_number: responseMaterial.data.table_number,
+        table_subnumber: responseMaterial.data.table_subnumber
+      };
+      let response = await api.post("/materials.list", {
+        ...body
+      });
+      setMaterials(response.data)
+      body = {
+        licence_id: auth.login.licence_id,
+        userlog_id: auth.login.values.loggedInUser.id,
+        tablename: "financialaccounts"
+      };
+      let responseFinancialAccount = await api.post("/configurationtables", {
+        ...body
+      });
+      // setConfigFinancial(responseFinancialAccount.data)
+      body = {
+        licence_id: auth.login.licence_id,
+        id: 0,
+        // active: "all",
+        userlog_id: auth.login.values.loggedInUser.id,
+        un_id: 0,
+        table_type: responseFinancialAccount.data.table_type,
+        table_number: responseFinancialAccount.data.table_number,
+        table_subnumber: responseFinancialAccount.data.table_subnumber
+      };
+      response = await api.post("/financialaccounts.list", {
+        ...body
+      });
+      setFinancialaccounts(response.data)
+      body = {
+        licence_id: auth.login.licence_id,
+        id: 0,
+        // active: "all",
+        userlog_id: auth.login.values.loggedInUser.id
+      };
+
+      response = await api.post("/businessunits.list", {
+        ...body
+      });
+      setBusinessunits(response.data)
+      setLoadTables(false)
+      let data = new Date()
+      // let minutes = data.getMinutes()
+      // let hours = data.getHours()
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      let start = setMilliseconds(
+        setSeconds(setMinutes(setHours(data, 0), 0), 0),
+        0
+      );
+      setDataDia(utcToZonedTime(start, timezone))
+
+      setAtualiza(!atualiza)
+    }
+    if(loadTables) {
+      loadrowData2();
+    }
+  }, [loadTables]) // eslint-disable-line
 
   function toggle(tab) {
     if(tab==='-1'){
@@ -227,15 +311,17 @@ export default function InvoiceCadastro(props) {
 
   function handleChange(id, value) {
     if(id==='dtReceived.value' || id==='dtDocument.value') {
-      let data = new Date(value.toString())
-      let minutes = data.getMinutes()
-      let hours = data.getHours()
-      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      let start = setMilliseconds(
-        setSeconds(setMinutes(setHours(data, hours), minutes), 0),
-        0
-      );
-      value = utcToZonedTime(start, timezone);
+      if(value!== '') {
+        let data = new Date(value.toString())
+        let minutes = data.getMinutes()
+        let hours = data.getHours()
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        let start = setMilliseconds(
+          setSeconds(setMinutes(setHours(data, hours), minutes), 0),
+          0
+        );
+        value = utcToZonedTime(start, timezone);
+      }
     }
     _.set(rowData, id, value);
     _.set(rowData, 'changed.value', true)
@@ -346,6 +432,61 @@ export default function InvoiceCadastro(props) {
           abortEarly: false
         }
       )
+      //Criticas Outras
+      //Documento
+      setAtualiza(!atualiza)
+      if(rowData.dtDocument.value>rowData.dtReceived.value) {
+        toast.error("Data de documento maior que data do recebimento!", { transition: Flip });
+        return
+      }
+      if(rowData.dtReceived.value>dataDia) {
+        toast.error("Data de recebimento maior que a data atual!", { transition: Flip });
+        return
+      }
+      // if(rowData.dtReceived.value<dataDia) {
+      //   toast.error("Data de recebimento menor a data atual!", { transition: Flip });
+      //   return
+      // }
+      if(rowData.totalValue.value<=0) {
+        toast.error("Valor total do Documento não informado!", { transition: Flip });
+        return
+      }
+      //Itens e Financeiro
+      if(rowData.invoiceitems.value.length<=0) {
+        toast.error("Não foram informados os Itens do Documento!", { transition: Flip });
+        return
+      }
+      if(rowData.invoicefinancials.value.length<=0) {
+        toast.error("Não foram informados as parcelas do Financeiro!", { transition: Flip });
+        return
+      }
+      let total=0;
+      let flvencimentoanterior = false
+      rowData.invoicefinancials.value.forEach(element => {
+        total+=element.value
+        if(element.dueDate<dataDia) {
+          flvencimentoanterior = true
+        }
+      });
+      console.log(total)
+      console.log(rowData.totalValue.value)
+      if(total<=0 || total !== rowData.totalValue.value) {
+        toast.error("Soma das parcelas do Financeiro é diferente do total do documento!", { transition: Flip });
+        return
+      }
+      if(flvencimentoanterior) {
+        toast.error("Existe Parcela do financeiro com data de vencimento anterior a data do documento!", { transition: Flip });
+        return
+      }
+      total=0;
+      rowData.invoiceitems.value.forEach(element => {
+        total+=element.value
+      });
+      if(total<=0 || total !== rowData.totalValue.value) {
+        toast.error("Soma dos valores dos itens é diferente do total do documento!", { transition: Flip });
+        return
+      }
+
       let data=null
       data = {
 
@@ -363,7 +504,7 @@ export default function InvoiceCadastro(props) {
           admission: 0,
           userlog_id:   auth.login.values.loggedInUser.id,
           licence_id: auth.login.licence_id,
-          invoiceitems: [],
+          invoiceitems: rowData.invoiceitems.value,
           invoicefinancials: rowData.invoicefinancials.value
       }
       if (!edicao) {
@@ -435,7 +576,7 @@ export default function InvoiceCadastro(props) {
         if (validErrors.length > 0) {
           toast.error(
             `Dados incorretos ao ${
-              id === "0" ? "incluir" : "alterar"
+              !edicao ? "incluir" : "alterar"
             } o Documento.`
           , { transition: Flip });
         }
@@ -443,7 +584,7 @@ export default function InvoiceCadastro(props) {
         setAtualiza(!atualiza)
       } else {
         toast.error(
-          `Não foi possível ${id === "0" ? "incluir" : "alterar"} o Documento. ${error.message}`
+          `Não foi possível ${!edicao ? "incluir" : "alterar"} o Documento. ${error.message}`
         , { transition: Flip });
       }
     }
@@ -462,7 +603,7 @@ export default function InvoiceCadastro(props) {
                     getOptionLabel={option => `${option.id} - ${option.name}`}
                     getOptionValue={option => option.id}
                     className="React"
-                    placeholder="selecionar empresa"
+                    placeholder="Empresa"
                     classNamePrefix="select"
                     isSearchable={true}
                     name="group"
@@ -483,7 +624,7 @@ export default function InvoiceCadastro(props) {
                     getOptionLabel={option => `${option.id} - ${option.name}`}
                     getOptionValue={option => option.id}
                     className="React"
-                    placeholder="selecionar fornecedor"
+                    placeholder="Fornecedor"
                     classNamePrefix="select"
                     isSearchable={true}
                     name="group"
@@ -502,7 +643,7 @@ export default function InvoiceCadastro(props) {
                     getOptionLabel={option => `${option.id} - ${option.name}`}
                     getOptionValue={option => option.id}
                     className="React"
-                    placeholder="selecionar tipo doc"
+                    placeholder="Tipo de documento"
                     classNamePrefix="select"
                     isSearchable={true}
                     name="group"
@@ -526,7 +667,7 @@ export default function InvoiceCadastro(props) {
                     invalid={rowData.series.invalid.toString()}
                     disabled={!salvarPermission}
                   />
-                  <FormFeedback>{rowData.series.msg}</FormFeedback>
+                  {rowData.series.invalid ? <div className="text-danger font-small-2">{rowData.series.msg}</div>: null }
                 </FormGroup>
               </Col>
               <Col sm="2" lg="2">
@@ -541,7 +682,7 @@ export default function InvoiceCadastro(props) {
                     invalid={rowData.number.invalid.toString()}
                     disabled={!salvarPermission}
                   />
-                  <FormFeedback>{rowData.number.msg}</FormFeedback>
+                  {rowData.number.invalid ? <div className="text-danger font-small-2">{rowData.number.msg}</div>: null }
                 </FormGroup>
               </Col>
               <Col sm="1" lg="1">
@@ -576,7 +717,7 @@ export default function InvoiceCadastro(props) {
                     invalid={rowData.sequential.invalid}
                     disabled={!salvarPermission}
                     /> */}
-                  <FormFeedback>{rowData.sequential.msg}</FormFeedback>
+                  {rowData.sequential.invalid ? <div className="text-danger font-small-2">{rowData.sequential.msg}</div>: null }
                 </FormGroup>
               </Col>
             </Row>
@@ -592,10 +733,10 @@ export default function InvoiceCadastro(props) {
                      // options={{ altInput: true, altFormat: "F j, Y", dateFormat: "Y-m-d", }}
                     options={{ dateFormat: "d-m-Y", enableTime: false }}
                     value={rowData.dtDocument.value}
-                    onChange={date => handleChange("dtDocument.value", date[0].toJSON())}
+                    onChange={date =>  handleChange("dtDocument.value", date[0] ? date[0].toJSON() : '' ) }
                     disabled={!salvarPermission}
-                    // onChange={date => this.handledob(date)}
                   />
+                  {rowData.dtDocument.invalid ? <div className="text-danger font-small-2">{rowData.dtDocument.msg}</div>: null }
                 </FormGroup>
               </Col>
               <Col sm="2" lg="2">
@@ -608,10 +749,10 @@ export default function InvoiceCadastro(props) {
                     className="form-control"
                     options={{ dateFormat: "d-m-Y" }}
                     value={rowData.dtReceived.value}
-                    onChange={date => handleChange("dtReceived.value", date[0].toJSON())}
+                    onChange={date =>  handleChange("dtReceived.value", date[0] ? date[0].toJSON() : '' ) }
                     disabled={!salvarPermission}
-                    // onChange={date => this.handledob(date)}
                   />
+                  {rowData.dtReceived.invalid ? <div className="text-danger font-small-2">{rowData.dtReceived.msg}</div>: null }
                 </FormGroup>
               </Col>
               <Col sm="1" lg="1">
@@ -653,7 +794,7 @@ export default function InvoiceCadastro(props) {
                     invalid={rowData.totalValue.invalid}
                     disabled={!salvarPermission}
                     /> */}
-                  <FormFeedback>{rowData.totalValue.msg}</FormFeedback>
+                  {rowData.totalValue.invalid ? <div className="text-danger font-small-2">{rowData.totalValue.msg}</div>: null }
                 </FormGroup>
               </Col>
 
@@ -668,7 +809,7 @@ export default function InvoiceCadastro(props) {
     <Modal
         isOpen={props.sidebar ? true : false}
         className="modal-dialog-centered"
-        style={{minWidth: '1100px', width: '100%'}}
+        style={{minWidth: '1300px', width: '100%'}}
         // toggle={() => props.handleSidebar(false)}
         toggle={() => toggleModalClose(false)}
         // style={{minWidth: '1200px', minHeight: '900px', width: '80%', height: '808px', margin: '10px auto'}}
@@ -723,8 +864,8 @@ export default function InvoiceCadastro(props) {
                       toggle("2")
                     }}
                   >
-                    <Info size={16} />
-                    <span className="align-middle ml-50">Financeiro</span>
+                    <Share size={16} />
+                    <span className="align-middle ml-50">Itens</span>
                   </NavLink>
                 </NavItem>
                 <NavItem>
@@ -736,8 +877,8 @@ export default function InvoiceCadastro(props) {
                       toggle("3")
                     }}
                   >
-                    <Share size={16} />
-                    <span className="align-middle ml-50">Itens</span>
+                    <Info size={16} />
+                    <span className="align-middle ml-50">Financeiro</span>
                   </NavLink>
                 </NavItem>
               </Nav>
@@ -753,6 +894,19 @@ export default function InvoiceCadastro(props) {
               <FormTab1 />
             </TabPane>
             <TabPane tabId="2">
+              <InvoiceItemList
+                rowData={rowData.invoiceitems.value}
+                permission={permission}
+                idPai={id}
+                handleAdd={handleAddItem}
+                handleUpdate={handleUpdateItem}
+                handleDelete={handleDeleteItem}
+                businessunits = {businessunits}
+                financialaccounts = {financialaccounts}
+                materials = {materials}
+              />
+            </TabPane>
+            <TabPane tabId="3">
               <InvoiceFinancialList
                 rowData={rowData.invoicefinancials.value}
                 permission={permission}
@@ -762,16 +916,7 @@ export default function InvoiceCadastro(props) {
                 handleDelete={handleDeleteFinancial}
               />
             </TabPane>
-            <TabPane tabId="3">
-            <InvoiceItemList
-                rowData={rowData.invoiceitems.value}
-                permission={permission}
-                idPai={id}
-                handleAdd={handleAddItem}
-                handleUpdate={handleUpdateItem}
-                handleDelete={handleDeleteItem}
-              />
-            </TabPane>
+
           </TabContent>
         :
             <Spinner color="primary" className="reload-spinner" />
@@ -788,7 +933,13 @@ export default function InvoiceCadastro(props) {
             Foram alterados dados no Documento. Confirma perda das alterações? <br></br><br></br>
           </ModalBody>
           <ModalFooter>
-            <Button color="warning" onClick={() => { setShowModalClose(false); props.handleSidebar(false); }}>
+            <Button color="warning" onClick={() =>
+                { setShowModalClose(false);
+                  props.handleSidebar(false);
+                  _.set(rowData, 'changed.value', false)
+                  setRowData(baseData)
+                }
+              }>
               Confirmar
             </Button>{" "}
           </ModalFooter>

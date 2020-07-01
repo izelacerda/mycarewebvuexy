@@ -25,7 +25,8 @@ import * as Excel from "exceljs/dist/exceljs.min.js"
 
 import {
   Edit,
-  Trash2
+  Trash2,
+  PlusCircle
 } from "react-feather"
 import { FormattedMessage } from "react-intl"
 
@@ -118,20 +119,20 @@ export default function InvoiceList(props) {
       headerName: "Grupo Emp",
       field: "company.companygroup.name",
       filter: true,
-      width: 200,
+      width: 150,
 
     },
     {
       headerName: "Empresa",
       field: "company.name",
       filter: true,
-      width: 200
+      width: 150
     },
     {
       headerName: "Fornecedor",
       field: "person.name",
       filter: true,
-      width: 200
+      width: 150
     },
     {
       headerName: "Tipo",
@@ -203,10 +204,18 @@ export default function InvoiceList(props) {
               onClick={() => dadosdoCadastroPermission ? handleId(params.data,params.data.id,true) : null}
             />
             <Trash2
+              className="mr-50"
               size={15}
               disabled={!deletePermission}
               onClick={() =>
                   deletePermission ? toggleModalDelete(params.data,true) : null
+              }
+            />
+             <PlusCircle
+              size={15}
+              disabled={!insertPermission}
+              onClick={() =>
+                insertPermission ? handleId(null,0,true) : null
               }
             />
           </div>
@@ -223,7 +232,7 @@ export default function InvoiceList(props) {
           let body = {
             licence_id: auth.login.licence_id,
             id: 0,
-            active: "all",
+            // active: "all",
             userlog_id: auth.login.values.loggedInUser.id
           };
 

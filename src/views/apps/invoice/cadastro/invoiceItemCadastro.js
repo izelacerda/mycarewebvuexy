@@ -7,15 +7,14 @@ import {
   ModalBody,
   Label,
   FormGroup,
-  FormFeedback,
   Spinner
 } from "reactstrap"
 import _ from 'lodash';
 import { useSelector } from "react-redux";
 import { toast, Flip } from "react-toastify"
 import * as Yup from "yup";
-import Flatpickr from "react-flatpickr";
 import NumberFormat from "react-number-format"
+import Select from "react-select"
 
 import Chip from "../../../../components/@vuexy/chips/ChipComponent"
 import "../../../../assets/scss/pages/users.scss"
@@ -25,14 +24,30 @@ import "../../../../assets/scss/plugins/forms/flatpickr/flatpickr.scss"
 import ToolBar from "../../../../components/especificos/toolbar"
 
 const schema = Yup.object().shape({
-  dueDate: Yup.date()
-  .required("A Data de Vencimento é obrigatória"),
+  un_id: Yup.number()
+  .min(1,"Unidade de Negócio é obrigatória")
+  .required("Unidade de Negócio é obrigatória"),
+  financial_id: Yup.number()
+  .min(1,"Conta do Financeiro é obrigatória")
+  .required("Conta do Financeiro é obrigatória"),
+  material_id: Yup.number()
+  .min(1,"Material é obrigatório")
+  .required("Material é obrigatório"),
+  qtd:  Yup.number()
+  .min(0.0001, "Quantidade é obrigatória")
+  .required("Quantidade é obrigatória"),
+  unitValue: Yup.number()
+  .min(0.01, "Valor Unitário é obrigatório")
+  .required("Valor Unitário é obrigatório"),
+  discValue: Yup.number()
+  .min(0, "Valor do Desconto inválido"),
+  addValue: Yup.number()
+  .min(0, "Valor do Acréscimo inválido"),
   value: Yup.number()
-  .min(1, "Valor Total é obrigatório")
-  .required("O Valor Total é obrigatório"),
+  .min(0.01, "Valor total inválido"),
 });
 
-export default function InvoiceFinancialCadastro(props) {
+export default function InvoiceItemCadastro(props) {
   let listaPermission = true
   let insertPermission = true
   let updatePermission = true
@@ -57,8 +72,14 @@ export default function InvoiceFinancialCadastro(props) {
 
   const baseData = {
     id: { value: 0,  invalid: false, tab: '1', msg:'' },
-    dueDate: { value: '',  invalid: false, tab: '1', msg:'' },
-    value: { value: '', invalid: false, tab: '1', msg:'' },
+    un_id: { value: 0,  invalid: false, tab: '1', msg:'', select: null },
+    financial_id: { value: 0,  invalid: false, tab: '1', msg:'', select: null },
+    material_id: { value: 0,  invalid: false, tab: '1', msg:'', select: null },
+    qtd: { value: 0,  invalid: false, tab: '1', msg:'' },
+    unitValue: { value: 0, invalid: false, tab: '1', msg:'' },
+    discValue: { value: 0, invalid: false, tab: '1', msg:'' },
+    addValue: { value: 0, invalid: false, tab: '1', msg:'' },
+    value: { value: 0, invalid: false, tab: '1', msg:'' },
   }
   const [rowData, setRowData] = useState(baseData)
   const toolBarList = [
@@ -102,8 +123,17 @@ export default function InvoiceFinancialCadastro(props) {
       setEdicao(props.id>0)
       if(props.id > 0 && props.data) {
         rowData.id.value = props.data.id
-        rowData.dueDate.value = props.data.dueDate
+        rowData.un_id.value = props.data.un_id
+        rowData.financial_id.value = props.data.financial_id
+        rowData.material_id.value = props.data.material_id
+        rowData.qtd.value = props.data.qtd
+        rowData.unitValue.value = props.data.unitValue
+        rowData.discValue.value = props.data.discValue
+        rowData.addValue.value = props.data.addValue
         rowData.value.value = props.data.value
+        rowData.un_id.select = props.data.businessUnit
+        rowData.financial_id.select = props.data.financialAccount
+        rowData.material_id.select = props.data.material
       }
       else {
         setRowData(baseData)
@@ -132,32 +162,90 @@ export default function InvoiceFinancialCadastro(props) {
   }
 
   function handleChange(id, value) {
+    if(id==='qtd.value' || id==='unitValue.value' || id==='discValue.value' || id==='addValue.value' ) {
+      let valor= (rowData.qtd.value *  rowData.unitValue.value ) - rowData.discValue.value + rowData.addValue.value
+      _.set(rowData, 'value.value', valor);
+    }
     _.set(rowData, id, value);
+    // setAtualiza(!atualiza)
   }
-
+  function handleChangeSelect(id, idSelect, value, select) {
+    _.set(rowData, id, value);
+    if(select !== undefined) {
+      _.set(rowData, idSelect, select)
+    }
+    // setAtualiza(!atualiza)
+  }
   async function handleSubmit() {
     try {
       for(var row in rowData){
         rowData[row].invalid = false
         rowData[row].msg = ""
       }
+      if(rowData.qtd.value === undefined || rowData.qtd.value === null) {
+        rowData.qtd.value = 0
+      }
+      if(rowData.unitValue.value === undefined || rowData.unitValue.value === null) {
+        rowData.unitValue.value = 0
+      }
+      if(rowData.discValue.value === undefined || rowData.discValue.value === null) {
+        rowData.discValue.value = 0
+      }
+      if(rowData.addValue.value === undefined || rowData.addValue.value === null) {
+        rowData.addValue.value = 0
+      }
+      if(rowData.value.value === undefined || rowData.value.value === null) {
+        rowData.value.value = 0
+      }
       await schema.validate(
         {
-          dueDate: rowData.dueDate.value,
+          un_id: rowData.un_id.value,
+          financial_id: rowData.financial_id.value,
+          material_id: rowData.material_id.value,
+          qtd: rowData.qtd.value,
+          unitValue: rowData.unitValue.value,
+          discValue: rowData.discValue.value,
+          addValue: rowData.addValue.value,
           value: rowData.value.value,
         },
         {
           abortEarly: false
         }
       );
-      let data=null
+
+      rowData.value.value= (rowData.qtd.value *  rowData.unitValue.value ) - rowData.discValue.value + rowData.addValue.value
+      console.log(rowData.value)
+      if(rowData.value.value<=0) {
+        rowData.value.msg='Valor total do item com valor inválido!'
+        rowData.value.invalid = true
+        setAtualiza(!atualiza)
+        return
+      }
+      setAtualiza(!atualiza)
+      let  data =  {
+        un_id: rowData.un_id.value,
+        financial_id: rowData.financial_id.value,
+        material_id: rowData.material_id.value,
+        qtd: rowData.qtd.value,
+        unitValue: rowData.unitValue.value,
+        discValue: rowData.discValue.value,
+        addValue: rowData.addValue.value,
+        value: (rowData.qtd.value *  rowData.unitValue.value ) - rowData.discValue.value + rowData.addValue.value,
+        businessUnit: (rowData.un_id.select ? {
+          id: rowData.un_id.select.id,
+          name: rowData.un_id.select.name
+        } : null),
+        financialAccount: (rowData.financial_id.select ? {
+          id: rowData.financial_id.select.id,
+          name: rowData.financial_id.select.name
+        } : null),
+        material: (rowData.material_id.select ? {
+          id: rowData.material_id.select.id,
+          name: rowData.material_id.select.name
+        } : null)
+      }
       if (!edicao) {
         try {
-           data =  {
-            dueDate: rowData.dueDate.value,
-            value: rowData.value.value,
-            balance: rowData.value.value
-          }
           props.handleSidebar(false)
           props.handleAdd(data)
           setRowData(baseData)
@@ -170,22 +258,17 @@ export default function InvoiceFinancialCadastro(props) {
                 toast.error(error.response.data.message, { transition: Flip });
               }
               else{
-                toast.error(`Erro ao Incluir o Financeiro! ${error.message}`, { transition: Flip });
+                toast.error(`Erro ao Incluir o Material! ${error.message}`, { transition: Flip });
               }
             }
           }
           else {
-            toast.error(`Erro ao Incluir o Financeiro! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao Incluir o Material! ${error.message}`, { transition: Flip });
           }
         }
       } else {
         try {
-          data =  {
-            id: id,
-            dueDate: rowData.dueDate.value,
-            value: rowData.value.value,
-            balance: rowData.value.value
-          }
+          data.id  =  rowData.id.value
           props.handleSidebar(false)
           props.handleUpdate(data)
           setRowData(baseData)
@@ -198,12 +281,12 @@ export default function InvoiceFinancialCadastro(props) {
                 toast.error(error.response.data.message, { transition: Flip });
               }
               else{
-                toast.error(`Erro ao Incluir o Financeiro! ${error.message}`, { transition: Flip });
+                toast.error(`Erro ao Incluir o Material! ${error.message}`, { transition: Flip });
               }
             }
           }
           else {
-            toast.error(`Erro ao atualizar o Financeiro! ${error.message}`, { transition: Flip });
+            toast.error(`Erro ao atualizar o Material! ${error.message}`, { transition: Flip });
           }
         }
       }
@@ -223,15 +306,15 @@ export default function InvoiceFinancialCadastro(props) {
         if (validErrors.length > 0) {
           toast.error(
             `Dados incorretos ao ${
-              id === "0" ? "incluir" : "alterar"
-            } o Financeiro.`
+              !edicao ? "incluir" : "alterar"
+            } o Material.`
           , { transition: Flip });
         }
         toggle(tabAux)
         setAtualiza(!atualiza)
       } else {
         toast.error(
-          `Não foi possível ${id === "0" ? "incluir" : "alterar"} o Financeiro. ${error.message}`
+          `Não foi possível ${!edicao ? "incluir" : "alterar"} o Material. ${error.message}`
         , { transition: Flip });
       }
     }
@@ -243,39 +326,158 @@ export default function InvoiceFinancialCadastro(props) {
         <Col sm="12">
           <Form onSubmit={e => e.preventDefault()}>
             <Row>
-              <Col sm="12" lg="12">
+              <Col sm="6" lg="6">
                 <FormGroup>
-                  <Label>
-                    Data do Vencimento
-                  </Label>
-                  <Flatpickr
-                    id="dobD"
-                    className="form-control"
-                    options={{ dateFormat: "d-m-Y" }}
-                    value={rowData.dueDate.value}
-                    onChange={date => handleChange("dueDate.value", date[0].toJSON())}
-                    disabled={!salvarPermission}
-                    // onChange={date => this.handledob(date)}
+                  <Label>Unidade de Negócio</Label>
+                  <Select
+                    getOptionLabel={option => `${option.id} - ${option.name}`}
+                    getOptionValue={option => option.id}
+                    className="React"
+                    placeholder="Unidade de Negócio"
+                    classNamePrefix="select"
+                    isSearchable={true}
+                    name="group"
+                    options={props.businessunits}
+                    defaultValue={props.businessunits ? props.businessunits.filter(option => option.id === rowData.un_id.value) : 0}
+                    onChange={e =>  handleChangeSelect("un_id.value","un_id.select", e === null ? null : e.id,e)}
+                    isDisabled={!salvarPermission}
                   />
-                  <FormFeedback>{rowData.dueDate.msg}</FormFeedback>
+                  {rowData.un_id.invalid ? <div className="text-danger font-small-2">{rowData.un_id.msg}</div>: null }
                 </FormGroup>
               </Col>
-              <Col sm="12" lg="12">
+              <Col sm="6" lg="6">
                 <FormGroup>
-                  <Label>Valor total</Label>
+                  <Label>Conta Financeira</Label>
+                  <Select
+                    getOptionLabel={option => `${option.id} - ${option.name}`}
+                    getOptionValue={option => option.id}
+                    className="React"
+                    placeholder="Conta Financeira"
+                    classNamePrefix="select"
+                    isSearchable={true}
+                    name="group"
+                    options={props.financialaccounts}
+                    defaultValue={props.financialaccounts ? props.financialaccounts.filter(option => option.id === rowData.financial_id.value) : 0}
+                    onChange={e =>  handleChangeSelect("financial_id.value","financial_id.select", e === null ? null : e.id,e)}
+                    isDisabled={!salvarPermission}
+                  />
+                  {rowData.financial_id.invalid ? <div className="text-danger font-small-2">{rowData.financial_id.msg}</div>: null }
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col sm="6" lg="6">
+                <FormGroup>
+                  <Label>Material</Label>
+                  <Select
+                    getOptionLabel={option => `${option.id} - ${option.name}`}
+                    getOptionValue={option => option.id}
+                    className="React"
+                    placeholder="Material"
+                    classNamePrefix="select"
+                    isSearchable={true}
+                    name="group"
+                    options={props.materials}
+                    defaultValue={props.materials ? props.materials.filter(option => option.id === rowData.material_id.value) : 0 }
+                    onChange={e =>  handleChangeSelect("material_id.value","material_id.select", e === null ? null : e.id,e)}
+                    isDisabled={!salvarPermission}
+                  />
+                  {rowData.material_id.invalid ? <div className="text-danger font-small-2">{rowData.material_id.msg}</div>: null }
+                </FormGroup>
+              </Col>
+              <Col sm="3" lg="3">
+                <FormGroup>
+                  <Label>Quantidade</Label>
                   <NumberFormat
-                    prefix={'R$'}
-                    decimalScale={2}
+                    // prefix={'R$'}
+                    decimalScale={4}
                     decimalSeparator={','}
                     thousandSeparator={'.'}
                     className="form-control"
-                    placeholder="Valor Total"
+                    placeholder="Quantidade"
+                    value={rowData.qtd.value}
+                    onValueChange={e => handleChange("qtd.value",e.floatValue)}
+                    invalid={rowData.qtd.invalid.toString()}
+                    disabled={!salvarPermission}
+                  />
+                  {rowData.qtd.invalid ? <div className="text-danger font-small-2">{rowData.qtd.msg}</div>: null }
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+              <Col sm="3" lg="3">
+                <FormGroup>
+                  <Label>Valor Unitário</Label>
+                  <NumberFormat
+                    prefix={'R$'}
+                    decimalScale={4}
+                    decimalSeparator={','}
+                    thousandSeparator={'.'}
+                    className="form-control"
+                    placeholder="Valor Unitário"
+                    autoFocus
+                    value={rowData.unitValue.value}
+                    onValueChange={e => handleChange("unitValue.value",e.floatValue)}
+                    invalid={rowData.unitValue.invalid.toString()}
+                    disabled={!salvarPermission}
+                  />
+                  {rowData.unitValue.invalid ? <div className="text-danger font-small-2">{rowData.unitValue.msg}</div>: null }
+                </FormGroup>
+              </Col>
+              <Col sm="3" lg="3">
+                <FormGroup>
+                  <Label>Desconto</Label>
+                  <NumberFormat
+                    prefix={'R$'}
+                    decimalScale={4}
+                    decimalSeparator={','}
+                    thousandSeparator={'.'}
+                    className="form-control"
+                    placeholder="Desconto"
+                    value={rowData.discValue.value}
+                    onValueChange={e => handleChange("discValue.value",e.floatValue)}
+                    invalid={rowData.discValue.invalid.toString()}
+                    disabled={!salvarPermission}
+                  />
+                  {rowData.discValue.invalid ? <div className="text-danger font-small-2">{rowData.discValue.msg}</div>: null }
+                </FormGroup>
+              </Col>
+              <Col sm="3" lg="3">
+                <FormGroup>
+                  <Label>Acréscimo</Label>
+                  <NumberFormat
+                    prefix={'R$'}
+                    decimalScale={4}
+                    decimalSeparator={','}
+                    thousandSeparator={'.'}
+                    className="form-control"
+                    placeholder="Acréscimo"
+                    value={rowData.addValue.value}
+                    onValueChange={e => handleChange("addValue.value",e.floatValue)}
+                    invalid={rowData.addValue.invalid.toString()}
+                    disabled={!salvarPermission}
+                  />
+                  {rowData.addValue.invalid ? <div className="text-danger font-small-2">{rowData.addValue.msg}</div>: null }
+                </FormGroup>
+              </Col>
+            </Row>
+            <Row>
+            <Col sm="3" lg="3">
+                <FormGroup>
+                  <Label>Total</Label>
+                  <NumberFormat
+                    prefix={'R$'}
+                    decimalScale={4}
+                    decimalSeparator={','}
+                    thousandSeparator={'.'}
+                    className="form-control"
+                    placeholder="Total"
                     value={rowData.value.value}
                     onValueChange={e => handleChange("value.value",e.floatValue)}
                     invalid={rowData.value.invalid.toString()}
                     disabled={!salvarPermission}
                   />
-                  <FormFeedback>{rowData.value.msg}</FormFeedback>
+                  {rowData.value.invalid ? <div className="text-danger font-small-2">{rowData.value.msg}</div>: null }
                 </FormGroup>
               </Col>
             </Row>
@@ -287,7 +489,7 @@ export default function InvoiceFinancialCadastro(props) {
   return (
     <Modal
         isOpen={props.sidebar ? true : false}
-        className="modal-dialog-centered modal-sm"
+        className="modal-dialog-centered modal-lg"
         toggle={() => props.handleSidebar(false)}
       >
       <ModalBody>

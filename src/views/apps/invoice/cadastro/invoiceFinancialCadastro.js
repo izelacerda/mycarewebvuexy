@@ -7,7 +7,6 @@ import {
   ModalBody,
   Label,
   FormGroup,
-  FormFeedback,
   Spinner
 } from "reactstrap"
 import _ from 'lodash';
@@ -16,6 +15,13 @@ import { toast, Flip } from "react-toastify"
 import * as Yup from "yup";
 import Flatpickr from "react-flatpickr";
 import NumberFormat from "react-number-format"
+import {
+  setHours,
+  setMinutes,
+  setSeconds,
+  setMilliseconds
+} from "date-fns";
+import { utcToZonedTime } from "date-fns-tz";
 
 import Chip from "../../../../components/@vuexy/chips/ChipComponent"
 import "../../../../assets/scss/pages/users.scss"
@@ -28,8 +34,8 @@ const schema = Yup.object().shape({
   dueDate: Yup.date()
   .required("A Data de Vencimento é obrigatória"),
   value: Yup.number()
-  .min(1, "Valor Total é obrigatório")
-  .required("O Valor Total é obrigatório"),
+  .min(0.01, "Valor da parcela do financeiro é obrigatório")
+  .required("Valor da parcela do financeiro é obrigatório"),
 });
 
 export default function InvoiceFinancialCadastro(props) {
@@ -132,6 +138,19 @@ export default function InvoiceFinancialCadastro(props) {
   }
 
   function handleChange(id, value) {
+    if(id==='dueDate.value') {
+      if(value!== '') {
+        let data = new Date(value.toString())
+        let minutes = data.getMinutes()
+        let hours = data.getHours()
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        let start = setMilliseconds(
+          setSeconds(setMinutes(setHours(data, hours), minutes), 0),
+          0
+        );
+        value = utcToZonedTime(start, timezone);
+      }
+    }
     _.set(rowData, id, value);
   }
 
@@ -150,6 +169,7 @@ export default function InvoiceFinancialCadastro(props) {
           abortEarly: false
         }
       );
+      setAtualiza(!atualiza)
       let data=null
       if (!edicao) {
         try {
@@ -223,7 +243,7 @@ export default function InvoiceFinancialCadastro(props) {
         if (validErrors.length > 0) {
           toast.error(
             `Dados incorretos ao ${
-              id === "0" ? "incluir" : "alterar"
+              !edicao ? "incluir" : "alterar"
             } o Financeiro.`
           , { transition: Flip });
         }
@@ -231,7 +251,7 @@ export default function InvoiceFinancialCadastro(props) {
         setAtualiza(!atualiza)
       } else {
         toast.error(
-          `Não foi possível ${id === "0" ? "incluir" : "alterar"} o Financeiro. ${error.message}`
+          `Não foi possível ${!edicao ? "incluir" : "alterar"} o Financeiro. ${error.message}`
         , { transition: Flip });
       }
     }
@@ -253,11 +273,11 @@ export default function InvoiceFinancialCadastro(props) {
                     className="form-control"
                     options={{ dateFormat: "d-m-Y" }}
                     value={rowData.dueDate.value}
-                    onChange={date => handleChange("dueDate.value", date[0].toJSON())}
+                    onChange={date => handleChange("dueDate.value", date[0] ? date[0].toJSON() : '')}
                     disabled={!salvarPermission}
                     // onChange={date => this.handledob(date)}
                   />
-                  <FormFeedback>{rowData.dueDate.msg}</FormFeedback>
+                  {rowData.dueDate.invalid ? <div className="text-danger font-small-2">{rowData.dueDate.msg}</div>: null }
                 </FormGroup>
               </Col>
               <Col sm="12" lg="12">
@@ -275,7 +295,7 @@ export default function InvoiceFinancialCadastro(props) {
                     invalid={rowData.value.invalid.toString()}
                     disabled={!salvarPermission}
                   />
-                  <FormFeedback>{rowData.value.msg}</FormFeedback>
+                  {rowData.value.invalid ? <div className="text-danger font-small-2">{rowData.value.msg}</div>: null }
                 </FormGroup>
               </Col>
             </Row>
