@@ -27,10 +27,10 @@ import 'devextreme/dist/css/dx.common.css';
 // import 'devextreme/dist/css/dx.light.compact.css';
 import { TreeList, Column, SearchPanel } from 'devextreme-react/tree-list';
 
-import {
-  Edit,
-  Trash2
-} from "react-feather"
+// import {
+//   Edit,
+//   Trash2
+// } from "react-feather"
 
 import api from "../../../../services/api"
 // import { ContextLayout } from "../../../../utility/context/Layout"
@@ -53,11 +53,11 @@ const expandedRowKeys = [1];
 export default function FinancialAccountList(props) {
   const auth = useSelector(state => state.auth);
   let insertPermission = props.userPermission.includes(67+1)
-  let deletePermission = props.userPermission.includes(67+3)
+  // let deletePermission = props.userPermission.includes(67+3)
   let reportPermission = props.userPermission.includes(67+4)
-  let dadosdoCadastroPermission = props.userPermission.includes(67+5)
+  // let dadosdoCadastroPermission = props.userPermission.includes(67+5)
 
-  const [gridApi, setGridApi] = useState(null)
+  // const [gridApi, setGridApi] = useState(null)
   const [rowData, setRowData] = useState(null)
   // const pageSize = useState(50)
   const [showModalDelete, setShowModalDelete] = useState(false)
@@ -75,96 +75,96 @@ export default function FinancialAccountList(props) {
   const [loadedDados, setLoadedDados] = useState(false)
   const [rowSelectTable, setRowSelectTable] = useState(null)
 
-  const rowClassRules = {
-    'rowColor_00': function(params) {
-      if(params && params.data.structure) {
-        let level = params.data.structure.split(".").length - 1
-        return level===0 && params.data.is_group
-      }
-      return false
-      // var numSickDays = params.data.sickDays;
-      // return numSickDays > 5 && numSickDays <= 7;
-    },
-    'rowColor_01': function(params) {
-      if(params && params.data.structure) {
-        let level = params.data.structure.split(".").length - 1
-        return level===1 && params.data.is_group
-      }
-      return false
-    },
-    'rowColor_02': function(params) {
-      if(params && params.data.structure) {
-        let level = params.data.structure.split(".").length - 1
-        return level===2 && params.data.is_group
-      }
-      return false
-    },
-    'rowColor_03': function(params) {
-      if(params && params.data.structure) {
-        let level = params.data.structure.split(".").length - 1
-        return level===3 && params.data.is_group
-      }
-      return false
-    },
-    'rowColor_04': function(params) {
-      if(params && params.data.structure) {
-        let level = params.data.structure.split(".").length - 1
-        return level===4 && params.data.is_group
-      }
-      return false
-    },
-    'rowColor_05': function(params) {
-      return params.data.is_group === false
-    },
-  }
-  const icons =  {
-    // menu: '<i class="fa fa-bath" style="width: 10px"/>',
-    // filter: '<i class="fa fa-long-arrow-alt-down"/>',
-    // columns: '<i class="fa fa-handshake"/>',
-    // sortAscending: '<i class="fa fa-long-arrow-alt-down"/>',
-    // sortDescending: '<i class="fa fa-long-arrow-alt-up"/>',
-    // groupExpanded:'-',
-    // groupContracted: '<span class="ag-icon ag-icon-closed">+</span>',
-    //  groupContracted: '<span class="ag-iconAux">+</span>',
-      // '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/javascript-grid-icons/plus.png" style="height: 12px; width: 12px;padding-right: 2px"/>',
-    // columnMovePin: '<i class="far fa-hand-rock"/>',
-    // columnMoveAdd: '<i class="fa fa-plus-square"/>',
-    // columnMoveHide: '<i class="fa fa-times"/>',
-    // columnMoveMove: '<i class="fa fa-link"/>',
-    // columnMoveLeft: '<i class="fa fa-arrow-left"/>',
-    // columnMoveRight: '<i class="fa fa-arrow-right"/>',
-    // columnMoveGroup: '<i class="fa fa-users"/>',
-    // rowGroupPanel: '<i class="fa fa-university"/>',
-    // pivotPanel: '<i class="fa fa-magic"/>',
-    // valuePanel: '<i class="fa fa-magnet"/>',
-    // menuPin: 'P',
-    // menuValue: 'V',
-    // menuAddRowGroup: 'A',
-    // menuRemoveRowGroup: 'R',
-    // clipboardCopy: '>>',
-    // clipboardPaste: '>>',
-    // rowDrag: '<i class="fa fa-circle"/>',
-  }
-  const groupDefaultExpanded = 0
-  function getDataPath(data) {
-    if(data && data.structure) {
-      return data.structure.split(".")
-    }
-    return data
-  }
-  function getRowNodeId(data) {
-    return data.id
-  }
-  const autoGroupColumnDef = {
-        headerName: "Estruturado",
-        minwidth: 10,
-        filter: true,
-        valueGetter: params => params.data.structure,
-        cellRendererParams: {
-          checkbox: false,
-          suppressCount: true
-        }
-      }
+  // const rowClassRules = {
+  //   'rowColor_00': function(params) {
+  //     if(params && params.data.structure) {
+  //       let level = params.data.structure.split(".").length - 1
+  //       return level===0 && params.data.is_group
+  //     }
+  //     return false
+  //     // var numSickDays = params.data.sickDays;
+  //     // return numSickDays > 5 && numSickDays <= 7;
+  //   },
+  //   'rowColor_01': function(params) {
+  //     if(params && params.data.structure) {
+  //       let level = params.data.structure.split(".").length - 1
+  //       return level===1 && params.data.is_group
+  //     }
+  //     return false
+  //   },
+  //   'rowColor_02': function(params) {
+  //     if(params && params.data.structure) {
+  //       let level = params.data.structure.split(".").length - 1
+  //       return level===2 && params.data.is_group
+  //     }
+  //     return false
+  //   },
+  //   'rowColor_03': function(params) {
+  //     if(params && params.data.structure) {
+  //       let level = params.data.structure.split(".").length - 1
+  //       return level===3 && params.data.is_group
+  //     }
+  //     return false
+  //   },
+  //   'rowColor_04': function(params) {
+  //     if(params && params.data.structure) {
+  //       let level = params.data.structure.split(".").length - 1
+  //       return level===4 && params.data.is_group
+  //     }
+  //     return false
+  //   },
+  //   'rowColor_05': function(params) {
+  //     return params.data.is_group === false
+  //   },
+  // }
+  // const icons =  {
+  //   // menu: '<i class="fa fa-bath" style="width: 10px"/>',
+  //   // filter: '<i class="fa fa-long-arrow-alt-down"/>',
+  //   // columns: '<i class="fa fa-handshake"/>',
+  //   // sortAscending: '<i class="fa fa-long-arrow-alt-down"/>',
+  //   // sortDescending: '<i class="fa fa-long-arrow-alt-up"/>',
+  //   // groupExpanded:'-',
+  //   // groupContracted: '<span class="ag-icon ag-icon-closed">+</span>',
+  //   //  groupContracted: '<span class="ag-iconAux">+</span>',
+  //     // '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/javascript-grid-icons/plus.png" style="height: 12px; width: 12px;padding-right: 2px"/>',
+  //   // columnMovePin: '<i class="far fa-hand-rock"/>',
+  //   // columnMoveAdd: '<i class="fa fa-plus-square"/>',
+  //   // columnMoveHide: '<i class="fa fa-times"/>',
+  //   // columnMoveMove: '<i class="fa fa-link"/>',
+  //   // columnMoveLeft: '<i class="fa fa-arrow-left"/>',
+  //   // columnMoveRight: '<i class="fa fa-arrow-right"/>',
+  //   // columnMoveGroup: '<i class="fa fa-users"/>',
+  //   // rowGroupPanel: '<i class="fa fa-university"/>',
+  //   // pivotPanel: '<i class="fa fa-magic"/>',
+  //   // valuePanel: '<i class="fa fa-magnet"/>',
+  //   // menuPin: 'P',
+  //   // menuValue: 'V',
+  //   // menuAddRowGroup: 'A',
+  //   // menuRemoveRowGroup: 'R',
+  //   // clipboardCopy: '>>',
+  //   // clipboardPaste: '>>',
+  //   // rowDrag: '<i class="fa fa-circle"/>',
+  // }
+  // const groupDefaultExpanded = 0
+  // function getDataPath(data) {
+  //   if(data && data.structure) {
+  //     return data.structure.split(".")
+  //   }
+  //   return data
+  // }
+  // function getRowNodeId(data) {
+  //   return data.id
+  // }
+  // const autoGroupColumnDef = {
+  //       headerName: "Estruturado",
+  //       minwidth: 10,
+  //       filter: true,
+  //       valueGetter: params => params.data.structure,
+  //       cellRendererParams: {
+  //         checkbox: false,
+  //         suppressCount: true
+  //       }
+  //     }
 
   const toolBarList = [
     {
@@ -193,115 +193,115 @@ export default function FinancialAccountList(props) {
     }
   ]
 
-  const defaultColDef  = useState({
-     sortable: true
-  })
-  const [searchVal, setsearchVal] = useState("")
-  const columnDefs = [
-    // {
-    //   headerName: "Estruturado",
-    //   field: "structure",
-    //   minwidth: 150,
-    //   filter: true,
-    //   visible: false,
-    //   cellRendererFramework: params => {
-    //     return (
-    //       <div
-    //         className="d-flex align-items-center cursor-pointer"
-    //         //onClick={() => dadosdoCadastroPermission ? history.push(`/app/profile/cadastro/${params.data.id}`) : null}
-    //         onClick={() => dadosdoCadastroPermission ? handleId(params.data,params.data.id,true)  : null}
-    //       >
-    //         <span>{params.data.structure}</span>
-    //       </div>
-    //     )
-    //   }
-    // },
-    {
-      headerName: "ID",
-      field: "id",
-      width: 150,
-      filter: true,
-    },
-    {
-      headerName: "Nome",
-      field: "name",
-      filter: true,
-      width: 250,
-      cellRendererFramework: params => {
-        return (
-          <div
-            className="d-flex align-items-center cursor-pointer"
-            //onClick={() => dadosdoCadastroPermission ? history.push(`/app/profile/cadastro/${params.data.id}`) : null}
-            onClick={() => dadosdoCadastroPermission ? handleId(params.data,params.data.id,true)  : null}
-          >
-            <span>{params.data.name}</span>
-          </div>
-        )
-      }
-    },
-    {
-      headerName: "Grupo",
-      field: "is_group",
-      filter: true,
-      width: 120,
-      cellRendererFramework: params => {
-        return params.value === true ? (
-          <div className="badge badge-pill badge-light">
-            Sim
-          </div>
-          // <div className="bullet bullet-sm bullet-primary"></div>
-        ) : params.value === false ? (
-          // <div className="bullet bullet-sm bullet-secondary"></div>
-          <div className="badge badge-pill badge-light">
-            Não
-          </div>
-        ) : null
-      }
-    },
-    {
-      headerName: "Ativo",
-      field: "is_active",
-      filter: true,
-      width: 120,
-      cellRendererFramework: params => {
-        return params.value === true ? (
-          <div className="badge badge-pill badge-light-success">
-            Ativo
-          </div>
-          // <div className="bullet bullet-sm bullet-primary"></div>
-        ) : params.value === false ? (
-          // <div className="bullet bullet-sm bullet-secondary"></div>
-          <div className="badge badge-pill badge-light-danger">
-            Inativo
-          </div>
-        ) : null
-      }
-    },
-    {
-      headerName: "Ações",
-      field: "transactions",
-      width: 150,
-      cellRendererFramework: params => {
-        return (
-          <div className="actions cursor-pointer">
-            <Edit
-              className="mr-50"
-              size={15}
-              //onClick={() => dadosdoCadastroPermission ? history.push(`/app/profile/cadastro/${params.data.id}`) : null}
-              onClick={() => dadosdoCadastroPermission ? handleId(params.data,params.data.id,true) : null}
-            />
-            <Trash2
-              size={15}
-              disabled={!deletePermission}
-              onClick={() =>
-                  deletePermission ? toggleModalDelete(params.data,true) : null
-              }
-            />
-          </div>
-        )
-      }
-    }
-  ]
+  // const defaultColDef  = useState({
+  //    sortable: true
+  // })
+  // const [searchVal, setsearchVal] = useState("")
+  // const columnDefs = [
+  //   // {
+  //   //   headerName: "Estruturado",
+  //   //   field: "structure",
+  //   //   minwidth: 150,
+  //   //   filter: true,
+  //   //   visible: false,
+  //   //   cellRendererFramework: params => {
+  //   //     return (
+  //   //       <div
+  //   //         className="d-flex align-items-center cursor-pointer"
+  //   //         //onClick={() => dadosdoCadastroPermission ? history.push(`/app/profile/cadastro/${params.data.id}`) : null}
+  //   //         onClick={() => dadosdoCadastroPermission ? handleId(params.data,params.data.id,true)  : null}
+  //   //       >
+  //   //         <span>{params.data.structure}</span>
+  //   //       </div>
+  //   //     )
+  //   //   }
+  //   // },
+  //   {
+  //     headerName: "ID",
+  //     field: "id",
+  //     width: 150,
+  //     filter: true,
+  //   },
+  //   {
+  //     headerName: "Nome",
+  //     field: "name",
+  //     filter: true,
+  //     width: 250,
+  //     cellRendererFramework: params => {
+  //       return (
+  //         <div
+  //           className="d-flex align-items-center cursor-pointer"
+  //           //onClick={() => dadosdoCadastroPermission ? history.push(`/app/profile/cadastro/${params.data.id}`) : null}
+  //           onClick={() => dadosdoCadastroPermission ? handleId(params.data,params.data.id,true)  : null}
+  //         >
+  //           <span>{params.data.name}</span>
+  //         </div>
+  //       )
+  //     }
+  //   },
+  //   {
+  //     headerName: "Grupo",
+  //     field: "is_group",
+  //     filter: true,
+  //     width: 120,
+  //     cellRendererFramework: params => {
+  //       return params.value === true ? (
+  //         <div className="badge badge-pill badge-light">
+  //           Sim
+  //         </div>
+  //         // <div className="bullet bullet-sm bullet-primary"></div>
+  //       ) : params.value === false ? (
+  //         // <div className="bullet bullet-sm bullet-secondary"></div>
+  //         <div className="badge badge-pill badge-light">
+  //           Não
+  //         </div>
+  //       ) : null
+  //     }
+  //   },
+  //   {
+  //     headerName: "Ativo",
+  //     field: "is_active",
+  //     filter: true,
+  //     width: 120,
+  //     cellRendererFramework: params => {
+  //       return params.value === true ? (
+  //         <div className="badge badge-pill badge-light-success">
+  //           Ativo
+  //         </div>
+  //         // <div className="bullet bullet-sm bullet-primary"></div>
+  //       ) : params.value === false ? (
+  //         // <div className="bullet bullet-sm bullet-secondary"></div>
+  //         <div className="badge badge-pill badge-light-danger">
+  //           Inativo
+  //         </div>
+  //       ) : null
+  //     }
+  //   },
+  //   {
+  //     headerName: "Ações",
+  //     field: "transactions",
+  //     width: 150,
+  //     cellRendererFramework: params => {
+  //       return (
+  //         <div className="actions cursor-pointer">
+  //           <Edit
+  //             className="mr-50"
+  //             size={15}
+  //             //onClick={() => dadosdoCadastroPermission ? history.push(`/app/profile/cadastro/${params.data.id}`) : null}
+  //             onClick={() => dadosdoCadastroPermission ? handleId(params.data,params.data.id,true) : null}
+  //           />
+  //           <Trash2
+  //             size={15}
+  //             disabled={!deletePermission}
+  //             onClick={() =>
+  //                 deletePermission ? toggleModalDelete(params.data,true) : null
+  //             }
+  //           />
+  //         </div>
+  //       )
+  //     }
+  //   }
+  // ]
 
   useEffect(() =>
   {
@@ -402,15 +402,15 @@ export default function FinancialAccountList(props) {
       setLoadedDados(false)
     }
   }
-  const onGridReady = params => {
-    setGridApi(params.api)
-    // setgridColumnApi(params.columnApi)
-  }
+  // const onGridReady = params => {
+  //   setGridApi(params.api)
+  //   // setgridColumnApi(params.columnApi)
+  // }
 
-  const updateSearchQuery = val => {
-    gridApi.setQuickFilter(val)
-    setsearchVal(val)
-  }
+  // const updateSearchQuery = val => {
+  //   gridApi.setQuickFilter(val)
+  //   // setsearchVal(val)
+  // }
 
 
   function toggleModalDelete(itemDelete, status) {
@@ -489,9 +489,9 @@ export default function FinancialAccountList(props) {
   function toggleModalExport() {
     setShowModalExport(!showModalExport)
   }
-  function sayHelloWorld() {
-    alert('Hello world!')
- }
+//   function sayHelloWorld() {
+//     alert('Hello world!')
+//  }
  function onRowPrepared(e) {
   if (e.rowType === 'data' && e.data.is_group) {
     // e.rowElement.style.backgroundColor = rgb(223, 219, 219) ;

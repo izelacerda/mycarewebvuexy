@@ -13,7 +13,7 @@ export default function Viewer() {
   // const [report, setReport] = useState(null)
   // const [viewerAtual, setViewer] = useState(null)
   const auth = useSelector(state => state.auth);
-  const [rowData, setRowData] = useState(null)
+  // const [rowData, setRowData] = useState(null)
   useEffect(() =>
   {
     async function loadDados() {
@@ -27,7 +27,7 @@ export default function Viewer() {
         body
       );
       let rowData = response.data;
-      setRowData(rowData)
+      // setRowData(rowData)
       console.log(rowData)
       console.log('Loading Viewer view');
 

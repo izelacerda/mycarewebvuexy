@@ -17,10 +17,10 @@ import {
 import { useSelector } from "react-redux";
 import { toast, Flip } from "react-toastify"
 // import XLSX from "xlsx"
-import { saveAs } from 'file-saver'
+// import { saveAs } from 'file-saver'
 import { AgGridReact } from "ag-grid-react"
 import 'ag-grid-enterprise'
-import * as Excel from "exceljs/dist/exceljs.min.js"
+// import * as Excel from "exceljs/dist/exceljs.min.js"
 // import Select from "react-select"
 
 import {
@@ -58,7 +58,7 @@ export default function InvoiceList(props) {
   const [rowData, setRowData] = useState(null)
   const pageSize = useState(50)
   const [showModalDelete, setShowModalDelete] = useState(false)
-  const [showModalExport, setShowModalExport] = useState(false)
+  // const [showModalExport, setShowModalExport] = useState(false)
   const [itemDelete, setItemDelete] = useState(null)
   const [fileName, setFileName] = useState("")
   const [fileFormat, setFileFormat] = useState("xlsx")
@@ -654,7 +654,7 @@ export default function InvoiceList(props) {
                             </ModalFooter>
                           </Modal>
                           <Modal
-                            isOpen={showModalExport}
+                            isOpen={false}
                             toggle={() => toggleModalExport()}
                             className="modal-dialog-centered"
                           >
