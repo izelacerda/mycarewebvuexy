@@ -1,3 +1,5 @@
+import 'devextreme/dist/css/dx.common.css';
+import 'devextreme/dist/css/dx.light.css';
 import React from "react"
 import Router from "./Router"
 import "./components/@vuexy/rippleButton/RippleButton"

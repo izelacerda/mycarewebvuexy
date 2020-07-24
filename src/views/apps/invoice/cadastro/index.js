@@ -809,7 +809,7 @@ export default function InvoiceCadastro(props) {
     <Modal
         isOpen={props.sidebar ? true : false}
         className="modal-dialog-centered"
-        style={{minWidth: '1300px', width: '100%'}}
+        style={{minWidth: '1000px', width: '100%'}}
         // toggle={() => props.handleSidebar(false)}
         toggle={() => toggleModalClose(false)}
         // style={{minWidth: '1200px', minHeight: '900px', width: '80%', height: '808px', margin: '10px auto'}}
@@ -936,7 +936,6 @@ export default function InvoiceCadastro(props) {
             <Button color="warning" onClick={() =>
                 { setShowModalClose(false);
                   props.handleSidebar(false);
-                  _.set(rowData, 'changed.value', false)
                   setRowData(baseData)
                 }
               }>

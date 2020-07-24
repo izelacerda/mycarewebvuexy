@@ -36,7 +36,7 @@ import { ContextLayout } from "../../../../utility/context/Layout"
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 import "../../../../assets/scss/pages/users.scss"
 import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 
 import "../../../../assets/scss/especificos/cadastros.scss"
 
@@ -88,7 +88,8 @@ export default function InvoiceList(props) {
       outline: false,
       tooltip: 'Incluir',
       disabled: !insertPermission,
-      action: () => handleId(null,0,true)  //action: () => history.push(`/app/profile/cadastro/0`)
+      action: () =>
+      handleId(null,0,true)  //action: () => history.push(`/app/profile/cadastro/0`)
     },
     {
       id: 'toolbar2',
@@ -120,19 +121,26 @@ export default function InvoiceList(props) {
       field: "company.companygroup.name",
       filter: true,
       width: 150,
-
+      enableRowGroup: true,
+      sortable: true,
+      enablePivot: true,
     },
     {
       headerName: "Empresa",
       field: "company.name",
       filter: true,
-      width: 150
+      width: 150,
+      enableRowGroup: true,
+      enablePivot: true,
+      sortable: true,
     },
     {
       headerName: "Fornecedor",
       field: "person.name",
       filter: true,
-      width: 150
+      width: 150,
+      enableRowGroup: true,
+      sortable: true
     },
     {
       headerName: "Tipo",
@@ -144,13 +152,18 @@ export default function InvoiceList(props) {
       headerName: "Série",
       field: "series",
       filter: true,
-      width: 100
+      width: 100,
+      pivot: true,
+      enablePivot: true,
     },
     {
       headerName: "Número",
       field: "number",
       filter: true,
       width: 120,
+      pivot: true,
+      enablePivot: true,
+      sortable: true,
        cellRendererFramework: params => {
         return (
           <div
@@ -158,7 +171,7 @@ export default function InvoiceList(props) {
             //onClick={() => dadosdoCadastroPermission ? history.push(`/app/profile/cadastro/${params.data.id}`) : null}
             onClick={() => dadosdoCadastroPermission ? handleId(params.data,params.data.id,true)  : null}
           >
-            <span>{params.data.number}</span>
+            <span>{params.data ? params.data.number : null}</span>
           </div>
         )
       }
@@ -174,6 +187,9 @@ export default function InvoiceList(props) {
       field: "dtDocument",
       filter: true,
       width: 130,
+      enableRowGroup: true,
+      enablePivot: true,
+      sortable: true,
       valueFormatter: dateFormat
     },
     {
@@ -181,6 +197,8 @@ export default function InvoiceList(props) {
       field: "dtReceived",
       filter: true,
       width: 130,
+      enableRowGroup: true,
+      sortable: true,
       valueFormatter: dateFormat
     },
     {
@@ -188,6 +206,8 @@ export default function InvoiceList(props) {
       field: "totalValue",
       filter: true,
       width: 150,
+      sortable: true,
+      aggFunc: 'sum',
       valueFormatter: currencyFormat
     },
     {
@@ -348,6 +368,7 @@ export default function InvoiceList(props) {
   // }
   const onGridReady = params => {
     setGridApi(params.api)
+    params.api.closeToolPanel();
     // setgridColumnApi(params.columnApi)
   }
 
@@ -431,7 +452,8 @@ export default function InvoiceList(props) {
 
   }
   function toggleModalExport() {
-    setShowModalExport(!showModalExport)
+    gridApi.exportDataAsExcel({})
+    // setShowModalExport(!showModalExport)
   }
 
   // function handleExport() {
@@ -446,85 +468,86 @@ export default function InvoiceList(props) {
   //   XLSX.writeFile(wbout, fileNameArq);
   // }
   async function handleExport() {
-    toggleModalExport()
-    let fileNameArq =
-        fileName.length && fileFormat.length
-          ? `${fileName}.${fileFormat}`
-          : "excel-sheet.xlsx"
-    const workbook = new Excel.Workbook();
-    workbook.creator = 'Me';
-    workbook.lastModifiedBy = 'Her';
-    workbook.created = new Date(1985, 8, 30);
-    workbook.modified = new Date();
-    workbook.lastPrinted = new Date(2016, 9, 27);
-    workbook.calcProperties.fullCalcOnLoad = true;
+    // gridApi.exportDataAsExcel({})
+    // toggleModalExport()
+    // let fileNameArq =
+    //     fileName.length && fileFormat.length
+    //       ? `${fileName}.${fileFormat}`
+    //       : "excel-sheet.xlsx"
+    // const workbook = new Excel.Workbook();
+    // workbook.creator = 'Me';
+    // workbook.lastModifiedBy = 'Her';
+    // workbook.created = new Date(1985, 8, 30);
+    // workbook.modified = new Date();
+    // workbook.lastPrinted = new Date(2016, 9, 27);
+    // workbook.calcProperties.fullCalcOnLoad = true;
 
-    const worksheet =  workbook.addWorksheet('sheet', {
-      pageSetup:{paperSize: 9, orientation:'landscape'}
-    });
-    worksheet.pageSetup.margins = {
-      left: 0.7, right: 0.7,
-      top: 0.75, bottom: 0.75,
-      header: 0.3, footer: 0.3
-    };
-    worksheet.pageSetup.printArea = 'A1:G20';
-    worksheet.columns = [
-      { header: 'Id', key: 'id', width: 10 },
-      { header: 'Name', key: 'name', width: 32 },
-      { header: 'D.O.B.', key: 'DOB', width: 10, outlineLevel: 1 }
-    ];
-    // const idCol = worksheet.getColumn('id');
-    // const nameCol = worksheet.getColumn('B');
-    const dobCol = worksheet.getColumn(3);
+    // const worksheet =  workbook.addWorksheet('sheet', {
+    //   pageSetup:{paperSize: 9, orientation:'landscape'}
+    // });
+    // worksheet.pageSetup.margins = {
+    //   left: 0.7, right: 0.7,
+    //   top: 0.75, bottom: 0.75,
+    //   header: 0.3, footer: 0.3
+    // };
+    // worksheet.pageSetup.printArea = 'A1:G20';
+    // worksheet.columns = [
+    //   { header: 'Id', key: 'id', width: 10 },
+    //   { header: 'Name', key: 'name', width: 32 },
+    //   { header: 'D.O.B.', key: 'DOB', width: 10, outlineLevel: 1 }
+    // ];
+    // // const idCol = worksheet.getColumn('id');
+    // // const nameCol = worksheet.getColumn('B');
+    // const dobCol = worksheet.getColumn(3);
 
-    // set column properties
+    // // set column properties
 
-    // Note: will overwrite cell value C1
-    dobCol.header = 'Date of Birth';
+    // // Note: will overwrite cell value C1
+    // dobCol.header = 'Date of Birth';
 
-    // Note: this will overwrite cell values C1:C2
-    dobCol.header = ['Date of Birth', 'A.K.A. D.O.B.'];
+    // // Note: this will overwrite cell values C1:C2
+    // dobCol.header = ['Date of Birth', 'A.K.A. D.O.B.'];
 
-    // from this point on, this column will be indexed by 'dob' and not 'DOB'
-    dobCol.key = 'dob';
+    // // from this point on, this column will be indexed by 'dob' and not 'DOB'
+    // dobCol.key = 'dob';
 
-    dobCol.width = 15;
+    // dobCol.width = 15;
 
-    // Hide the column if you'd like
-    dobCol.hidden = true;
+    // // Hide the column if you'd like
+    // dobCol.hidden = true;
 
-    // set an outline level for columns
-    worksheet.getColumn(4).outlineLevel = 0;
-    worksheet.getColumn(5).outlineLevel = 1;
-    worksheet.getColumn(6).values = [1,2,3,4,5];
-    worksheet.addRow({id: 1, name: 'John Doe', dob: new Date(1970,1,1)});
-    worksheet.addRow({id: 2, name: 'Jane Doe', dob: new Date(1965,1,7)});
-    const row = worksheet.lastRow;
+    // // set an outline level for columns
+    // worksheet.getColumn(4).outlineLevel = 0;
+    // worksheet.getColumn(5).outlineLevel = 1;
+    // worksheet.getColumn(6).values = [1,2,3,4,5];
+    // worksheet.addRow({id: 1, name: 'John Doe', dob: new Date(1970,1,1)});
+    // worksheet.addRow({id: 2, name: 'Jane Doe', dob: new Date(1965,1,7)});
+    // const row = worksheet.lastRow;
 
-    // Set a specific row height
-    row.height = 42.5;
-    row.values = {
-      id: 13,
-      name: 'Thing 1',
-      dob: new Date()
-    };
-    worksheet.getCell('A1').numFmt = '0.00%';
+    // // Set a specific row height
+    // row.height = 42.5;
+    // row.values = {
+    //   id: 13,
+    //   name: 'Thing 1',
+    //   dob: new Date()
+    // };
+    // worksheet.getCell('A1').numFmt = '0.00%';
 
-    worksheet.columns = [
-      { header: 'Id', key: 'id', width: 10 },
-      { header: 'Name', key: 'name', width: 32, style: { font: { name: 'Arial Black' } } },
-      { header: 'D.O.B.', key: 'DOB', width: 10, style: { numFmt: 'dd/mm/yyyy' } }
-    ];
+    // worksheet.columns = [
+    //   { header: 'Id', key: 'id', width: 10 },
+    //   { header: 'Name', key: 'name', width: 32, style: { font: { name: 'Arial Black' } } },
+    //   { header: 'D.O.B.', key: 'DOB', width: 10, style: { numFmt: 'dd/mm/yyyy' } }
+    // ];
 
-    // Set Column 3 to Currency Format
-    // worksheet.getColumn(3).numFmt = '"£"#,##0.00;[Red]\-"£"#,##0.00';
+    // // Set Column 3 to Currency Format
+    // // worksheet.getColumn(3).numFmt = '"£"#,##0.00;[Red]\-"£"#,##0.00';
 
-    // Set Row 2 to Comic Sans.
-    worksheet.getRow(2).font = { name: 'Comic Sans MS', family: 4, size: 16, underline: 'double', bold: true };
-    // await workbook.writeFile(fileNameArq);
-    const buf = await workbook.xlsx.writeBuffer()
+    // // Set Row 2 to Comic Sans.
+    // worksheet.getRow(2).font = { name: 'Comic Sans MS', family: 4, size: 16, underline: 'double', bold: true };
+    // // await workbook.writeFile(fileNameArq);
+    // const buf = await workbook.xlsx.writeBuffer()
 
-    saveAs(new Blob([buf]), fileNameArq)
+    // saveAs(new Blob([buf]), fileNameArq)
 
   }
 
@@ -545,7 +568,7 @@ export default function InvoiceList(props) {
                 <Col sm="12">
                   <Card>
                     <CardBody>
-                      <div className="ag-theme-alpine ag-grid-table" >
+                      <div className="ag-theme-balham ag-grid-table" >
                         <div className="ag-grid-actions d-flex justify-content-between flex-wrap mb-1">
                           <div className="sort-dropdown">
                             <h3 className="primary">
@@ -596,9 +619,12 @@ export default function InvoiceList(props) {
                                     animateRows={true}
                                     floatingFilter={false}
                                     pagination={true}
+                                    pivotMode={false}
+                                    sideBar={true}
                                     pivotPanelShow="always"
                                     paginationPageSize={pageSize}
                                     resizable={true}
+                                    rowGroupPanelShow='always'
                                     enableRtl={context.state.direction === "rtl"}
                                   />
                                 )}

@@ -30,10 +30,8 @@ import { toast, Flip } from "react-toastify"
 
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 
-// import "ag-grid-community/dist/styles/ag-theme-balham.css";
+import "ag-grid-community/dist/styles/ag-theme-balham.css";
 // import "../../../../assets/scss/pages/permissions.scss"
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 import "../../../../assets/scss/pages/users.scss"
 
@@ -273,11 +271,18 @@ export default function ProfilePermission(props) {
       }
     }
   }
+  // function rowGroupCallback(params) {
+  //   return params.node.key;
+  // }
   function toggleModalExport() {
     setShowModalExport(!showModalExport)
   }
 
   function handleExport() {
+    gridApi.exportDataAsExcel({});
+    // gridApi.exportDataAsExcel({
+    //   processRowGroupCallback: rowGroupCallback,
+    // });
     toggleModalExport()
     let fileNameArq =
       fileName.length && fileFormat.length
@@ -294,7 +299,7 @@ export default function ProfilePermission(props) {
       <Col sm="12">
         <Card>
           <CardBody>
-            <div className="ag-theme-alpine ag-grid-table">
+            <div className="ag-theme-balham ag-grid-table">
               <div className="ag-grid-actions d-flex justify-content-between flex-wrap mb-1">
                 <div className="sort-dropdown">
                   <UncontrolledDropdown className="ag-dropdown p-1">

@@ -27,7 +27,7 @@ import { ContextLayout } from "../../../../utility/context/Layout"
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 import "../../../../assets/scss/pages/users.scss"
 import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 
 import "../../../../assets/scss/especificos/cadastros.scss"
 
@@ -267,7 +267,7 @@ export default function InvoiceFinancialList(props) {
                 }}
               ></div>
                 <Col sm="12">
-                      <div className="ag-theme-alpine ag-grid-table" >
+                      <div className="ag-theme-balham ag-grid-table" >
                         <div className="ag-grid-actions d-flex justify-content-between flex-wrap mb-1">
                           <div className="sort-dropdown">
                           </div>
@@ -291,7 +291,7 @@ export default function InvoiceFinancialList(props) {
                                       height: '70%',
                                       width: '100%',
                                     }}
-                                    className="ag-theme-alpine"
+                                    className="ag-theme-balham"
                                   >
                                     <AgGridReact
                                         gridOptions={{}}

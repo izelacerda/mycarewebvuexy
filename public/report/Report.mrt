@@ -1,0 +1,222 @@
+{
+  "ReportGuid": "68ef07ac8639c47d2fac827b66268d87",
+  "ReportName": "Report",
+  "ReportAlias": "Report",
+  "ReportFile": "Report.mrt",
+  "ReportCreated": "/Date(1595444533000-0300)/",
+  "ReportChanged": "/Date(1595444533000-0300)/",
+  "EngineVersion": "EngineV2",
+  "CalculationMode": "Interpretation",
+  "ReportUnit": "Centimeters",
+  "PreviewSettings": 268435455,
+  "Dictionary": {
+    "DataSources": {
+      "0": {
+        "Ident": "StiSqlSource",
+        "Name": "persons",
+        "Alias": "persons",
+        "Columns": {
+          "0": {
+            "Name": "email",
+            "Index": -1,
+            "NameInSource": "email",
+            "Alias": "email",
+            "Type": "System.String"
+          },
+          "1": {
+            "Name": "id",
+            "Index": -1,
+            "NameInSource": "id",
+            "Alias": "id",
+            "Type": "System.Int32"
+          },
+          "2": {
+            "Name": "name",
+            "Index": -1,
+            "NameInSource": "name",
+            "Alias": "name",
+            "Type": "System.String"
+          },
+          "3": {
+            "Name": "login",
+            "Index": -1,
+            "NameInSource": "login",
+            "Alias": "login",
+            "Type": "System.String"
+          }
+        },
+        "NameInSource": "sqlserver",
+        "SqlCommand": "select * from [persons]"
+      },
+      "1": {
+        "Ident": "StiSqlSource",
+        "Name": "spCompanyGroup",
+        "Alias": "spCompanyGroup",
+        "Columns": {
+          "0": {
+            "Name": "id",
+            "Index": -1,
+            "NameInSource": "id",
+            "Alias": "id",
+            "Type": "System.Decimal"
+          },
+          "1": {
+            "Name": "is_active",
+            "Index": -1,
+            "NameInSource": "is_active",
+            "Alias": "is_active",
+            "Type": "System.Boolean"
+          },
+          "2": {
+            "Name": "licence_id",
+            "Index": -1,
+            "NameInSource": "licence_id",
+            "Alias": "licence_id",
+            "Type": "System.Decimal"
+          },
+          "3": {
+            "Name": "name",
+            "Index": -1,
+            "NameInSource": "name",
+            "Alias": "name",
+            "Type": "System.String"
+          }
+        },
+        "NameInSource": "sqlserver",
+        "Type": "Table",
+        "SqlCommand": "[dbo].[spCompanyGroup] \r\n   @licence_id=1\r\n  ,@id=0\r\n  ,@active='all'\r\n  ,@userlog_id=2\r\n"
+      }
+    },
+    "Databases": {
+      "0": {
+        "Ident": "StiSqlDatabase",
+        "Name": "sqlserver",
+        "Alias": "sqlserver",
+        "ConnectionStringEncrypted": "49BpCVZcu8jiTLmlZEnpXot4oStmGMt94kSh9GNMZKfGOLPrTwrjpO1G7aVqBOcXx3jVy9dcQ/XtSU2A8T1lXthw2e9NS0uZa30="
+      }
+    }
+  },
+  "Pages": {
+    "0": {
+      "Ident": "StiPage",
+      "Name": "Page1",
+      "Guid": "575e55d1e663849515dcb460d809e40f",
+      "Interaction": {
+        "Ident": "StiInteraction"
+      },
+      "Border": ";;2;;;;;solid:Black",
+      "Brush": "solid:",
+      "Components": {
+        "0": {
+          "Ident": "StiReportTitleBand",
+          "Name": "ReportTitleBand1",
+          "ClientRectangle": "0,0.4,19.01,2.2",
+          "Interaction": {
+            "Ident": "StiInteraction"
+          },
+          "Border": ";;;;;;;solid:Black",
+          "Brush": "solid:",
+          "Components": {
+            "0": {
+              "Ident": "StiImage",
+              "Name": "Image1",
+              "GrowToHeight": true,
+              "ClientRectangle": "0.2,0,2.4,2.2",
+              "Interaction": {
+                "Ident": "StiInteraction"
+              },
+              "Border": ";;;;;;;solid:Black",
+              "Brush": "solid:",
+              "File": "/Users/joseluizlacerdasoares/Pictures/logo_mycare.png",
+              "ImageBytes": ""
+            }
+          }
+        },
+        "1": {
+          "Ident": "StiDataBand",
+          "Name": "DataspCompanyGroup",
+          "ClientRectangle": "0,3.4,19.01,0.6",
+          "Interaction": {
+            "Ident": "StiBandInteraction"
+          },
+          "Border": ";;;;;;;solid:Black",
+          "Brush": "solid:",
+          "Components": {
+            "0": {
+              "Ident": "StiText",
+              "Name": "Text1",
+              "Guid": "37d81a2f77e257d2987c3bef782dc93e",
+              "ClientRectangle": "0.2,0,3,0.6",
+              "Interaction": {
+                "Ident": "StiInteraction"
+              },
+              "Text": {
+                "Value": "{spCompanyGroup.id}"
+              },
+              "Border": ";;;;;;;solid:Black",
+              "Brush": "solid:",
+              "TextBrush": "solid:Black"
+            },
+            "1": {
+              "Ident": "StiText",
+              "Name": "Text2",
+              "Guid": "fbed003df2bf72a302ae9967042b52ac",
+              "ClientRectangle": "3.2,0,3,0.6",
+              "Interaction": {
+                "Ident": "StiInteraction"
+              },
+              "Text": {
+                "Value": "{spCompanyGroup.is_active}"
+              },
+              "Border": ";;;;;;;solid:Black",
+              "Brush": "solid:",
+              "TextBrush": "solid:Black"
+            },
+            "2": {
+              "Ident": "StiText",
+              "Name": "Text3",
+              "Guid": "374dace809f4c837a2466140dffbb73d",
+              "ClientRectangle": "6.4,0,3,0.6",
+              "Interaction": {
+                "Ident": "StiInteraction"
+              },
+              "Text": {
+                "Value": "{spCompanyGroup.licence_id}"
+              },
+              "Border": ";;;;;;;solid:Black",
+              "Brush": "solid:",
+              "TextBrush": "solid:Black"
+            },
+            "3": {
+              "Ident": "StiText",
+              "Name": "Text4",
+              "Guid": "1956275a02519182b4ce361bb4e8b9ae",
+              "ClientRectangle": "9.6,0,3,0.6",
+              "Interaction": {
+                "Ident": "StiInteraction"
+              },
+              "Text": {
+                "Value": "{spCompanyGroup.name}"
+              },
+              "Border": ";;;;;;;solid:Black",
+              "Brush": "solid:",
+              "TextBrush": "solid:Black"
+            }
+          },
+          "DataSourceName": "spCompanyGroup"
+        }
+      },
+      "PageWidth": 21.01,
+      "PageHeight": 29.69,
+      "Watermark": {
+        "TextBrush": "solid:50,0,0,0"
+      },
+      "Margins": {
+        "Left": 1,
+        "Right": 1,
+        "Top": 1,
+        "Bottom": 1
+      }
+    }
+  }
+}

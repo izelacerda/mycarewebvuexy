@@ -24,7 +24,7 @@ import Select from "react-select"
 
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 
-import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+import "ag-grid-community/dist/styles/ag-theme-balham.css";
 // import "../../../../assets/scss/pages/permissions.scss"
 import "../../../../assets/scss/pages/users.scss"
 
@@ -293,7 +293,7 @@ export default function CompanyPermission(props) {
       <Col sm="12">
         <Card>
           <CardBody>
-            <div className="ag-theme-alpine ag-grid-table">
+            <div className="ag-theme-balham ag-grid-table">
               <div className="ag-grid-actions d-flex justify-content-between">
                 <Content>
                   <Select

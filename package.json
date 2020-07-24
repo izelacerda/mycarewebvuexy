@@ -22,6 +22,8 @@
     "crypto-js": "^4.0.0",
     "date-fns": "^2.14.0",
     "date-fns-tz": "^1.0.10",
+    "devextreme": "20.1-stable",
+    "devextreme-react": "20.1-stable",
     "draft-js": "^0.11.4",
     "exceljs": "^4.0.0",
     "file-saver": "^2.0.2",
@@ -103,7 +105,8 @@
   "devDependencies": {
     "node-sass": "^4.14.1",
     "react-app-rewire-postcss": "^3.0.2",
-    "react-app-rewired": "^2.1.5"
+    "react-app-rewired": "^2.1.5",
+    "devextreme-themebuilder": "20.1-stable"
   },
   "browserslist": {
     "production": [

@@ -27,7 +27,7 @@ import { ContextLayout } from "../../../../utility/context/Layout"
 import "../../../../assets/scss/plugins/tables/_agGridStyleOverride.scss"
 import "../../../../assets/scss/pages/users.scss"
 import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 
 import "../../../../assets/scss/especificos/cadastros.scss"
 
@@ -74,7 +74,15 @@ export default function InvoiceItemList(props) {
   ]
 
   const defaultColDef  = useState({
-     sortable: true
+     sortable: true,
+     editable: true,
+     enableRowGroup: true,
+     enablePivot: true,
+     enableValue: true,
+     resizable: true,
+     filter: true,
+     flex: 1,
+     minWidth: 100,
   })
   const [searchVal, setsearchVal] = useState("")
   const columnDefs = [
@@ -82,53 +90,40 @@ export default function InvoiceItemList(props) {
       headerName: "Unidade de Negócio",
       field: "businessUnit.name",
       filter: true,
-      width: 150
+      width: 120,
     },
     {
       headerName: "Conta Financeira",
       field: "financialAccount.name",
       filter: true,
-      width: 150
+      width: 120,
     },
     {
       headerName: "Material",
       field: "material.name",
       filter: true,
-      width: 150
+      width: 120,
     },
     {
       headerName: "Quantidade",
       field: "qtd",
       filter: true,
-      width: 150,
+      width: 120,
       valueFormatter: currencyFormat
     },
     {
       headerName: "Valor Unitário",
       field: "unitValue",
       filter: true,
-      width: 150,
+      width: 120,
       valueFormatter: currencyFormat
     },
-    {
-      headerName: "Desconto",
-      field: "discValue",
-      filter: true,
-      width: 100,
-      valueFormatter: currencyFormat
-    },
-    {
-      headerName: "Acréscimo",
-      field: "addValue",
-      filter: true,
-      width: 100,
-      valueFormatter: currencyFormat
-    },
+
     {
       headerName: "Valor Total",
       field: "value",
       filter: true,
-      width: 150,
+      width: 120,
       valueFormatter: currencyFormat
     },
     {
@@ -161,6 +156,20 @@ export default function InvoiceItemList(props) {
           </div>
         )
       }
+    },
+    {
+      headerName: "Desconto",
+      field: "discValue",
+      filter: true,
+      width: 100,
+      valueFormatter: currencyFormat
+    },
+    {
+      headerName: "Acréscimo",
+      field: "addValue",
+      filter: true,
+      width: 100,
+      valueFormatter: currencyFormat
     }
   ]
 
@@ -283,7 +292,7 @@ export default function InvoiceItemList(props) {
                 }}
               ></div>
                 <Col sm="12">
-                      <div className="ag-theme-alpine ag-grid-table" >
+                      <div className="ag-theme-balham ag-grid-table" >
                         <div className="ag-grid-actions d-flex justify-content-between flex-wrap mb-1">
                           <div className="sort-dropdown">
                           </div>
@@ -307,7 +316,7 @@ export default function InvoiceItemList(props) {
                                       height: '70%',
                                       width: '100%',
                                     }}
-                                    className="ag-theme-alpine"
+                                    className="ag-theme-balham"
                                   >
                                     <AgGridReact
                                         gridOptions={{}}
@@ -325,6 +334,7 @@ export default function InvoiceItemList(props) {
                                         resizable={true}
                                         domLayout={"normal"}
                                         enableRtl={context.state.direction === "rtl"}
+
                                     />
                                   </div>
                                 )}

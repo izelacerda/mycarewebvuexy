@@ -47,6 +47,29 @@ const schema = Yup.object().shape({
   .min(0.01, "Valor total inválido"),
 });
 
+// const NumberQtd = ({field, key, value, mainHandle, autoFocus, decimal, prefix, invalid, disabled, placeholder, className}) => {
+//   const handleNumber= (value,e) => {
+//     mainHandle(field, value,e)
+//   }
+
+//   return (
+//     <NumberFormat
+//       prefix={prefix}
+//       key={key}
+//       decimalScale={decimal}
+//       decimalSeparator={','}
+//       thousandSeparator={'.'}
+//       className={className}
+//       placeholder={placeholder}
+//       autoFocus={autoFocus}
+//       value={value}
+//       onValueChange={e =>  handleNumber(e.floatValue,e) }
+//       invalid={invalid}
+//       disabled={disabled}
+//     />
+//   )
+// }
+
 export default function InvoiceItemCadastro(props) {
   let listaPermission = true
   let insertPermission = true
@@ -68,18 +91,23 @@ export default function InvoiceItemCadastro(props) {
   }
   const [activeTab, setTab] = useState("1")
   const [load, setLoad] = useState(true)
-  const [atualiza, setAtualiza] = useState(true);
+  const [atualiza, setAtualiza] = useState(true)
+  const [qtd, setQtd] = useState(0)
+  const [unitValue, setUnitValue] = useState(0)
+  const [discValue, setDiscValue] = useState(0)
+  const [addValue, setAddValue] = useState(0)
+  const [value, setValue] = useState(0)
 
   const baseData = {
-    id: { value: 0,  invalid: false, tab: '1', msg:'' },
-    un_id: { value: 0,  invalid: false, tab: '1', msg:'', select: null },
-    financial_id: { value: 0,  invalid: false, tab: '1', msg:'', select: null },
-    material_id: { value: 0,  invalid: false, tab: '1', msg:'', select: null },
-    qtd: { value: 0,  invalid: false, tab: '1', msg:'' },
-    unitValue: { value: 0, invalid: false, tab: '1', msg:'' },
-    discValue: { value: 0, invalid: false, tab: '1', msg:'' },
-    addValue: { value: 0, invalid: false, tab: '1', msg:'' },
-    value: { value: 0, invalid: false, tab: '1', msg:'' },
+    id: { value: 0,  invalid: false, tab: '1', msg:'', autoFocus: false },
+    un_id: { value: 0,  invalid: false, tab: '1', msg:'', autoFocus: false, select: null },
+    financial_id: { value: 0,  invalid: false, tab: '1', msg:'', autoFocus: false, select: null },
+    material_id: { value: 0,  invalid: false, tab: '1', msg:'', autoFocus: false, select: null },
+    qtd: { value: 0,  invalid: false, tab: '1', msg:'', autoFocus: false},
+    unitValue: { value: 0, invalid: false, tab: '1', msg:'', autoFocus: false },
+    discValue: { value: 0, invalid: false, tab: '1', msg:'',autoFocus: false },
+    addValue: { value: 0, invalid: false, tab: '1', msg:'',autoFocus: false },
+    value: { value: 0, invalid: false, tab: '1', msg:'',autoFocus: false },
   }
   const [rowData, setRowData] = useState(baseData)
   const toolBarList = [
@@ -134,9 +162,19 @@ export default function InvoiceItemCadastro(props) {
         rowData.un_id.select = props.data.businessUnit
         rowData.financial_id.select = props.data.financialAccount
         rowData.material_id.select = props.data.material
+        setQtd(props.data.qtd)
+        setUnitValue(props.data.unitValue)
+        setDiscValue(props.data.discValue)
+        setAddValue(props.data.addValue)
+        setValue(props.data.value)
       }
       else {
         setRowData(baseData)
+        setQtd(0)
+        setUnitValue(0)
+        setDiscValue(0)
+        setAddValue(0)
+        setValue(0)
       }
       setLoad(false)
       setAtualiza(!atualiza)
@@ -161,13 +199,32 @@ export default function InvoiceItemCadastro(props) {
     setTab(tab)
   }
 
-  function handleChange(id, value) {
+  function handleChange(id, value,e) {
+    if(value === null || value === undefined) {
+      value=0
+    }
+    _.set(rowData, id, value);
     if(id==='qtd.value' || id==='unitValue.value' || id==='discValue.value' || id==='addValue.value' ) {
       let valor= (rowData.qtd.value *  rowData.unitValue.value ) - rowData.discValue.value + rowData.addValue.value
       _.set(rowData, 'value.value', valor);
+      _.set(rowData,'qtd.autoFocus',id==="qtd.value")
+      _.set(rowData,'unitValue.autoFocus',id==="unitValue.value")
+      _.set(rowData,'discValue.autoFocus',id==="discValue.value")
+      _.set(rowData,'addValue.autoFocus',id==="addValue.value")
+      setValue(valor)
+      if(id==='qtd.value') {
+        setQtd(value)
+      }
+      if(id==='unitValue.value') {
+        setUnitValue(value)
+      }
+      if(id==='discValue.value') {
+        setDiscValue(value)
+      }
+      if(id==='addValue.value') {
+        setAddValue(value)
+      }
     }
-    _.set(rowData, id, value);
-    // setAtualiza(!atualiza)
   }
   function handleChangeSelect(id, idSelect, value, select) {
     _.set(rowData, id, value);
@@ -213,8 +270,7 @@ export default function InvoiceItemCadastro(props) {
         }
       );
 
-      rowData.value.value= (rowData.qtd.value *  rowData.unitValue.value ) - rowData.discValue.value + rowData.addValue.value
-      console.log(rowData.value)
+      // rowData.value.value= (rowData.qtd.value *  rowData.unitValue.value ) - rowData.discValue.value + rowData.addValue.value
       if(rowData.value.value<=0) {
         rowData.value.msg='Valor total do item com valor inválido!'
         rowData.value.invalid = true
@@ -249,6 +305,11 @@ export default function InvoiceItemCadastro(props) {
           props.handleSidebar(false)
           props.handleAdd(data)
           setRowData(baseData)
+          setQtd(0)
+          setUnitValue(0)
+          setDiscValue(0)
+          setAddValue(0)
+          setValue(0)
         } catch (error) {
           if (typeof error.response !== 'undefined')
           {
@@ -272,6 +333,11 @@ export default function InvoiceItemCadastro(props) {
           props.handleSidebar(false)
           props.handleUpdate(data)
           setRowData(baseData)
+          setQtd(0)
+          setUnitValue(0)
+          setDiscValue(0)
+          setAddValue(0)
+          setValue(0)
         } catch (error) {
           if (typeof error.response !== 'undefined')
           {
@@ -319,6 +385,7 @@ export default function InvoiceItemCadastro(props) {
       }
     }
   }
+
 
   function FormTab1() {
     return (
@@ -389,14 +456,15 @@ export default function InvoiceItemCadastro(props) {
                 <FormGroup>
                   <Label>Quantidade</Label>
                   <NumberFormat
-                    // prefix={'R$'}
+                    key="qtd.value"
                     decimalScale={4}
                     decimalSeparator={','}
                     thousandSeparator={'.'}
                     className="form-control"
                     placeholder="Quantidade"
-                    value={rowData.qtd.value}
-                    onValueChange={e => handleChange("qtd.value",e.floatValue)}
+                    autoFocus={rowData.qtd.autoFocus}
+                    value={qtd}
+                    onValueChange={e =>   handleChange("qtd.value", e.floatValue,e) }
                     invalid={rowData.qtd.invalid.toString()}
                     disabled={!salvarPermission}
                   />
@@ -410,14 +478,15 @@ export default function InvoiceItemCadastro(props) {
                   <Label>Valor Unitário</Label>
                   <NumberFormat
                     prefix={'R$'}
+                    key="unitValue.value"
                     decimalScale={4}
                     decimalSeparator={','}
                     thousandSeparator={'.'}
                     className="form-control"
                     placeholder="Valor Unitário"
-                    autoFocus
-                    value={rowData.unitValue.value}
-                    onValueChange={e => handleChange("unitValue.value",e.floatValue)}
+                    autoFocus={rowData.unitValue.autoFocus}
+                    value={unitValue}
+                    onValueChange={e =>   handleChange("unitValue.value", e.floatValue,e) }
                     invalid={rowData.unitValue.invalid.toString()}
                     disabled={!salvarPermission}
                   />
@@ -429,13 +498,15 @@ export default function InvoiceItemCadastro(props) {
                   <Label>Desconto</Label>
                   <NumberFormat
                     prefix={'R$'}
-                    decimalScale={4}
+                    key="discValue.value"
+                    decimalScale={2}
                     decimalSeparator={','}
                     thousandSeparator={'.'}
                     className="form-control"
                     placeholder="Desconto"
-                    value={rowData.discValue.value}
-                    onValueChange={e => handleChange("discValue.value",e.floatValue)}
+                    autoFocus={rowData.discValue.autoFocus}
+                    value={discValue}
+                    onValueChange={e => handleChange("discValue.value",e.floatValue,e)}
                     invalid={rowData.discValue.invalid.toString()}
                     disabled={!salvarPermission}
                   />
@@ -447,13 +518,15 @@ export default function InvoiceItemCadastro(props) {
                   <Label>Acréscimo</Label>
                   <NumberFormat
                     prefix={'R$'}
-                    decimalScale={4}
+                    key="addValue"
+                    decimalScale={2}
                     decimalSeparator={','}
                     thousandSeparator={'.'}
                     className="form-control"
                     placeholder="Acréscimo"
-                    value={rowData.addValue.value}
-                    onValueChange={e => handleChange("addValue.value",e.floatValue)}
+                    autoFocus={rowData.addValue.autoFocus}
+                    value={addValue}
+                    onValueChange={e => handleChange("addValue.value",e.floatValue,e)}
                     invalid={rowData.addValue.invalid.toString()}
                     disabled={!salvarPermission}
                   />
@@ -467,15 +540,14 @@ export default function InvoiceItemCadastro(props) {
                   <Label>Total</Label>
                   <NumberFormat
                     prefix={'R$'}
-                    decimalScale={4}
+                    key="value"
+                    decimalScale={2}
                     decimalSeparator={','}
                     thousandSeparator={'.'}
                     className="form-control"
                     placeholder="Total"
-                    value={rowData.value.value}
-                    onValueChange={e => handleChange("value.value",e.floatValue)}
-                    invalid={rowData.value.invalid.toString()}
-                    disabled={!salvarPermission}
+                    value={value}
+                    displayType={'text'}
                   />
                   {rowData.value.invalid ? <div className="text-danger font-small-2">{rowData.value.msg}</div>: null }
                 </FormGroup>

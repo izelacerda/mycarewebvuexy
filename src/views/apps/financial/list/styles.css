@@ -1,0 +1,132 @@
+.rowColor_00 {
+  background-color:rgb(223, 219, 219) !important;
+}
+.rowColor_01 {
+  background-color:rgb(236, 233, 233) !important;
+}
+
+.rowColor_02 {
+  background-color:rgb(248, 246, 246)
+}
+.rowColor_03 {
+  background-color:white;
+}
+.rowColor_04 {
+  background-color:white;
+}
+.rowColor_05 {
+  background-color:white;
+}
+.ag-iconAux {
+  font-weight: bold;
+  /* height: 12px; width: 12px;padding-right: 2px */
+}
+/* .dx-treelist-rowsview .dx-treelist-expanded span:before {
+  content: "\f067";
+  position: absolute;
+  display: block;
+  width: 24px;
+  top: 50%;
+  left: 0;
+  margin-left: -5px;
+  margin-top: -12px;
+} */
+/* .ag-theme-alpine .ag-icon2::before {
+  content: '\f00c';
+} */
+/* .ag-theme-alpine {
+  @include ag-theme-alpine((
+    header-height: 10px,
+    row-height: 10px,
+    row-hover-color: var(--gridRowHoverColor, #{$gridRowHoverColor}),
+    header-background-color: red,
+
+    icon-font-family: "Font Awesome 5 Free",
+    icons-data: null,
+    icons-font-codes: (
+        "aggregation": "\f247",
+        "arrows": "\f0b2",
+        "asc": "\f062",
+        "cancel": "\f057",
+        "chart": "\f080",
+        "color-picker": "\f576",
+        "columns": "\f0db",
+        "contracted": "\f146",
+        "copy": "\f0c5",
+        "cross": "\f00d",
+        "desc": "\f063",
+        "expanded": "\f0fe",
+        "eye-slash": "\f070",
+        "eye": "\f06e",
+        "filter": "\f0b0",
+        "first": "\f100",
+        "grip": "\f58e",
+        "group": "\f5fd",
+        "last": "\f101",
+        "left": "\f060",
+        "linked": "\f0c1",
+        "loading": "\f110",
+        "maximize": "\f2d0",
+        "menu": "\f0c9",
+        "minimize": "\f2d1",
+        "next": "\f105",
+        "none": "\f338",
+        "not-allowed": "\f05e",
+        "paste": "\f0ea",
+        "pin": "\f276",
+        "pivot": "\f074",
+        "previous": "\f104",
+        "right": "\f061",
+        "save": "\f0c7",
+        "small-down": "\f107",
+        "small-left": "\f104",
+        "small-right": "\f105",
+        "small-up": "\f106",
+        "tick": "\f00c",
+        "tree-closed": "\f0c7",
+        "tree-indeterminate": "\f0c7",
+        "tree-open": "\f0c7",
+        "unlinked": "\f127",
+    )
+  ));
+
+  .ag-group-title-bar {
+    background-color: lightgreen;
+  }
+
+  .ag-icon {
+    font-weight: bold;
+  }
+} */
+
+
+/**
+* DevExtreme (dx.light.compact.css)
+* Version: 20.1.4
+* Build date: Tue Jun 02 2020
+*
+* Copyright (c) 2012 - 2020 Developer Express Inc. ALL RIGHTS RESERVED
+* Read about DevExtreme licensing here: https://js.devexpress.com/Licensing/
+*/
+/* .dx-treelist-borders {
+  /* border: 1px solid #000;
+}
+/* .dx-treelist-headers {
+  color: #000;
+  font-weight: 400;
+  -ms-touch-action: pinch-zoom;
+  touch-action: pinch-zoom;
+  border: 1px solid #000;
+}
+.dx-row {
+  color: #000;
+  font-weight: 400;
+  /* background-color: #fff;
+}
+
+.dx-treelist-headers .dx-row {
+    background-color: #fff;
+}
+.dx-treelist-borders .dx-treelist-rowsview, [dir] .dx-treelist-headers + .dx-treelist-rowsview {
+  border: 1px solid #000;
+}  */

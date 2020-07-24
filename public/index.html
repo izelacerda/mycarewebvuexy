@@ -25,9 +25,43 @@
       href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
       crossorigin=""
     />
+    <link rel="stylesheet" href="/stimulsoft.viewer.office2013.whiteblue.css">
+    <script src="/stimulsoft.reports.js"></script>
+    <script src="/stimulsoft.viewer.js"></script>
+
     <title>Mycare</title>
   </head>
   <body>
+    <!-- <script type="text/babel">
+      class Viewer extends React.Component {
+          render() {
+              return <div id="viewer"></div>;
+          }
+
+          componentWillMount(){
+              console.log('Loading Viewer view');
+
+              console.log('Creating the report viewer with default options');
+              var viewer = new window.Stimulsoft.Viewer.StiViewer(null, 'StiViewer', false);
+
+              console.log('Creating a new report instance');
+              var report = new window.Stimulsoft.Report.StiReport();
+
+              console.log('Load report from url');
+              report.loadFile('/reports/SimpleList.mrt');
+
+              console.log('Assigning report to the viewer, the report will be built automatically after rendering the viewer');
+              viewer.report = report;
+
+              console.log('Rendering the viewer to selected element');
+              viewer.renderHtml('viewer');
+        }
+      }
+      ReactDOM.render(
+          <Viewer />,
+          document.getElementById("main")
+      )
+  </script> -->
     <div id="root"></div>
     <!--
       This HTML file is a template.

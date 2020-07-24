@@ -1,0 +1,13 @@
+[
+  {
+    "profile_id": 4,
+    "profile_name": "teste",
+    "module_id": 2,
+    "module_name": "Administrativo",
+    "routine_id": 8,
+    "routine_name": "Agenda",
+    "functionality_id": 19,
+    "functionality_name": "Acessar Agenda",
+    "is_permission": true
+  }
+]
